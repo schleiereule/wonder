@@ -142,13 +142,13 @@ public class ERMDNestingListPageRepetition extends ERMDListPageRepetition {
         return showNestedRelationshipEditor;
     }
 
+    /**
+     * @return the column count for the nested td's colspan
+     */
     public int columnCount() {
         int columnCount = displayPropertyKeyCount();
-        // TODO move collapse action to separate column, in case no left actions
-        // are defined?
-        if (hasLeftActions()) {
-            columnCount++;
-        }
+        // left action column will always be shown
+        columnCount++;
         if (hasRightActions()) {
             columnCount++;
         }
