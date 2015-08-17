@@ -88,6 +88,7 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 	private EOEnterpriseObject _objectToAddToRelationship;
 	private String _relationshipKey;
 	private EODataSource _dataSource;
+	private EODataSource _editListDataSource;
 	private EODataSource _selectDataSource;
 	private WODisplayGroup _relationshipDisplayGroup;
 	public boolean isRelationshipToMany;
@@ -138,6 +139,32 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 		setInlineTaskSafely("create");
 		return null;
 	}
+	   
+    /**
+     * Turn the list repetition into an editable list, to allow simultaneous editing of all objects. 
+     */
+    public WOComponent editListAction() {
+        setInlineTaskSafely("editList");
+        return null;
+    }
+   
+    
+    /**
+     * The data source for the edit list uses a nested EC, so the relationship
+     * page's cancel button remains functional.
+     * 
+     * @return a data source for the embedded edit list
+     */
+    public EODataSource editListDataSource() {
+        if (_editListDataSource == null) {
+            EOEditingContext ec = masterObject().editingContext();
+            EOEditingContext childEc = ERXEC.newEditingContext(ec);
+            _editListDataSource = ERXEOControlUtilities.dataSourceForObjectAndKey(
+                    EOUtilities.localInstanceOfObject(childEc, masterObject()),
+                    relationshipKey());
+        }
+        return _editListDataSource;
+    }
 	
 	/**
 	 * Performs the queryAction. Sets the inline task to 'list'
@@ -239,6 +266,13 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 	 */
 	public boolean displayList() {
 		return "list".equals(inlineTask());
+	}
+
+	/**
+	 * Controls whether the edit list page is displayed.
+	 */
+	public boolean displayEditList() {
+		return "editList".equals(inlineTask());
 	}
 	
 	/**
@@ -444,6 +478,10 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 		return (String)d2wContext().valueForKey(Keys.inlineTask);
 	}
 	
+	public String subTask() {
+		return (String)d2wContext().valueForKey(Keys.subTask);
+	}
+	
 	public void setInlineTask(String task) {
 		// noop
 	}
@@ -452,6 +490,10 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 		d2wContext().takeValueForKey(task, Keys.inlineTask);
 	}
     
+	public void setSubTaskSafely(String subTask) {
+		d2wContext().takeValueForKey(subTask, Keys.subTask);
+	}
+
     public String relationshipKey() {
     	return _relationshipKey;
     }
@@ -580,6 +622,17 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
         repetitionContainerID = repetitionContainerID.concat("_"
                 + masterObject().hashCode());
         return repetitionContainerID;
+    }
+
+    public Boolean showBottomActionBlock() {
+        Boolean showBottomActionBlock = ERXValueUtilities.booleanValue(d2wContext()
+                .valueForKey("showBottomActionBlock"));
+        if (displayEditList()) {
+            // hide the bottom action block when 
+            // showing the inline edit list
+            showBottomActionBlock = Boolean.FALSE;
+        }
+        return showBottomActionBlock;
     }
 
 }
