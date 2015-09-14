@@ -36,7 +36,7 @@ import com.webobjects.foundation.NSMutableDictionary;
  * @d2wKey classForObjectTableHeader
  * @d2wKey updateContainerID
  * @d2wKey baseClassForObjectRow
- * @d2wKey recursiveRelationship
+ * @d2wKey nestedRelationship
  * 
  * @author fpeters
  */
