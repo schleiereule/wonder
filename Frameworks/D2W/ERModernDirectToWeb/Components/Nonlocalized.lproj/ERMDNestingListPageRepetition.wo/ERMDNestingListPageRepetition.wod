@@ -67,6 +67,17 @@ showNestedRelationshipEditor : WOConditional {
 	condition = showNestedRelationshipEditor;
 }
 
+NestedRelationshipField : WOGenericContainer {
+	elementName = "td";
+	colspan = columnCount;
+}
+
+HiddenNestedRelationshipField : WOGenericContainer {
+	elementName = "td";
+	colspan = columnCount;
+	class = "hidden";
+}
+
 NestedRelationshipEditor : WOSwitchComponent {
 	WOComponentName = childContext.componentName;
 	localContext = childContext;
