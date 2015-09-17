@@ -1,1 +1,10 @@
+<<<<<<< HEAD
 /build/
+=======
+target
+bin
+build
+*.xcodeproj
+*.pbxproj
+ant.*
+>>>>>>> master
