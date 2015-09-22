@@ -19,6 +19,9 @@
     <webobject name = "HasLeftActionsConditional">
       <td class="ActionCell LftActionCell">
         <ul class="ObjActionList LftObjActionList">
+          <webobject name = "HasNestedRelationship">
+        	<li><webobject name = "ToggleNestedRelationshipEditor">Show Nested</webobject></li>
+          </webobject>
           <webobject name = "LeftActions">
             <li><webobject name = "LeftAction" /></li>
           </webobject>
@@ -39,6 +42,17 @@
         </ul>
       </td>
       </webobject>
+    </webobject>
+    <!-- optional child relationship drill-down -->
+    <webobject name = "HasNestedRelationship">
+		<webobject name = "NestedUC">
+			<webobject name = "showNestedRelationshipEditor">
+				<webobject name = "NestedRelationshipField"><webobject name = "NestedRelationshipEditor"></webobject></webobject>
+			</webobject>
+			<webobject name = "hideNestedRelationshipEditor">
+				<webobject name = "HiddenNestedRelationshipField">&nbsp;</webobject>
+			</webobject>
+	    </webobject>
     </webobject>
   </webobject>
 </webobject>

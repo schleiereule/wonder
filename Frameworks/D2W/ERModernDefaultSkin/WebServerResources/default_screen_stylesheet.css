@@ -818,6 +818,12 @@ span.ErrorLabel {
 	background-color: #e6e9ef;
 }
 
+/* hide empty children row */
+.ObjRow.NestedObjRow .hidden {
+	line-height: 0px;
+	padding: 0px;
+}
+
 .ComboTHLink .Label{
 	text-decoration: none;
 	color: #c2c6cf;
