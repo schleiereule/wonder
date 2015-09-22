@@ -47,23 +47,10 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/ERJars/LibraryJavadocs/httpmime-4.3.6-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-<<<<<<< HEAD
 	<classpathentry exported="true" kind="lib" path="Libraries/commons-codec-1.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="Libraries/commons-io-2.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="Libraries/slf4j-api-1.7.12.jar"/>
 	<classpathentry exported="true" kind="lib" path="Libraries/slf4j-log4j12-1.7.12.jar"/>
 	<classpathentry exported="true" kind="lib" path="Libraries/junit-4.11.jar"/>
-=======
-	<classpathentry exported="true" kind="lib" path="Libraries/slf4j-log4j12-1.7.12.jar" sourcepath="LibrarySources/slf4j-log4j12-1.7.12-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/ERJars/LibraryJavadocs/slf4j-log4j12-1.7.12-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="Libraries/slf4j-api-1.7.12.jar" sourcepath="LibrarySources/slf4j-api-1.7.12-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/ERJars/LibraryJavadocs/slf4j-api-1.7.12-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
->>>>>>> master
 	<classpathentry kind="output" path="bin"/>
 </classpath>
