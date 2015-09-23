@@ -138,9 +138,29 @@ HasLeftActionsConditional : WOConditional {
 	condition = hasLeftActions;
 }
 
+HasChildren : WOConditional {
+	condition = hasChildren;
+}
+
 ToggleNestedRelationshipEditor : AjaxUpdateLink {
 	action = toggleNestedRelationshipEditor;
 	updateContainerID = idForNestedUpdateContainer;
+	onComplete = toggleIconsScript;
+	style = "display:block;";
+}
+
+DoOpenIcon : WOImage {
+	filename = "RightTriangle.gif";
+	framework = "JavaWOExtensions";
+	id = idForDoOpenIcon;
+	style = initialStyleForDoOpenIcon;
+}
+
+DoCloseIcon : WOImage {
+	filename = "DownTriangle.gif";
+	framework = "JavaWOExtensions";
+	id = idForDoCloseIcon;
+	style = initialStyleForDoCloseIcon;
 }
 
 HasRightActionsConditional : WOConditional {

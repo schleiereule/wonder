@@ -10,6 +10,8 @@ import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSMutableDictionary;
 
+import er.extensions.foundation.ERXValueUtilities;
+
 /**
  * Special list page repetition for hierarchical object structures that extends
  * ERMDListPageRepetition. Allows recursive access to a relationship specified
@@ -112,9 +114,6 @@ public class ERMDNestingListPageRepetition extends ERMDListPageRepetition {
 
     public boolean hasLeftActions() {
         boolean hasLeftActions = leftActions() != null && leftActions().count() > 0;
-        if (d2wContext().valueForKey(Keys.nestedRelationship) != null) {
-            hasLeftActions = true;
-        }
         return hasLeftActions;
     }
 
@@ -135,20 +134,24 @@ public class ERMDNestingListPageRepetition extends ERMDListPageRepetition {
         return d2wContext().valueForKey(Keys.nestedRelationship) != null;
     }
 
-    public Boolean showNestedRelationshipEditor() {
-        // use globalID hash as unique key for this object
-        Boolean showNestedRelationshipEditor = (Boolean) d2wContext().valueForKeyPath(
-                Keys.showNestedRelationshipEditor + uniqueObjectID());
-        return showNestedRelationshipEditor;
-    }
+	public boolean showNestedRelationshipEditor() {
+		// use globalID hash as unique key for this object
+		return ERXValueUtilities.booleanValue(d2wContext().valueForKeyPath(Keys.
+				showNestedRelationshipEditor + uniqueObjectID()));
+	}
 
     /**
      * @return the column count for the nested td's colspan
      */
     public int columnCount() {
         int columnCount = displayPropertyKeyCount();
-        // left action column will always be shown
-        columnCount++;
+        if (d2wContext().valueForKey(Keys.nestedRelationship) != null) {
+        	// additional column for toggle action
+        	columnCount++;
+        }
+        if (hasLeftActions()) {
+            columnCount++;
+        }
         if (hasRightActions()) {
             columnCount++;
         }
@@ -177,7 +180,7 @@ public class ERMDNestingListPageRepetition extends ERMDListPageRepetition {
                 + "_" + uniqueObjectID();
         return idForNestedUpdateContainer;
     }
-
+    
     /**
      * @return a unique ID, based on the D2WContext's object value
      */
@@ -210,5 +213,41 @@ public class ERMDNestingListPageRepetition extends ERMDListPageRepetition {
         nestedRowClass = nestedRowClass.concat(" NestedObjRow");
         return nestedRowClass;
     }
+
+    public boolean hasChildren() {
+        EOEnterpriseObject object = (EOEnterpriseObject) d2wContext().valueForKey(
+                "object");
+		boolean hasChildren = ERXValueUtilities.booleanValue(object.valueForKeyPath(
+				d2wContext().valueForKey(Keys.nestedRelationship) + ".@count"));
+    	return hasChildren; 
+    }
+    
+    /*
+	 * The remainder handles the icon toggling – the same could be achieved by simply
+	 * putting the icons in a dependent update container, but that would
+	 * potentially introduce a lot of update containers.
+	 */
+
+    public String idForDoOpenIcon() {
+    	return idForNestedUpdateContainer() + "_open";
+    }
+    
+    public String idForDoCloseIcon() {
+    	return idForNestedUpdateContainer() + "_close";
+    }
+
+	public String toggleIconsScript() {
+		String toggleIconsScript = "function(){$('" + idForDoOpenIcon() + 
+				"', '" + idForDoCloseIcon() + "').invoke('toggle');}";
+		return toggleIconsScript;
+	}
+	
+	public String initialStyleForDoOpenIcon() {
+		return showNestedRelationshipEditor() ? "display:none;" : "";
+	}
+	
+	public String initialStyleForDoCloseIcon() {
+		return showNestedRelationshipEditor() ? "" : "display:none;";
+	}
 
 }

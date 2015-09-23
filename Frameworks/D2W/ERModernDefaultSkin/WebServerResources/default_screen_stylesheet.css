@@ -570,6 +570,14 @@ ul.L2WithChildren li.Nav2Selected {
 	width: 35px;
 }
 
+/* increase clickable area */
+.ShowNestedActionCell {
+	padding: 0;
+}
+.ShowNestedActionCell a {
+	padding: 0.5em;
+}
+
 .EmbeddedObjTable .RtActionCell,
 .EditRelationshipObjTable .RtActionCell {
 	width: 170px;
