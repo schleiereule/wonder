@@ -214,6 +214,14 @@ public class ERMDNestingListPageRepetition extends ERMDListPageRepetition {
         return nestedRowClass;
     }
 
+    public boolean hasChildren() {
+        EOEnterpriseObject object = (EOEnterpriseObject) d2wContext().valueForKey(
+                "object");
+		boolean hasChildren = ERXValueUtilities.booleanValue(object.valueForKeyPath(
+				d2wContext().valueForKey(Keys.nestedRelationship) + ".@count"));
+    	return hasChildren; 
+    }
+    
     /*
 	 * The remainder handles the icon toggling – the same could be achieved by simply
 	 * putting the icons in a dependent update container, but that would

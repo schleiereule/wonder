@@ -138,11 +138,15 @@ HasLeftActionsConditional : WOConditional {
 	condition = hasLeftActions;
 }
 
+HasChildren : WOConditional {
+	condition = hasChildren;
+}
+
 ToggleNestedRelationshipEditor : AjaxUpdateLink {
 	action = toggleNestedRelationshipEditor;
 	updateContainerID = idForNestedUpdateContainer;
 	onComplete = toggleIconsScript;
-	style = "display:inline;";
+	style = "display:block;";
 }
 
 DoOpenIcon : WOImage {
