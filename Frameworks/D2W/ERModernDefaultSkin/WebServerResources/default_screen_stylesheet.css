@@ -1460,6 +1460,56 @@ div.RtActionCell li {
 	clear: both;
 }
 
+/* ERC PROPERTY HELP TEXT */
+
+/* fix positioning of D2WPropertyDebugInfo */
+span span.Tooltip.HelpTooltip.PropertyHelpTooltip + a {
+	margin-left: 10px;
+	position: absolute;
+}
+
+.Tooltip {
+	position: absolute;
+}
+
+.Tooltip .TooltipTrigger {
+	position: absolute;
+	font-size: 10px;
+	padding: 1px 5px 2px 4px;
+}
+
+.Tooltip .TooltipTrigger.TooltipTriggerWithText {
+	font-weight: bold;
+	font-size: 12px;
+}
+
+.Tooltip .TooltipHelpText {
+    display: none;
+    position: absolute;
+	left: -50px;
+	top: 25px;
+	width: 250px;
+    padding: 10px;
+    z-index: 800;
+    color: #fff;
+    text-align: left;
+    background: #414b5e;
+    opacity: .9;
+    border: 1px solid #e5e5e5;
+}
+
+.Tooltip .TooltipTrigger:hover + .TooltipHelpText {
+	   display: block;
+}
+
+.ListObjTable .TooltipHelpText {
+	   display: none;
+}
+
+.ListObjTableHd span.Tooltip {
+	   display: none;
+}
+
 /* DEBUG FLAGS */
 
 .DebugFlags {

@@ -1,0 +1,39 @@
+IsHelpTextEnabled : WOConditional {
+	condition = isHelpTextEnabled;
+}
+
+HasHelpText : WOConditional {
+	condition = hasHelpText;
+}
+
+HelpText : WOString {
+	value = helpText.value;
+	valueWhenEmpty = defaultValue;
+	escapeHTML = false;
+}
+
+ShowCreate : WOConditional {
+	condition = showCreate;
+}
+
+TooltipTriggerSpan : WOGenericContainer {
+	elementName = "span";
+	class = classForTooltipTrigger;
+}
+
+ShowEdit : WOConditional {
+	condition = showEdit;	
+}
+
+HideActions : WOConditional {
+	condition = showActions;
+	negate = true;
+}
+
+Create :WOHyperlink {
+	action = createHelpText;
+}
+
+Edit :WOHyperlink {
+	action = editHelpText;
+}

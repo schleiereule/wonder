@@ -20,6 +20,16 @@ abbr: WOGenericContainer {
 	title = localizedTitle;
 }
 
+DisplayPropertyHelpText : WOConditional {
+	// only display if a component name is set
+	condition = d2wContext.propertyHelpTextComponentName;
+}
+
+HelpText : WOSwitchComponent {
+    d2wContext = d2wContext;
+    WOComponentName = d2wContext.propertyHelpTextComponentName;
+}
+
 ContextDictionaryRepetition : WORepetition {
 	list = contextDictionaryForPropertyKey.allKeys.@sortAsc.toString; //VALID
 	item = currentKey;
