@@ -474,7 +474,8 @@ ul.L2WithChildren li.Nav2Selected {
 .EditPageButton,
 .NextPageButton,
 .SubmitPageButton,
-.QueryPageButton {
+.QueryPageButton,
+.QueryRelatedPageButton {
 	background-image: url(btn_blu.png);
 	color: #fff;
 }
@@ -482,7 +483,8 @@ ul.L2WithChildren li.Nav2Selected {
 .EditPageButton span,
 .NextPageButton span,
 .SubmitPageButton span,
-.QueryPageButton span {
+.QueryPageButton span,
+.QueryRelatedPageButton span {
 	background-image: url(btn_blu.png);
 	background-color: #fff;
 	text-shadow: #405882 0px -1px 0px;
@@ -549,14 +551,16 @@ ul.L2WithChildren li.Nav2Selected {
 
 .EditObjButton,
 .QueryObjButton,
-.EmbeddedEditRelationshipBtmActions .QueryPageButton {
+.EmbeddedEditRelationshipBtmActions .QueryPageButton,
+.EmbeddedEditRelationshipBtmActions .QueryRelatedPageButton {
 	background-image: url(btn_blu_sm.png);
 	color: #fff;
 }
 
 .EditObjButton span,
 .QueryObjButton span,
-.EmbeddedEditRelationshipBtmActions .QueryPageButton span {
+.EmbeddedEditRelationshipBtmActions .QueryPageButton span,
+.EmbeddedEditRelationshipBtmActions .QueryRelatedPageButton span {
 	background-image: url(btn_blu_sm.png);
 	text-shadow: #405882 0px -1px 0px;
 }
