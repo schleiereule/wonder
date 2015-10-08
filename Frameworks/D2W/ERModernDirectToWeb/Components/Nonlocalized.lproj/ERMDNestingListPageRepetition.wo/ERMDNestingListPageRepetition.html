@@ -2,6 +2,7 @@
   <webobject name = "ObjectsRepetition">
     <webobject name = "IsRenderTableHeader">
       <webobject name = "ObjectTableHeaderRow">
+        <webobject name = "HasNestedRelationship"><th>&nbsp;</th></webobject>
         <webobject name = "HasLeftActionsConditional"><th class="ActionCell LftActionCell">&nbsp;</th></webobject>
         <webobject name = "SectionRepetition">
           <webobject name = "ColumnLabelRepetition">
@@ -16,9 +17,16 @@
       </webobject>
     </webobject>
     <webobject name = "ListTableRow">
+    <webobject name = "HasNestedRelationship">
+      <td class="ActionCell ShowNestedActionCell">
+		<webobject name = "HasChildren">
+			<webobject name = "ToggleNestedRelationshipEditor"><webobject name = "DoCloseIcon"/><webobject name = "DoOpenIcon"/></webobject>
+		</webobject>
+      </td>
+    </webobject>
     <webobject name = "HasLeftActionsConditional">
       <td class="ActionCell LftActionCell">
-        <ul class="ObjActionList LftObjActionList">
+        <ul class="ObjActionList LftObjActionList NestingLftObjActionList">
           <webobject name = "LeftActions">
             <li><webobject name = "LeftAction" /></li>
           </webobject>
@@ -39,6 +47,17 @@
         </ul>
       </td>
       </webobject>
+    </webobject>
+    <!-- optional child relationship drill-down -->
+    <webobject name = "HasNestedRelationship">
+		<webobject name = "NestedUC">
+			<webobject name = "showNestedRelationshipEditor">
+				<webobject name = "NestedRelationshipField"><webobject name = "NestedRelationshipEditor"></webobject></webobject>
+			</webobject>
+			<webobject name = "hideNestedRelationshipEditor">
+				<webobject name = "HiddenNestedRelationshipField">&nbsp;</webobject>
+			</webobject>
+	    </webobject>
     </webobject>
   </webobject>
 </webobject>
