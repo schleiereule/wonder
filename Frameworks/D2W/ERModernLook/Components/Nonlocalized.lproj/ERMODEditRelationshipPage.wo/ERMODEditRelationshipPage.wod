@@ -30,11 +30,6 @@ InspectComponent: ERXD2WInspect {
 	settings = settings;
 }
 
-IsEntityWritable: WOConditional {
-	_unroll = true;
-	condition = isEntityCreatable;
-}
-
 IsToMany: WOConditional {
 	condition = isRelationshipToMany;
 }
@@ -53,26 +48,6 @@ ListComponent: ERXD2WSelect {
 	_settings = settings;
 }
 
-NewButton: CCSmartAjaxButton {
-	alt = "Creates a new Object to add to the relationship";
-	action = newObjectAction;
-	class = "Button PageButton CreatePageButton";
-	value = d2wContext.newRelationshipButtonLabel;
-	useAjax = d2wContext.useAjaxControls;
-    updateContainerID = d2wContext.idForMainContainer;
-    dontSubmitForm = true;
-}
-
-EditListButton: CCSmartAjaxButton {
-	alt = "Enables editing of the list of relationship objects";
-	action = editListAction;
-	class = "Button PageButton EditListPageButton";
-	value = "Edit list";
-	useAjax = true;
-    updateContainerID = d2wContext.idForMainContainer;
-    dontSubmitForm = true;
-}
-
 PageWrapper: WOSwitchComponent {
 	WOComponentName = pageWrapperName;
 	_componentUnroll = true;
@@ -87,26 +62,6 @@ QueryComponent: ERXD2WQuery {
 	settings = settings;
 }
 
-QueryButton: CCSmartAjaxButton {
-	alt = "Find new objects to add to the relationship";
-	action = displayQueryAction;
-	class = "Button PageButton QueryPageButton";
-	value = d2wContext.queryRelationshipButtonLabel;
-	useAjax = d2wContext.useAjaxControls;
-	updateContainerID = d2wContext.idForMainContainer;
-	dontSubmitForm = true;
-}
-
-ReturnButton : CCSmartAjaxButton {
-	alt = "Returns to the inspect page";
-	action = returnAction;
-	class = "Button PageButton ReturnPageButton";
-	value = d2wContext.returnButtonLabel;
-	useAjax = d2wContext.useAjaxControlsWhenEmbedded;
-	updateContainerID = d2wContext.idForParentMainContainer;
-	dontSubmitForm = true;
-}
-
 RequiredWrapper : ERMODRequiredWrapper {
 	d2wContext = d2wContext;
 	object = object;
@@ -115,7 +70,7 @@ RequiredWrapper : ERMODRequiredWrapper {
 }
 
 ShowBottomActionBlock : WOConditional {
-    condition = showBottomActionBlock;
+    condition = d2wContext.showBottomActionBlock;
 }
 
 InnerWrapper : WOGenericContainer {
@@ -123,38 +78,23 @@ InnerWrapper : WOGenericContainer {
 	class = d2wContext.classForInnerWrapper;
 }
 
-IsNotEditList : WOConditional {
-	condition = displayEditList;
-	negate = true;
-}
-
-IsEditList : WOConditional {
-	condition = displayEditList;
-}
-
 RepetitionUpdateContainer : AjaxUpdateContainer {
     elementName = "div";
-    id = idForRepetitionContainer;
+    id = d2wContext.idForRepetitionContainer;
 }
 
 ToManyListRepetition: WOSwitchComponent {
     WOComponentName = d2wContext.toManyRepetitionComponentName;
     d2wContext = localContext;
     displayGroup = relationshipDisplayGroup;
-    updateContainerID = idForRepetitionContainer;
-}
-
-EditListComponent: ERXD2WList {
-    pageConfiguration = d2wContext.editListEmbeddedConfigurationName;
-	action = saveAction;
-	dataSource = editListDataSource;
+    updateContainerID = d2wContext.idForRepetitionContainer;
 }
 
 ToOneListRepetition: WOSwitchComponent {
     WOComponentName = d2wContext.toOneRepetitionComponentName;
     d2wContext = localContext;
     displayGroup = relationshipDisplayGroup;
-    updateContainerID = idForRepetitionContainer;
+    updateContainerID = d2wContext.idForRepetitionContainer;
 }
 
 ShowBottomBatchNavBar : WOConditional {
@@ -179,18 +119,23 @@ NavigationBar: WOSwitchComponent {
     WOComponentName = d2wContext.batchNavigationBarComponentName;
     displayGroup = relationshipDisplayGroup;
     d2wContext = d2wContext;
-    updateContainerID = idForRepetitionContainer;
+    updateContainerID = d2wContext.idForRepetitionContainer;
 }
 
 BatchSizeControl : ERMDBatchSizeControl {
   displayGroup = relationshipDisplayGroup;
-  updateContainerID = idForRepetitionContainer;
+  updateContainerID = d2wContext.idForRepetitionContainer;
   d2wContext = d2wContext;
 }
 
 BottomActionBlock : WOGenericContainer {
     elementName = "div";
     class = d2wContext.classForBottomActionBlock;
+}
+
+BottomActions: ERD2WExtraDisplayPropertyKeysComponent {
+	localContext = d2wContext;
+	extraPropertiesKey = "belowControllerPropertyKeys";
 }
 
 TopNavBar : WOGenericContainer {
@@ -225,10 +170,6 @@ InspectBlock : WOGenericContainer {
   class = d2wContext.classForEmbeddedEditBlock;
 }
 
-ShowCancel : WOConditional {
-  condition = showCancel;
-}
-
 EmptyMessageComponent: WOSwitchComponent {
     WOComponentName = d2wContext.emptyListComponentName;
     d2wContext = d2wContext;
@@ -241,8 +182,4 @@ ListEmpty: WOConditional {
 ListNotEmpty: WOConditional {
     condition = isListEmpty;
     negate = true;
-}
-
-ShowFind: WOConditional {
-	condition = d2wContext.shouldShowQueryRelatedButton;
 }

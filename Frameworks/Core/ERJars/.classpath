@@ -4,23 +4,12 @@
 	<classpathentry exported="true" kind="lib" path="Libraries/ERWebObjects.jar"/>
 	<classpathentry exported="true" kind="lib" path="Libraries/commons-lang-2.6.jar"/>
 	<classpathentry exported="true" kind="lib" path="Libraries/joda-time-2.3.jar" sourcepath="LibrarySources/joda-time-2.3-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="Libraries/junit-4.10.jar" sourcepath="LibrarySources/junit-4.10-src.jar"/>
 	<classpathentry exported="true" kind="lib" path="Libraries/icu4j-3_8_1.jar"/>
 	<classpathentry exported="true" kind="lib" path="Libraries/ognl-2.6.7.jar"/>
 	<classpathentry exported="true" kind="lib" path="Libraries/log4j-1.2.17.jar"/>
-	<classpathentry exported="true" kind="lib" path="Libraries/commons-codec-1.6.jar" sourcepath="LibrarySources/commons-codec-1.6-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/ERJars/LibraryJavadocs/commons-codec-1.6-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="Libraries/commons-cli-1.2.jar" sourcepath="LibrarySources/commons-cli-1.2-sources.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/ERJars/LibraryJavadocs/commons-cli-1.2-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="Libraries/commons-io-2.2.jar" sourcepath="LibrarySources/commons-io-2.2-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/ERJars/LibraryJavadocs/commons-io-2.2-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="Libraries/commons-lang3-3.1.jar" sourcepath="LibrarySources/commons-lang3-3.1-sources.jar">
@@ -58,15 +47,10 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/ERJars/LibraryJavadocs/httpmime-4.3.6-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="Libraries/slf4j-log4j12-1.7.12.jar" sourcepath="LibrarySources/slf4j-log4j12-1.7.12-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/ERJars/LibraryJavadocs/slf4j-log4j12-1.7.12-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="Libraries/slf4j-api-1.7.12.jar" sourcepath="LibrarySources/slf4j-api-1.7.12-sources.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/ERJars/LibraryJavadocs/slf4j-api-1.7.12-javadoc.jar!/"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="Libraries/commons-codec-1.9.jar"/>
+	<classpathentry exported="true" kind="lib" path="Libraries/commons-io-2.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="Libraries/slf4j-api-1.7.12.jar"/>
+	<classpathentry exported="true" kind="lib" path="Libraries/slf4j-log4j12-1.7.12.jar"/>
+	<classpathentry exported="true" kind="lib" path="Libraries/junit-4.11.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

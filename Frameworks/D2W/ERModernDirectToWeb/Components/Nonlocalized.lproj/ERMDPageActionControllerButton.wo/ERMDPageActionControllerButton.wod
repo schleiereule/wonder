@@ -1,0 +1,24 @@
+BranchButtonRepetition: WORepetition {
+	item = branch;
+	list = branchChoices;
+	checkHashCodes = false;
+}
+
+BranchButton : CCSmartAjaxButton {
+	alt = branchButtonAlt;
+	action = performAction;
+	class = buttonCssClass;
+	value = branchButtonLabel;
+	useAjax = d2wContext.useAjaxControlsWhenEmbedded;
+	updateContainerID = d2wContext.idForMainContainer;
+	dontSubmitForm = true;
+}
+
+HasChoices: WOConditional {
+	condition = hasBranchChoices;
+}
+
+ActionList : WOGenericContainer {
+	elementName = "ul";
+	class = actionListCssClass;
+}

@@ -88,7 +88,6 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 	private EOEnterpriseObject _objectToAddToRelationship;
 	private String _relationshipKey;
 	private EODataSource _dataSource;
-	private EODataSource _editListDataSource;
 	private EODataSource _selectDataSource;
 	private WODisplayGroup _relationshipDisplayGroup;
 	public boolean isRelationshipToMany;
@@ -113,58 +112,59 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
     }
 	
 	// ACTIONS
-	
-    /**
-     * Perform the displayQueryAction. Sets the inline task to 'query'.
-     */
-	public WOComponent displayQueryAction() {
-		setInlineTaskSafely("query");
-		return null;
-	}
-	
-	/**
-	 * Performs the newObjectAction. Creates a new object and sets the inline task
-	 * to 'create'
-	 */
-	public WOComponent newObjectAction() {
-		EOEditingContext newEc = ERXEC.newEditingContext(masterObject().editingContext());
-		EOClassDescription relatedObjectClassDescription = masterObject().classDescriptionForDestinationKey(relationshipKey());
-		EOEnterpriseObject relatedObject = EOUtilities.createAndInsertInstance(newEc, relatedObjectClassDescription.entityName());
-		EOEnterpriseObject localObj = EOUtilities.localInstanceOfObject(relatedObject.editingContext(), masterObject());
-		if (localObj instanceof ERXGenericRecord) {
-			((ERXGenericRecord)localObj).setValidatedWhenNested(false);
-		}
-		localObj.addObjectToBothSidesOfRelationshipWithKey(relatedObject, relationshipKey());
-		setSelectedObject(relatedObject);
-		setInlineTaskSafely("create");
-		return null;
-	}
-	   
-    /**
-     * Turn the list repetition into an editable list, to allow simultaneous editing of all objects. 
-     */
-    public WOComponent editListAction() {
-        setInlineTaskSafely("editList");
-        return null;
-    }
-   
     
-    /**
-     * The data source for the edit list uses a nested EC, so the relationship
-     * page's cancel button remains functional.
-     * 
-     * @return a data source for the embedded edit list
-     */
-    public EODataSource editListDataSource() {
-        if (_editListDataSource == null) {
-            EOEditingContext ec = masterObject().editingContext();
-            EOEditingContext childEc = ERXEC.newEditingContext(ec);
-            _editListDataSource = ERXEOControlUtilities.dataSourceForObjectAndKey(
-                    EOUtilities.localInstanceOfObject(childEc, masterObject()),
-                    relationshipKey());
-        }
-        return _editListDataSource;
-    }
+    // delete methods ??
+	
+//    /**
+//     * Perform the displayQueryAction. Sets the inline task to 'query'.
+//     */
+//	public WOComponent displayQueryAction() {
+//		setInlineTaskSafely("query");
+//		return null;
+//	}
+//	
+//	/**
+//	 * Performs the newObjectAction. Creates a new object and sets the inline task
+//	 * to 'create'
+//	 */
+//	public WOComponent newObjectAction() {
+//		EOEditingContext newEc = ERXEC.newEditingContext(masterObject().editingContext());
+//		EOClassDescription relatedObjectClassDescription = masterObject().classDescriptionForDestinationKey(relationshipKey());
+//		EOEnterpriseObject relatedObject = EOUtilities.createAndInsertInstance(newEc, relatedObjectClassDescription.entityName());
+//		EOEnterpriseObject localObj = EOUtilities.localInstanceOfObject(relatedObject.editingContext(), masterObject());
+//		if (localObj instanceof ERXGenericRecord) {
+//			((ERXGenericRecord)localObj).setValidatedWhenNested(false);
+//		}
+//		localObj.addObjectToBothSidesOfRelationshipWithKey(relatedObject, relationshipKey());
+//		setSelectedObject(relatedObject);
+//		setInlineTaskSafely("create");
+//		return null;
+//	}
+//
+//	/** 
+//	 * Perform the returnAction. Called when the page is a non embedded page is returning to the originating
+//	 * edit page.
+//	 */
+//	public WOComponent returnAction() {
+//		
+//		masterObject().editingContext().saveChanges();
+//		WOComponent result = (nextPageDelegate() != null) ? nextPageDelegate().nextPage(this) : super.nextPage();
+//
+//		if (result != null) {
+//			return result;
+//		}
+//
+//		result = (WOComponent)D2W.factory().editPageForEntityNamed(masterObject().entityName(), session());
+//		((EditPageInterface)result).setObject(masterObject());
+//		return result;
+//	}
+//	
+//	/** Should the 'new' button be displayed? */
+//	public boolean isEntityCreatable() {
+//		return ERXValueUtilities.booleanValue(d2wContext().valueForKey(Keys.isEntityCreatable)) && !isEntityReadOnly();
+//	}
+	
+	// end delete methods ??
 	
 	/**
 	 * Performs the queryAction. Sets the inline task to 'list'
@@ -211,24 +211,6 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 		return null;
 	}
 	
-	/** 
-	 * Perform the returnAction. Called when the page is a non embedded page is returning to the originating
-	 * edit page.
-	 */
-	public WOComponent returnAction() {
-		
-		masterObject().editingContext().saveChanges();
-		WOComponent result = (nextPageDelegate() != null) ? nextPageDelegate().nextPage(this) : super.nextPage();
-
-		if (result != null) {
-			return result;
-		}
-
-		result = (WOComponent)D2W.factory().editPageForEntityNamed(masterObject().entityName(), session());
-		((EditPageInterface)result).setObject(masterObject());
-		return result;
-	}
-	
 	/**
 	 * Called when an {@link ERMDActionButton} changes the related object. 
 	 * Forces the displayGroup to fetch.
@@ -266,13 +248,6 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 	 */
 	public boolean displayList() {
 		return "list".equals(inlineTask());
-	}
-
-	/**
-	 * Controls whether the edit list page is displayed.
-	 */
-	public boolean displayEditList() {
-		return "editList".equals(inlineTask());
 	}
 	
 	/**
@@ -357,7 +332,15 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 				setMasterObject(eo);
 		        
 		        setEditingContext(eo.editingContext());
-		        setRelationshipKey(relationshipKey); 
+		        setRelationshipKey(relationshipKey);
+		        
+		        
+		        // JT
+		        EOEntity masterEntity = EOUtilities.entityForObject(masterObject().editingContext(), masterObject());
+				EORelationship rel = masterEntity.relationshipNamed(relationshipKey);
+				d2wContext().takeValueForKey(rel, "parentRelationship");
+		        //JT
+		        
 		        
 		        if (masterObject().isToManyKey(relationshipKey))
 		            isRelationshipToMany = true;
@@ -478,10 +461,6 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 		return (String)d2wContext().valueForKey(Keys.inlineTask);
 	}
 	
-	public String subTask() {
-		return (String)d2wContext().valueForKey(Keys.subTask);
-	}
-	
 	public void setInlineTask(String task) {
 		// noop
 	}
@@ -490,10 +469,6 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 		d2wContext().takeValueForKey(task, Keys.inlineTask);
 	}
     
-	public void setSubTaskSafely(String subTask) {
-		d2wContext().takeValueForKey(subTask, Keys.subTask);
-	}
-
     public String relationshipKey() {
     	return _relationshipKey;
     }
@@ -576,11 +551,6 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 		return relationshipDisplayGroup().displayedObjects().count();
 	}
 	
-	/** Should the 'new' button be displayed? */
-	public boolean isEntityCreatable() {
-		return ERXValueUtilities.booleanValue(d2wContext().valueForKey(Keys.isEntityCreatable)) && !isEntityReadOnly();
-	}
-	
 	private void writeObject(ObjectOutputStream out) throws IOException {
 		out.writeObject(_masterObject);
 		out.writeObject(_objectToAddToRelationship);
@@ -610,29 +580,5 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 			d2wContext().takeValueForKey(inlineTask, "inlineTask");
 		}
 	}
-
-    /**
-     * @return a unique ID for the repetition container
-     */
-    public String idForRepetitionContainer() {
-        String repetitionContainerID = (String) d2wContext().valueForKey(
-                "idForRepetitionContainer");
-        // use master object to generate globally unique ID
-        // - allows for nesting of relationship components
-        repetitionContainerID = repetitionContainerID.concat("_"
-                + masterObject().hashCode());
-        return repetitionContainerID;
-    }
-
-    public Boolean showBottomActionBlock() {
-        Boolean showBottomActionBlock = ERXValueUtilities.booleanValue(d2wContext()
-                .valueForKey("showBottomActionBlock"));
-        if (displayEditList()) {
-            // hide the bottom action block when 
-            // showing the inline edit list
-            showBottomActionBlock = Boolean.FALSE;
-        }
-        return showBottomActionBlock;
-    }
 
 }
