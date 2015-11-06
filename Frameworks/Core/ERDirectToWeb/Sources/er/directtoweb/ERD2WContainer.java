@@ -50,4 +50,41 @@ public class ERD2WContainer implements Serializable {
         sb.append(keys);
         return sb.toString();
     }
+    
+    public boolean equals(Object something) {
+        boolean equals = true;
+        if (something == null) {
+            equals = false;
+        }
+        if (equals && !getClass().equals(something.getClass())) {
+            equals = false;
+        }
+        if (equals) {
+            ERD2WContainer other = (ERD2WContainer) something;
+            // verify name equality
+            if (name == null && other.name != null) {
+                equals = false;
+            }
+            if (equals && name != null && !name.equals(other.name)) {
+                equals = false;
+            }
+            // verify displayName equality
+            if (equals && displayName == null && other.displayName != null) {
+                equals = false;
+            }
+            if (equals && displayName != null
+                    && !displayName.equals(other.displayName)) {
+                equals = false;
+            }
+            // verify keys equality
+            if (equals && keys == null && other.keys != null) {
+                equals = false;
+            }
+            if (equals && keys != null && !keys.equals(other.keys)) {
+                equals = false;
+            }
+        }
+        return equals;
+    }
+    
 }
