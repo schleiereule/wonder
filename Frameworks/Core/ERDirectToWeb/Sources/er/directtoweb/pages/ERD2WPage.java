@@ -999,6 +999,9 @@ public abstract class ERD2WPage extends D2WPage implements ERXExceptionHolder, E
                }
            }
         }
+        if (_currentTab == null) {
+            _currentTab = tabSectionsContents().objectAtIndex(0);
+        }
         return _currentTab;
     }
 
