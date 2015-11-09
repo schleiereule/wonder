@@ -68,21 +68,7 @@ public class ERD2WContainer implements Serializable {
             if (equals && name != null && !name.equals(other.name)) {
                 equals = false;
             }
-            // verify displayName equality
-            if (equals && displayName == null && other.displayName != null) {
-                equals = false;
-            }
-            if (equals && displayName != null
-                    && !displayName.equals(other.displayName)) {
-                equals = false;
-            }
-            // verify keys equality
-            if (equals && keys == null && other.keys != null) {
-                equals = false;
-            }
-            if (equals && keys != null && !keys.equals(other.keys)) {
-                equals = false;
-            }
+            // we don't verify display name and keys equality
         }
         return equals;
     }
