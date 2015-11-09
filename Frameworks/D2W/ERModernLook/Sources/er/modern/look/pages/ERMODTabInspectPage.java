@@ -114,6 +114,7 @@ public class ERMODTabInspectPage extends ERD2WTabInspectPageTemplate {
 	 */
 	@Override
 	public void setObject(EOEnterpriseObject eoenterpriseobject) {
+	    clearTabSectionsContents();
 		// If we are getting a new EO, then reset the current step.
 		if (eoenterpriseobject != null && !eoenterpriseobject.equals(object())) {
 			ERD2WContainer tab = tabSectionsContents().objectAtIndex(0);
