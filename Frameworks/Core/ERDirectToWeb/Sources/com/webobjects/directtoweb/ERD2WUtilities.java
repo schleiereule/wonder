@@ -9,8 +9,12 @@ package com.webobjects.directtoweb;
 import org.apache.log4j.Logger;
 
 import com.webobjects.appserver.WOComponent;
+import com.webobjects.eoaccess.EOEntity;
+import com.webobjects.eoaccess.EOModelGroup;
+import com.webobjects.eocontrol.EOEnterpriseObject;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSKeyValueCoding;
+import com.webobjects.foundation.NSKeyValueCoding.UnknownKeyException;
 
 import er.directtoweb.interfaces.ERDPickPageInterface;
 
@@ -164,4 +168,53 @@ public class ERD2WUtilities {
         return (D2WPage)enclosingPageOfClass(sender, D2WPage.class);
     }
     
+    /**
+	 * For a given D2WContext, this will return the target entity of the
+	 * context's propertyKey key path. Adapted from ERDDefaultModelAssignment's
+	 * smartRelationship method.
+	 * 
+	 * @param d2wContext
+	 * @return the entity carrying the last property in the property key path
+	 */
+    public static EOEntity entityForPropertyKeyPath(D2WContext d2wContext) {
+        Object rawObject = d2wContext.valueForKey("object");
+        String propertyKey = d2wContext.propertyKey();
+        return entityForPropertyKeyPathOfObject(rawObject, propertyKey);
+    }
+
+    /**
+     * For a given EO and a key path, retrieve the target entity of the key path.
+     * 
+     * @param rawObject
+     * @param propertyKey
+     * @return the entity carrying the last property in the property key path
+     */
+    public static EOEntity entityForPropertyKeyPathOfObject(Object rawObject,
+                                                            String propertyKey) {
+        EOEntity entityForKeyPath = null;
+        if (propertyKey != null) {
+            try {
+                if (rawObject != null && rawObject instanceof EOEnterpriseObject) {
+                    EOEnterpriseObject object = (EOEnterpriseObject) rawObject;
+                    EOEnterpriseObject lastEO = object;
+                    if (propertyKey.indexOf(".") != -1 && propertyKey.indexOf("@") == -1) {
+                        String partialKeyPath = KeyValuePath
+                                .keyPathWithoutLastProperty(propertyKey);
+                        Object rawLastEO = object.valueForKeyPath(partialKeyPath);
+                        lastEO = rawLastEO instanceof EOEnterpriseObject ? (EOEnterpriseObject) rawLastEO
+                                : null;
+                    }
+                    if (lastEO != null) {
+                        entityForKeyPath = EOModelGroup.defaultGroup().entityNamed(
+                                lastEO.entityName());
+                    }
+                }
+            } catch (UnknownKeyException uke) {
+                log.error("Failed to get key path " + propertyKey
+                        + " on object of class " + rawObject.getClass());
+            }
+        }
+        return entityForKeyPath;
+    }
+
 }
