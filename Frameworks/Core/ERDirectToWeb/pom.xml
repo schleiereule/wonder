@@ -18,6 +18,10 @@
 			<artifactId>ERExtensions</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>wonder.businesslogic</groupId>
+			<artifactId>ERTaggable</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.webobjects</groupId>
 			<artifactId>JavaWebObjects</artifactId>
 		</dependency>
