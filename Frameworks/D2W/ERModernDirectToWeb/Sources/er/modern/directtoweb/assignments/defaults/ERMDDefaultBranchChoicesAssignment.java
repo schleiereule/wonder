@@ -119,6 +119,13 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 		return choices;
 	}
 	
+	public Object editListControllerChoices(D2WContext c) {
+		NSMutableArray<String> choices = new NSMutableArray<String>();
+		EOEnterpriseObject eo = (EOEnterpriseObject) c.valueForKey("object");
+		choices.add("_editListRelated");
+		return choices;
+	}
+	
 	private Class<?> classForEntity(EOEntity entity) {
 		try {
 			return Class.forName(entity.className());

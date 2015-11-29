@@ -12,7 +12,8 @@
               <webobject name = "ShowTopBatchCount">
                 <webobject name = "TopNavBatchSize"><webobject name = "BatchSizeControl" /></webobject>
               </webobject>
-              <webobject name = "ToManyListRepetition" />
+              <webobject name = "IsNotEditList"> <webobject name = "ToManyListRepetition" /> </webobject>
+              <webobject name = "IsEditList"> <webobject name = "EditListComponent" /> </webobject>
               <webobject name = "ShowBottomBatchNavBar">
                 <webobject name = "BottomNavBar"> <webobject name = "NavigationBar" /> </webobject>
               </webobject>
@@ -28,9 +29,7 @@
       </webobject>
       <webobject name = "ListEmpty"> <webobject name = "EmptyMessageComponent" /> </webobject>
       <webobject name = "ShowBottomActionBlock">
-        <webobject name = "BottomActionBlock">
-          <webobject name = "BottomActions" />
-       	</webobject>
+        <webobject name = "BottomActionBlock"> <webobject name = "BottomActions" /> </webobject>
       </webobject>
     </webobject>
     <div class = "EmbeddedBlocks">

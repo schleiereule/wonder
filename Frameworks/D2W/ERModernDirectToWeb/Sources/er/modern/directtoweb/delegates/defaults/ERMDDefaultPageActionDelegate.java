@@ -54,6 +54,13 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 		}
 	}
 	
+	public void _editListRelated(WOComponent sender) {
+		EditRelationshipPageInterface erpi = ERD2WUtilities.enclosingComponentOfClass(sender, EditRelationshipPageInterface.class);
+		if(erpi != null) {
+			NSKeyValueCoding.Utility.takeValueForKey(erpi, "editList", "inlineTaskSafely");
+		}
+	}
+	
 	public void _queryRelated(WOComponent sender) {
 		EditRelationshipPageInterface erpi = ERD2WUtilities.enclosingComponentOfClass(sender, EditRelationshipPageInterface.class);
 		if(erpi != null) {

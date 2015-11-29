@@ -70,7 +70,7 @@ RequiredWrapper : ERMODRequiredWrapper {
 }
 
 ShowBottomActionBlock : WOConditional {
-    condition = d2wContext.showBottomActionBlock;
+    condition = showBottomActionBlock;
 }
 
 InnerWrapper : WOGenericContainer {
@@ -80,21 +80,37 @@ InnerWrapper : WOGenericContainer {
 
 RepetitionUpdateContainer : AjaxUpdateContainer {
     elementName = "div";
-    id = d2wContext.idForRepetitionContainer;
+    id = idForRepetitionContainer;
 }
 
 ToManyListRepetition: WOSwitchComponent {
     WOComponentName = d2wContext.toManyRepetitionComponentName;
     d2wContext = localContext;
     displayGroup = relationshipDisplayGroup;
-    updateContainerID = d2wContext.idForRepetitionContainer;
+    updateContainerID = idForRepetitionContainer;
+}
+
+EditListComponent: ERXD2WList {
+    pageConfiguration = d2wContext.editListEmbeddedConfigurationName;
+	action = saveAction;
+	dataSource = editListDataSource;
+    updateContainerID = idForRepetitionContainer;
+}
+
+IsNotEditList : WOConditional {
+	condition = displayEditList;
+	negate = true;
+}
+
+IsEditList : WOConditional {
+	condition = displayEditList;
 }
 
 ToOneListRepetition: WOSwitchComponent {
     WOComponentName = d2wContext.toOneRepetitionComponentName;
     d2wContext = localContext;
     displayGroup = relationshipDisplayGroup;
-    updateContainerID = d2wContext.idForRepetitionContainer;
+    updateContainerID = idForRepetitionContainer;
 }
 
 ShowBottomBatchNavBar : WOConditional {
@@ -119,12 +135,12 @@ NavigationBar: WOSwitchComponent {
     WOComponentName = d2wContext.batchNavigationBarComponentName;
     displayGroup = relationshipDisplayGroup;
     d2wContext = d2wContext;
-    updateContainerID = d2wContext.idForRepetitionContainer;
+    updateContainerID = idForRepetitionContainer;
 }
 
 BatchSizeControl : ERMDBatchSizeControl {
   displayGroup = relationshipDisplayGroup;
-  updateContainerID = d2wContext.idForRepetitionContainer;
+  updateContainerID = idForRepetitionContainer;
   d2wContext = d2wContext;
 }
 
