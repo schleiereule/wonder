@@ -18,7 +18,7 @@
             allowsNull = Y; 
             columnName = "NEW_VALUES"; 
             name = newValues; 
-            prototypeName = varchar1000; 
+            prototypeName = longText; 
         }, 
         {
             allowsNull = Y; 
@@ -30,7 +30,7 @@
             allowsNull = Y; 
             columnName = "OLD_VALUES"; 
             name = oldValues; 
-            prototypeName = varchar1000; 
+            prototypeName = longText; 
         }, 
         {allowsNull = N; columnName = "TRAIL_ID"; name = trailId; prototypeName = id; }, 
         {
