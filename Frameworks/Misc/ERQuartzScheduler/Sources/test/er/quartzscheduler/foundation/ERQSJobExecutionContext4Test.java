@@ -12,6 +12,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
+import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
 
 import er.quartzscheduler.util.ERQSSchedulerServiceFrameworkPrincipal;
@@ -143,6 +144,12 @@ public class ERQSJobExecutionContext4Test implements JobExecutionContext
 
 	public String getFireInstanceId() 
 	{
+		return null;
+	}
+
+	@Override
+	public TriggerKey getRecoveringTriggerKey() throws IllegalStateException {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }
