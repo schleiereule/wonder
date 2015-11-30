@@ -32,6 +32,7 @@ import er.taggable.model.ERTag;
  * @binding style the css style of the text field
  * @binding id the dom ID of the text field
  * @binding additionalQualifier an optional restricting qualifier
+ * @binging uiStyle the UI style of available tags, either caption or popup
  */
 public class ERTagField extends er.extensions.components.ERXComponent {
 	/**
@@ -72,6 +73,18 @@ public class ERTagField extends er.extensions.components.ERXComponent {
       size = "60";
     }
     return size;
+  }
+  
+  public String uiStyle() {
+      String uiStyle = "caption";
+      if (hasBinding("uiStyle")) {
+          uiStyle = stringValueForBinding("uiStyle");
+      }
+      return uiStyle;
+  }
+  
+  public boolean isCaptionUIStyle() {
+      return "caption".equals(uiStyle());
   }
   
   public int minimum() {

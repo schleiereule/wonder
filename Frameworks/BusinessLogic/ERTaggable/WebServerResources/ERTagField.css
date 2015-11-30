@@ -10,6 +10,8 @@
 	text-decoration: none;
 	padding: 3px;
 	margin-right: 5px;
+	display: none;
+	visibility: hidden;
 }
 
 .tagField .availableTags.suggestions a {
@@ -26,4 +28,6 @@
 
 .tagField .availableTags a.suggested {
 	color: rgb(255, 0, 0);
+	display: inline;
+	visibility: visible;
 }

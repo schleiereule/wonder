@@ -18,6 +18,15 @@ TagField : WOTextField {
   class = ^class;
 }
 
+IsCaptionUI : WOConditional {
+  condition = isCaptionUIStyle;
+}
+
+IsPopupUI : WOConditional {
+	condition = isCaptionUIStyle;
+	negate = true;
+}
+
 AvailableTags : WOGenericContainer {
   elementName = "div";
   id = tagsID;
