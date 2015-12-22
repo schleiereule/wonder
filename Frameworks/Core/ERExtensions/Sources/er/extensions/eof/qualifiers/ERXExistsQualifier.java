@@ -10,7 +10,7 @@ import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -460,7 +460,7 @@ public class ERXExistsQualifier extends EOQualifier implements Cloneable, NSCodi
 		boolean match = false;
 		NSKeyValueCodingAdditions obj = (NSKeyValueCodingAdditions) object;
 		if (obj != null && subqualifier != null) {
-			NSKeyValueCodingAdditions finalObj = (NSKeyValueCodingAdditions) obj.valueForKeyPath(baseKeyPath);
+			NSKeyValueCodingAdditions finalObj = baseKeyPath != null ? (NSKeyValueCodingAdditions) obj.valueForKeyPath(baseKeyPath) : obj;
 			if (finalObj != null) {
 				if (finalObj instanceof NSArray) {
 					NSArray<NSKeyValueCoding> objArray = (NSArray<NSKeyValueCoding>) finalObj;
