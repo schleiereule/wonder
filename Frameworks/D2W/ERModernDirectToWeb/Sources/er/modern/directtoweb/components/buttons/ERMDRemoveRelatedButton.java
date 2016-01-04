@@ -176,10 +176,11 @@ public class ERMDRemoveRelatedButton extends ERMDDeleteButton {
 	}
     
     /**
-     * Boolean used to hide/show the confirmation dialog's remove button. 
+     * Boolean used to hide/show the confirmation dialog's remove button.
      * 
-     * The remove button show only be displayed if the reverse relationship for the related eo is not
-     * mandatory and isEntityRemoveable returns true.
+     * The remove button should only be displayed if the relationship is not
+     * owned, the reverse relationship for the related EO not mandatory and
+     * isEntityRemoveable returns true.
      */
     public Boolean showRemoveButton() {
     	if (_showRemoveButton == null) {
@@ -191,12 +192,14 @@ public class ERMDRemoveRelatedButton extends ERMDDeleteButton {
     			EOEntity masterEntity = ERXEOAccessUtilities.entityForEo(masterObj);
     			EORelationship relationship = masterEntity.relationshipNamed(dds.detailKey());
     			EORelationship reverseRelationship = relationship.inverseRelationship();
-    			if(isRemoveable) {
+    			if(isRemoveable && !relationship.ownsDestination()) {
+    			    if (!relationship.ownsDestination()) {
     				if(reverseRelationship == null) {
     					_showRemoveButton = Boolean.TRUE;
     				} else {
     					_showRemoveButton = !reverseRelationship.isMandatory();
     				}
+    			    }
     			} else {
     				_showRemoveButton = Boolean.FALSE;
     			}
