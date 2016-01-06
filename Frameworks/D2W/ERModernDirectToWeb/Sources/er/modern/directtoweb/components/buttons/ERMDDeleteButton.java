@@ -11,6 +11,7 @@ import com.webobjects.appserver.WOContext;
 import com.webobjects.directtoweb.ConfirmPageInterface;
 import com.webobjects.directtoweb.D2W;
 import com.webobjects.directtoweb.D2WPage;
+import com.webobjects.eocontrol.EOClassDescription;
 import com.webobjects.eocontrol.EODetailDataSource;
 import com.webobjects.eocontrol.EOEditingContext;
 import com.webobjects.eocontrol.EOEnterpriseObject;
@@ -113,12 +114,25 @@ public class ERMDDeleteButton extends ERMDActionButton {
      * in-line confirmation dialog. Calls saveChanges on the parent ec if the finalCommit flag is true.
      */
     public WOActionResults deleteObjectWithFinalCommit(boolean finalCommit) {
-    	dataSource().deleteObject(object());
     	EOEnterpriseObject obj = (EOEnterpriseObject)d2wContext().valueForKey(Keys.objectPendingDeletion);
-    	obj.editingContext().deleteObject(obj);
+    	EODetailDataSource ds = (EODetailDataSource) dataSource();
+    	EOClassDescription masterClassDescription = ds.masterClassDescription();
+    	boolean isOwnsDestination = masterClassDescription.ownsDestinationObjectsForRelationshipKey(ds.detailKey());
 
     	try {
+    	    // since this is an EODetailDatasource, calling deleteObject
+    	    // will only remove the object from the relationship
+    	    ds.deleteObject(object());
+
+    	    // for "owns destination" relationships, the following would
+    	    // fail as the object will already be marked as deleted in the
+    	    // parent EC
+    	    if (!isOwnsDestination) {
+                // actually delete the object in the nested EC
+                obj.editingContext().deleteObject(obj);
 	    	obj.editingContext().saveChanges();
+    	    } 
+	    	
 	    	if (displayGroup() != null && displayGroup().displayedObjects().count() == 0) {
 	    		displayGroup().displayPreviousBatch();
 	    	}
