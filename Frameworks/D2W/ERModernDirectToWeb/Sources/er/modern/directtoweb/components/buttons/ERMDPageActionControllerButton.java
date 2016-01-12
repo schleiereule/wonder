@@ -69,107 +69,121 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 		}
 		return branchDelegate;
 	}
-    
-    public WOComponent nextPageFromParent() {
-        if(branchDelegate() == null)
-            return null;
-        return branchDelegate().nextPage(this);
-    }
 
-    /** override this */
-    public WOComponent performAction() {
-        return nextPageFromParent();
-    }
-    
-    @Override
-    public void reset() {
-        super.reset();
-        branch = null;
-        branchChoices = null;
-        branchDelegate = null;
-    } 
-    
-    //---------------- Branch Delegate Support --------------------//
-    /** holds the chosen branch */
-    protected NSDictionary branch;
-    protected NSArray branchChoices;
-    protected ERDBranchDelegateInterface branchDelegate;
- 
-    /**
-     * Cover method for getting the choosen branch.
-     * @return user choosen branch.
-     */
-    public NSDictionary branch() {
-        return branch;
-    }
+	public WOComponent nextPageFromParent() {
+		if (branchDelegate() == null)
+			return null;
+		return branchDelegate().nextPage(this);
+	}
 
-    /**
-     * Sets the user chosen branch.
-     * @param value branch chosen by user.
-     */
-    public void setBranch(NSDictionary value) {
-        branch = value;
-    }
+	/** override this */
+	public WOComponent performAction() {
+		return nextPageFromParent();
+	}
 
-    /**
-     * Implementation of the {@link ERDBranchDelegate ERDBranchDelegate}.
-     * Gets the user selected branch name.
-     * @return user selected branch name.
-     */
-    public String branchName() { return (String)branch().valueForKey(ERDBranchDelegate.BRANCH_NAME); }
-    
-    /**
-     * Implementation of the {@link ERDBranchDelegate ERDBranchDelegate}.
-     * Gets the user selected branch prefix.
-     * @return user selected branch prefix.
-     */
-    public String branchPrefix() { return (String)branch().valueForKey(ERDBranchDelegate.BRANCH_PREFIX); }
+	@Override
+	public void reset() {
+		super.reset();
+		branch = null;
+		branchChoices = null;
+		branchDelegate = null;
+	}
 
+	// ---------------- Branch Delegate Support --------------------//
+	/** holds the chosen branch */
+	protected NSDictionary branch;
+	protected NSArray branchChoices;
+	protected ERDBranchDelegateInterface branchDelegate;
 
-    /**
-     * Implementation of the {@link ERDBranchDelegate ERDBranchDelegate}.
-     * Gets the user selected branch label.
-     * @return user selected branch label.
-     */
-    public String branchButtonLabel() { return (String)branch().valueForKey(ERDBranchDelegate.BRANCH_LABEL); }
+	/**
+	 * Cover method for getting the choosen branch.
+	 * 
+	 * @return user choosen branch.
+	 */
+	public NSDictionary branch() {
+		return branch;
+	}
 
-    /**
-     * Implementation of the {@link ERDBranchDelegate ERDBranchDelegate}.
-     * Gets the user selected branch button id.
-     * @return user selected branch button id.
-     */
-    public String branchButtonID() { return (String)branch().valueForKey(ERDBranchDelegate.BRANCH_BUTTON_ID); }
-    
-    /**
-     * Calculates the branch choices for the current
-     * page. This method is just a cover for calling
-     * the method <code>branchChoicesForContext</code>
-     * on the current {@link ERDBranchDelegate ERDBranchDelegate}.
-     * @return array of branch choices
-     */
+	/**
+	 * Sets the user chosen branch.
+	 * 
+	 * @param value
+	 *            branch chosen by user.
+	 */
+	public void setBranch(NSDictionary value) {
+		branch = value;
+	}
 
-    public NSArray branchChoices() {
-        if (branchDelegate() != null) {
-            branchChoices = branchDelegate().branchChoicesForContext(d2wContext());
-        } else {
-            branchChoices = NSArray.EmptyArray;
-        }
-        return branchChoices;
-    }
+	/**
+	 * Implementation of the {@link ERDBranchDelegate ERDBranchDelegate}. Gets
+	 * the user selected branch name.
+	 * 
+	 * @return user selected branch name.
+	 */
+	public String branchName() {
+		return (String) branch().valueForKey(ERDBranchDelegate.BRANCH_NAME);
+	}
 
-    /**
-     * Determines if this message page should display branch choices.
-     * @return if the current delegate supports branch choices.
-     */
-    public boolean hasBranchChoices() {
-        return branchDelegate() != null && branchChoices().count() > 0;
-    }
+	/**
+	 * Implementation of the {@link ERDBranchDelegate ERDBranchDelegate}. Gets
+	 * the user selected branch prefix.
+	 * 
+	 * @return user selected branch prefix.
+	 */
+	public String branchPrefix() {
+		return (String) branch().valueForKey(ERDBranchDelegate.BRANCH_PREFIX);
+	}
 
-    @Override
-    public void validationFailedWithException(Throwable theException,Object theValue, String theKeyPath) {
-        parent().validationFailedWithException(theException, theValue, theKeyPath);
-        log.info("" + theException + theValue + theKeyPath);
-    }
-    
-    
+	/**
+	 * Implementation of the {@link ERDBranchDelegate ERDBranchDelegate}. Gets
+	 * the user selected branch label.
+	 * 
+	 * @return user selected branch label.
+	 */
+	public String branchButtonLabel() {
+		return (String) branch().valueForKey(ERDBranchDelegate.BRANCH_LABEL);
+	}
+
+	/**
+	 * Implementation of the {@link ERDBranchDelegate ERDBranchDelegate}. Gets
+	 * the user selected branch button id.
+	 * 
+	 * @return user selected branch button id.
+	 */
+	public String branchButtonID() {
+		return (String) branch().valueForKey(ERDBranchDelegate.BRANCH_BUTTON_ID);
+	}
+
+	/**
+	 * Calculates the branch choices for the current page. This method is just a
+	 * cover for calling the method <code>branchChoicesForContext</code> on the
+	 * current {@link ERDBranchDelegate ERDBranchDelegate}.
+	 * 
+	 * @return array of branch choices
+	 */
+
+	public NSArray branchChoices() {
+		if (branchDelegate() != null) {
+			branchChoices = branchDelegate().branchChoicesForContext(d2wContext());
+		} else {
+			branchChoices = NSArray.EmptyArray;
+		}
+		return branchChoices;
+	}
+
+	/**
+	 * Determines if this message page should display branch choices.
+	 * 
+	 * @return if the current delegate supports branch choices.
+	 */
+	public boolean hasBranchChoices() {
+		return branchDelegate() != null && branchChoices().count() > 0;
+	}
+
+	@Override
+	public void validationFailedWithException(Throwable theException, Object theValue, String theKeyPath) {
+		parent().validationFailedWithException(theException, theValue, theKeyPath);
+		log.info("" + theException + theValue + theKeyPath);
+	}
+
 }

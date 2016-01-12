@@ -17,6 +17,7 @@ import com.webobjects.eoaccess.EORelationship;
 import com.webobjects.eoaccess.EOUtilities;
 import com.webobjects.eocontrol.EODataSource;
 import com.webobjects.eocontrol.EODetailDataSource;
+import com.webobjects.eocontrol.EOEditingContext;
 import com.webobjects.eocontrol.EOEnterpriseObject;
 import com.webobjects.eocontrol.EOQualifier;
 import com.webobjects.eocontrol.EOSortOrdering;
@@ -30,6 +31,7 @@ import com.webobjects.foundation.NSSelector;
 import er.directtoweb.pages.ERD2WEditRelationshipPage;
 import er.directtoweb.pages.ERD2WPage;
 import er.extensions.eof.ERXConstant;
+import er.extensions.eof.ERXEC;
 import er.extensions.eof.ERXEOAccessUtilities;
 import er.extensions.eof.ERXEOControlUtilities;
 import er.extensions.foundation.ERXArrayUtilities;
@@ -41,26 +43,29 @@ import er.modern.directtoweb.components.repetitions.ERMDInspectPageRepetition;
 import er.modern.directtoweb.interfaces.ERMEditRelationshipPageInterface;
 
 /**
- * An improved EditRelationshipPage that supports embedding and inline editing tasks.
+ * An improved EditRelationshipPage that supports embedding and inline editing
+ * tasks.
  * 
  * @d2wKey editConfigurationName
  * @d2wKey isEntityEditable
  * @d2wKey checkSortOrderingKeys
  * @d2wKey defaultSortOrdering
  * @d2wKey readOnly
- * @d2wKey relationshipRestrictingQualifier - An additional qualifier that can be used to restrict the objects 
- * 									   		  shown in the relationship (see: ERDDelayedExtraQualifierAssignment).
- * 									          Useful if you have a value like: isDeleted that you wish to respect.
+ * @d2wKey relationshipRestrictingQualifier - An additional qualifier that can
+ *         be used to restrict the objects shown in the relationship (see:
+ *         ERDDelayedExtraQualifierAssignment). Useful if you have a value like:
+ *         isDeleted that you wish to respect.
  * 
  * @author davidleber
  */
 public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelationshipPageInterface, SelectPageInterface {
-  /**
-   * Do I need to update serialVersionUID?
-   * See section 5.6 <cite>Type Changes Affecting Serialization</cite> on page 51 of the 
-   * <a href="http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf">Java Object Serialization Spec</a>
-   */
-  private static final long serialVersionUID = 1L;
+	/**
+	 * Do I need to update serialVersionUID? See section 5.6 <cite>Type Changes
+	 * Affecting Serialization</cite> on page 51 of the
+	 * <a href="http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf">Java Object
+	 * Serialization Spec</a>
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public interface Keys extends ERD2WEditRelationshipPage.Keys {
 		public static String parentPageConfiguration = "parentPageConfiguration";
@@ -70,45 +75,46 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 		public static String createEmbeddedConfigurationName = "createEmbeddedConfigurationName";
 		public static String queryEmbeddedConfigurationName = "queryEmbeddedConfigurationName";
 		public static String localContext = "localContext";
-		public static String relationshipRestrictingQualifier ="relationshipRestrictingQualifier";
+		public static String relationshipRestrictingQualifier = "relationshipRestrictingQualifier";
 		public static String checkSortOrderingKeys = "checkSortOrderingKeys";
 		public static String defaultSortOrdering = "defaultSortOrdering";
-		public static String userPreferencesSortOrdering	= "sortOrdering";
+		public static String userPreferencesSortOrdering = "sortOrdering";
 		public static String displayPropertyKeys = "displayPropertyKeys";
 		public static String subTask = "subTask";
 		public static String isEntityCreatable = "isEntityCreatable";
-		
+
 	}
-	
+
 	private EOEnterpriseObject _masterObject;
 	private EOEnterpriseObject _selectedObject;
 	private EOEnterpriseObject _objectToAddToRelationship;
 	private String _relationshipKey;
 	private EODataSource _dataSource;
+	private EODataSource _editListDataSource;
 	private EODataSource _selectDataSource;
 	private WODisplayGroup _relationshipDisplayGroup;
     private Integer _batchSize = null;
 	public boolean isRelationshipToMany;
 	public WOComponent nextPage;
 	public NextPageDelegate nextPageDelegate;
-	
+
 	public ERMODEditRelationshipPage(WOContext context) {
-        super(context);
-    }
-    
-    @Override
-    public void awake() {
-    	_dataSource = null;
-    	NSNotificationCenter.defaultCenter().addObserver(this, new NSSelector<Void>("relatedObjectDidChange", ERXConstant.NotificationClassArray), ERMDActionButton.BUTTON_PERFORMED_DELETE_ACTION, null);
-    	super.awake();
-    }
-    
-    @Override
-    public void sleep() {
-    	NSNotificationCenter.defaultCenter().removeObserver(this, ERMDActionButton.BUTTON_PERFORMED_DELETE_ACTION, null);
-    	super.sleep();
-    }
-	
+		super(context);
+	}
+
+	@Override
+	public void awake() {
+		_dataSource = null;
+		NSNotificationCenter.defaultCenter().addObserver(this, new NSSelector<Void>("relatedObjectDidChange", ERXConstant.NotificationClassArray), ERMDActionButton.BUTTON_PERFORMED_DELETE_ACTION, null);
+		super.awake();
+	}
+
+	@Override
+	public void sleep() {
+		NSNotificationCenter.defaultCenter().removeObserver(this, ERMDActionButton.BUTTON_PERFORMED_DELETE_ACTION, null);
+		super.sleep();
+	}
+
 	// ACTIONS
     
     // delete methods ??
@@ -195,17 +201,17 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
         postChangeNotification();
 		return null;
 	}
-	
-	/** 
+
+	/**
 	 * Perform the selectAction. Called by inline select page.
 	 */
 	public WOComponent selectAction() {
 		EOEnterpriseObject selected = (objectToAddToRelationship() != null) ? EOUtilities.localInstanceOfObject(masterObject().editingContext(), objectToAddToRelationship()) : null;
-		
+
 		if (selected != null) {
-			
+
 			masterObject().addObjectToBothSidesOfRelationshipWithKey(selected, relationshipKey());
-			
+
 			relationshipDisplayGroup().fetch();
 			relationshipDisplayGroup().selectObject(selected);
 			relationshipDisplayGroup().displayBatchContainingSelectedObject();
@@ -215,17 +221,17 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
         postChangeNotification();
 		return null;
 	}
-	
+
 	/**
-	 * Called when an {@link ERMDActionButton} changes the related object. 
+	 * Called when an {@link ERMDActionButton} changes the related object.
 	 * Forces the displayGroup to fetch.
 	 */
 	@SuppressWarnings("unchecked")
 	public void relatedObjectDidChange(NSNotification notif) {
-		NSDictionary<String, Object>userInfo = notif.userInfo();
+		NSDictionary<String, Object> userInfo = notif.userInfo();
 		if (userInfo != null) {
 			Object key = userInfo.valueForKey("propertyKey");
-			EOEnterpriseObject obj = (EOEnterpriseObject)userInfo.valueForKey("object");
+			EOEnterpriseObject obj = (EOEnterpriseObject) userInfo.valueForKey("object");
 			if (relationshipKey() != null && relationshipKey().equals(key) && ERXEOControlUtilities.eoEquals(masterObject(), obj)) {
 				relationshipDisplayGroup().fetch();
 			}
@@ -248,45 +254,52 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
     }
     
 	// COMPONENT DISPLAY CONTROLS
-	
+
 	/**
 	 * Controls whether the inline query page is displayed.
 	 */
 	public boolean displayQuery() {
 		return "query".equals(inlineTask());
 	}
-	
+
 	/**
 	 * Controls whether the inline eidt/create page is displayed.
 	 */
 	public boolean displayNew() {
 		return "edit".equals(inlineTask()) || "inspect".equals(inlineTask()) || "create".equals(inlineTask());
 	}
-	
+
 	/**
 	 * Controls whether the inline list page is displayed.
 	 */
 	public boolean displayList() {
 		return "list".equals(inlineTask());
 	}
-	
+
+	/**
+	 * Controls whether the edit list page is displayed.
+	 */
+	public boolean displayEditList() {
+		return "editList".equals(inlineTask());
+	}
+
 	/**
 	 * Returns the name of the current inline page configuration
 	 */
 	public String inspectConfiguration() {
 		String result = null;
 		if ("create".equals(inlineTask())) {
-			result = (String)d2wContext().valueForKey(Keys.createEmbeddedConfigurationName);
+			result = (String) d2wContext().valueForKey(Keys.createEmbeddedConfigurationName);
 		} else if ("edit".equals(inlineTask())) {
-			result = (String)d2wContext().valueForKey(Keys.editEmbeddedConfigurationName);
+			result = (String) d2wContext().valueForKey(Keys.editEmbeddedConfigurationName);
 		} else {
-			result = (String)d2wContext().valueForKey(Keys.inspectEmbeddedConfigurationName);
+			result = (String) d2wContext().valueForKey(Keys.inspectEmbeddedConfigurationName);
 		}
 		return result;
 	}
-	
+
 	// SELECT PAGE INTERFACE
-	
+
 	/**
 	 * Returns the current selected Object. Required by the SelectPageInterface
 	 */
@@ -300,117 +313,115 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 	public void setSelectedObject(EOEnterpriseObject eo) {
 		_selectedObject = eo;
 	}
-	
+
 	// ERMEditRelationshipPageInterface
-	
+
 	/**
-	 * Returns an array containing the master object (index 0) and relationship key (index 1).
-	 * Required by the {@link ERMEditRelationshipPageInterface}
+	 * Returns an array containing the master object (index 0) and relationship
+	 * key (index 1). Required by the {@link ERMEditRelationshipPageInterface}
 	 * 
-	 * @return NSArray containing the master object (index 0) and relationship key (index 1).
+	 * @return NSArray containing the master object (index 0) and relationship
+	 *         key (index 1).
 	 */
 	public NSArray<?> masterObjectAndRelationshipKey() {
 		return new NSArray<Object>(new Object[] { masterObject(), relationshipKey() });
 	}
 
 	/**
-	 * Sets the master object and relationship key.
-	 * Takes an NSArray containing the master object (index 0) and relationship key (index 1).
-	 * Required by the {@link ERMEditRelationshipPageInterface}
+	 * Sets the master object and relationship key. Takes an NSArray containing
+	 * the master object (index 0) and relationship key (index 1). Required by
+	 * the {@link ERMEditRelationshipPageInterface}
 	 * 
-	 * @param a an NSArray containing the master object (index 0) and relationship key (index 1).
+	 * @param a
+	 *            an NSArray containing the master object (index 0) and
+	 *            relationship key (index 1).
 	 */
 	public void setMasterObjectAndRelationshipKey(NSArray<?> a) {
-        EOEnterpriseObject masterObject = (EOEnterpriseObject) a.objectAtIndex(0);
-        String relationshipKey = (String) a.objectAtIndex(1);
-        if (masterObject != null
-                && !ERXStringUtilities.stringIsNullOrEmpty(relationshipKey)) {
-            EOEntity masterEntity = EOUtilities.entityForObject(
-                    masterObject.editingContext(), masterObject);
-            EORelationship rel = masterEntity.relationshipNamed(relationshipKey);
-            // set currentRelationship key to allow unique ID creation
-            // (wonder-140)
-            d2wContext().takeValueForKey(rel, "currentRelationship");
-        }
-        setMasterObjectAndRelationshipKey(masterObject, relationshipKey);
+		EOEnterpriseObject masterObject = (EOEnterpriseObject) a.objectAtIndex(0);
+		String relationshipKey = (String) a.objectAtIndex(1);
+		if (masterObject != null && !ERXStringUtilities.stringIsNullOrEmpty(relationshipKey)) {
+			EOEntity masterEntity = EOUtilities.entityForObject(masterObject.editingContext(), masterObject);
+			EORelationship rel = masterEntity.relationshipNamed(relationshipKey);
+			// set currentRelationship key to allow unique ID creation
+			// (wonder-140)
+			d2wContext().takeValueForKey(rel, "currentRelationship");
+		}
+		setMasterObjectAndRelationshipKey(masterObject, relationshipKey);
 	}
-	
+
 	/**
 	 * Set the master object and relationship key.
 	 * 
-	 * @param eo the master object, an EOEnterpriseObject
+	 * @param eo
+	 *            the master object, an EOEnterpriseObject
 	 * @param relationshipKey
 	 */
 	public void setMasterObjectAndRelationshipKey(EOEnterpriseObject eo, String relationshipKey) {
 		// only do this if the eo and relationshipKey have changed;
 		if (relationshipKey != null && eo != null) {
-			if (ObjectUtils.notEqual(relationshipKey(), relationshipKey) ||
-					(masterObject() != null && !ERXEOControlUtilities.eoEquals(masterObject(), eo))) {
-//				NSLog.out.appendln("***ERMODEditRelationshipPage.setMasterObjectAndRelationshipKey: "
-//								+ "HAS CHANGES; " + eo + " - " + masterObject() + "  " + relationshipKey + " - " + relationshipKey() +"***");
-		        _dataSource = null;
+			if (ObjectUtils.notEqual(relationshipKey(), relationshipKey) || (masterObject() != null && !ERXEOControlUtilities.eoEquals(masterObject(), eo))) {
+				// NSLog.out.appendln("***ERMODEditRelationshipPage.setMasterObjectAndRelationshipKey:
+				// "
+				// + "HAS CHANGES; " + eo + " - " + masterObject() + " " +
+				// relationshipKey + " - " + relationshipKey() +"***");
+				_dataSource = null;
 				setMasterObject(eo);
-		        
-		        setEditingContext(eo.editingContext());
-		        setRelationshipKey(relationshipKey);
-		        
-		        
-		        // JT
-		        EOEntity masterEntity = EOUtilities.entityForObject(masterObject().editingContext(), masterObject());
+
+				setEditingContext(eo.editingContext());
+				setRelationshipKey(relationshipKey);
+
+				EOEntity masterEntity = EOUtilities.entityForObject(masterObject().editingContext(), masterObject());
 				EORelationship rel = masterEntity.relationshipNamed(relationshipKey);
 				d2wContext().takeValueForKey(rel, "parentRelationship");
-		        //JT
-		        
-		        
-		        if (masterObject().isToManyKey(relationshipKey))
-		            isRelationshipToMany = true;
-		        else
-		            relationshipDisplayGroup().setSelectsFirstObjectAfterFetch(true);
-		        
-		        relationshipDisplayGroup().setDataSource(dataSource());
-		        relationshipDisplayGroup().setSortOrderings(sortOrderings());
-		        relationshipDisplayGroup().fetch();
-		        EOQualifier extraQualifier = (EOQualifier)d2wContext().valueForKey(Keys.relationshipRestrictingQualifier);
-		        if (extraQualifier != null) {
-		        	relationshipDisplayGroup().setQualifier(extraQualifier);
-		        	relationshipDisplayGroup().qualifyDataSource();
-		        }
-		        setPropertyKey(keyWhenRelationship());
+				d2wContext().takeValueForKey(masterObject(), "masterObject");
+
+				if (masterObject().isToManyKey(relationshipKey))
+					isRelationshipToMany = true;
+				else
+					relationshipDisplayGroup().setSelectsFirstObjectAfterFetch(true);
+
+				relationshipDisplayGroup().setDataSource(dataSource());
+				relationshipDisplayGroup().setSortOrderings(sortOrderings());
+				relationshipDisplayGroup().fetch();
+				EOQualifier extraQualifier = (EOQualifier) d2wContext().valueForKey(Keys.relationshipRestrictingQualifier);
+				if (extraQualifier != null) {
+					relationshipDisplayGroup().setQualifier(extraQualifier);
+					relationshipDisplayGroup().qualifyDataSource();
+				}
+				setPropertyKey(keyWhenRelationship());
 			}
 		}
 	}
-	
-    /*
-     * Overridden to set the parentRelationship key.
-     * 
-     * @see er.directtoweb.pages.ERD2WPage#settings()
-     */
-    @Override
-    public NSDictionary settings() {
-        String pc = d2wContext().dynamicPage();
-        if (pc != null) {
-            if (d2wContext().valueForKey("currentRelationship") != null) {
-                // set parentRelationship key to allow subcomponents to
-                // reference the correct ID (wonder-140)
-                return new NSDictionary(new Object[] { pc,
-                        d2wContext().valueForKey("currentRelationship") }, new Object[] {
-                        "parentPageConfiguration", "parentRelationship" });
-            } else {
-                return new NSDictionary(pc, "parentPageConfiguration");
-            }
-        }
-        return null;
-    }
+
+	/*
+	 * Overridden to set the parentRelationship key.
+	 * 
+	 * @see er.directtoweb.pages.ERD2WPage#settings()
+	 */
+	@Override
+	public NSDictionary settings() {
+		String pc = d2wContext().dynamicPage();
+		if (pc != null) {
+			if (d2wContext().valueForKey("currentRelationship") != null) {
+				// set parentRelationship key to allow subcomponents to
+				// reference the correct ID (wonder-140)
+				return new NSDictionary(new Object[] { pc, d2wContext().valueForKey("currentRelationship") }, new Object[] { "parentPageConfiguration", "parentRelationship" });
+			} else {
+				return new NSDictionary(pc, "parentPageConfiguration");
+			}
+		}
+		return null;
+	}
 
 	// SORT ORDERING
-	
+
 	@SuppressWarnings("unchecked")
 	public NSArray<EOSortOrdering> sortOrderings() {
 		NSArray<EOSortOrdering> sortOrderings = null;
 		if (userPreferencesCanSpecifySorting()) {
 			sortOrderings = (NSArray<EOSortOrdering>) userPreferencesValueForPageConfigurationKey(Keys.userPreferencesSortOrdering);
 			if (log.isDebugEnabled()) {
-			  log.debug("Found sort Orderings in user prefs " + sortOrderings);
+				log.debug("Found sort Orderings in user prefs " + sortOrderings);
 			}
 		}
 		if (sortOrderings == null) {
@@ -422,8 +433,8 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 					String sortKey = sortOrderingDefinition.objectAtIndex(i++);
 					String sortSelectorKey = sortOrderingDefinition.objectAtIndex(i++);
 					if (!checkSortOrderingKeys() || isValidSortKey(displayPropertyKeys, sortKey)) {
-					  EOSortOrdering sortOrdering = new EOSortOrdering(sortKey, ERXArrayUtilities.sortSelectorWithKey(sortSelectorKey));
-					  validatedSortOrderings.addObject(sortOrdering);
+						EOSortOrdering sortOrdering = new EOSortOrdering(sortKey, ERXArrayUtilities.sortSelectorWithKey(sortSelectorKey));
+						validatedSortOrderings.addObject(sortOrdering);
 					}
 				}
 				sortOrderings = validatedSortOrderings;
@@ -434,41 +445,46 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 		}
 		return sortOrderings;
 	}
-	
+
 	/**
-	 * Returns whether or not sort orderings should be validated (based on the checkSortOrderingKeys rule).
+	 * Returns whether or not sort orderings should be validated (based on the
+	 * checkSortOrderingKeys rule).
+	 * 
 	 * @return whether or not sort orderings should be validated
 	 */
 	public boolean checkSortOrderingKeys() {
 		return ERXValueUtilities.booleanValueWithDefault(d2wContext().valueForKey(Keys.checkSortOrderingKeys), false);
 	}
-	
+
 	/**
-	 * Validates the given sort key (is it a display key, an attribute, or a valid attribute path). 
+	 * Validates the given sort key (is it a display key, an attribute, or a
+	 * valid attribute path).
 	 * 
-	 * @param displayPropertyKeys the current display properties
-	 * @param sortKey the sort key to validate
+	 * @param displayPropertyKeys
+	 *            the current display properties
+	 * @param sortKey
+	 *            the sort key to validate
 	 * @return true if the sort key is valid, false if not
 	 */
 	protected boolean isValidSortKey(NSArray<String> displayPropertyKeys, String sortKey) {
-	  boolean validSortOrdering = false;
-	  try {
-	    if (displayPropertyKeys.containsObject(sortKey) || entity().anyAttributeNamed(sortKey) != null || ERXEOAccessUtilities.attributePathForKeyPath(entity(), sortKey).count() > 0) {
-	      validSortOrdering = true;
-	    }
-	  }
-	  catch (IllegalArgumentException e) {
-	    // MS: ERXEOAccessUtilities.attributePathForKeyPath throws IllegalArgumentException for a bogus key path
-	    validSortOrdering = false;
-	  }
-	  
-	  if (!validSortOrdering) {
-	    log.warn("Sort key '" + sortKey + "' is not in display keys, attributes or non-flattened key paths for the entity '" + entity().name() + "'.");
-	    validSortOrdering = false;
-	  }
-	  return validSortOrdering;
-  }
-	
+		boolean validSortOrdering = false;
+		try {
+			if (displayPropertyKeys.containsObject(sortKey) || entity().anyAttributeNamed(sortKey) != null || ERXEOAccessUtilities.attributePathForKeyPath(entity(), sortKey).count() > 0) {
+				validSortOrdering = true;
+			}
+		} catch (IllegalArgumentException e) {
+			// MS: ERXEOAccessUtilities.attributePathForKeyPath throws
+			// IllegalArgumentException for a bogus key path
+			validSortOrdering = false;
+		}
+
+		if (!validSortOrdering) {
+			log.warn("Sort key '" + sortKey + "' is not in display keys, attributes or non-flattened key paths for the entity '" + entity().name() + "'.");
+			validSortOrdering = false;
+		}
+		return validSortOrdering;
+	}
+
 	// this can be overridden by subclasses for which sorting has to be fixed
 	// (i.e. Grouping Lists)
 	public boolean userPreferencesCanSpecifySorting() {
@@ -500,48 +516,72 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
     // ACCESSORS
     
 	public String inlineTask() {
-		return (String)d2wContext().valueForKey(Keys.inlineTask);
+		return (String) d2wContext().valueForKey(Keys.inlineTask);
 	}
-	
+
 	public void setInlineTask(String task) {
 		// noop
 	}
-	
+
 	public void setInlineTaskSafely(String task) {
 		d2wContext().takeValueForKey(task, Keys.inlineTask);
 	}
-    
-    public String relationshipKey() {
-    	return _relationshipKey;
-    }
-    
-    public void setRelationshipKey(String key) {
-    	_relationshipKey = key;
-    }
-    
-    /**
-     * DataSource for the relationship.
-     * 
-     * @return EODataSource an EODetailDataSource created from the masterObject and relationshipKey.
-     */
-    @Override
-    public EODataSource dataSource() {
-    	if (_dataSource == null) {
+
+	public String subTask() {
+		return (String) d2wContext().valueForKey(Keys.subTask);
+	}
+
+	public void setSubTaskSafely(String subTask) {
+		d2wContext().takeValueForKey(subTask, Keys.subTask);
+	}
+
+	public String relationshipKey() {
+		return _relationshipKey;
+	}
+
+	public void setRelationshipKey(String key) {
+		_relationshipKey = key;
+	}
+
+	/**
+	 * The data source for the edit list uses a nested EC, so the relationship
+	 * page's cancel button remains functional.
+	 * 
+	 * @return a data source for the embedded edit list
+	 */
+	public EODataSource editListDataSource() {
+		if (_editListDataSource == null) {
+			EOEditingContext ec = masterObject().editingContext();
+			EOEditingContext childEc = ERXEC.newEditingContext(ec);
+			_editListDataSource = ERXEOControlUtilities.dataSourceForObjectAndKey(EOUtilities.localInstanceOfObject(childEc, masterObject()), relationshipKey());
+		}
+		return _editListDataSource;
+	}
+
+	/**
+	 * DataSource for the relationship.
+	 * 
+	 * @return EODataSource an EODetailDataSource created from the masterObject
+	 *         and relationshipKey.
+	 */
+	@Override
+	public EODataSource dataSource() {
+		if (_dataSource == null) {
 			_dataSource = ERXEOControlUtilities.dataSourceForObjectAndKey(masterObject(), relationshipKey());
 		}
 		return _dataSource;
-    }
-    
-    @Override
-    public void setDataSource(EODataSource ds) {
-    	_dataSource = ds;
-    }
+	}
+
+	@Override
+	public void setDataSource(EODataSource ds) {
+		_dataSource = ds;
+	}
 
 	public EOEnterpriseObject objectToAddToRelationship() {
 		return _objectToAddToRelationship;
 	}
-	
-	public void setObjectToAddToRelationship( EOEnterpriseObject objectToAddTorRelationship) {
+
+	public void setObjectToAddToRelationship(EOEnterpriseObject objectToAddTorRelationship) {
 		_objectToAddToRelationship = objectToAddTorRelationship;
 	}
 
@@ -561,7 +601,7 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 	public void setRelationshipDisplayGroup(WODisplayGroup relationshipDisplayGroup) {
 		_relationshipDisplayGroup = relationshipDisplayGroup;
 	}
-	
+
 	public EODataSource selectDataSource() {
 		return _selectDataSource;
 	}
@@ -577,7 +617,7 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 	public void setMasterObject(EOEnterpriseObject masterObject) {
 		_masterObject = masterObject;
 	}
-	
+
 	/** Checks if the current list is empty. */
 	public boolean isListEmpty() {
 		return listSize() == 0;
@@ -587,7 +627,28 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 	public int listSize() {
 		return relationshipDisplayGroup().displayedObjects().count();
 	}
-	
+
+	/**
+	 * @return a unique ID for the repetition container
+	 */
+	public String idForRepetitionContainer() {
+		String repetitionContainerID = (String) d2wContext().valueForKey("idForRepetitionContainer");
+		// use master object to generate globally unique ID
+		// - allows for nesting of relationship components
+		repetitionContainerID = repetitionContainerID.concat("_" + masterObject().hashCode());
+		return repetitionContainerID;
+	}
+
+	public Boolean showBottomActionBlock() {
+		Boolean showBottomActionBlock = ERXValueUtilities.booleanValue(d2wContext().valueForKey("showBottomActionBlock"));
+		if (displayEditList()) {
+			// hide the bottom action block when
+			// showing the inline edit list
+			showBottomActionBlock = Boolean.FALSE;
+		}
+		return showBottomActionBlock;
+	}
+
 	private void writeObject(ObjectOutputStream out) throws IOException {
 		out.writeObject(_masterObject);
 		out.writeObject(_objectToAddToRelationship);
@@ -600,7 +661,7 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 		out.writeObject(_selectDataSource);
 		out.writeObject(d2wContext().valueForKey("inlineTask"));
 	}
-	
+
 	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
 		_masterObject = (EOEnterpriseObject) in.readObject();
 		_objectToAddToRelationship = (EOEnterpriseObject) in.readObject();
@@ -613,7 +674,7 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 		_relationshipDisplayGroup = (WODisplayGroup) in.readObject();
 		_selectDataSource = (EODataSource) in.readObject();
 		String inlineTask = (String) in.readObject();
-		if(inlineTask != null) {
+		if (inlineTask != null) {
 			d2wContext().takeValueForKey(inlineTask, "inlineTask");
 		}
 	}

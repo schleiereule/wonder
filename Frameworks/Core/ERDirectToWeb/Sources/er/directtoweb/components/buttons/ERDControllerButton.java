@@ -13,6 +13,8 @@ import er.directtoweb.delegates.ERDBranchDelegateInterface;
 import er.directtoweb.delegates.ERDBranchInterface;
 import er.directtoweb.pages.ERD2WPage;
 import er.extensions.components._private.ERXSubmitButton;
+import er.extensions.foundation.ERXStringUtilities;
+
 /**
  * Action button that looks for the inner-most page with a pageController (which must be
  * a ERDBranchDelegateInterface), collects all the actions from there 
@@ -123,7 +125,13 @@ public class ERDControllerButton extends ERDActionButton implements ERDBranchInt
      * Gets the user selected branch name.
      * @return user selected branch name.
      */
-    public String branchButtonLabel() { return (String)branch().valueForKey(ERDBranchDelegate.BRANCH_LABEL); }
+    public String branchButtonLabel() {
+    	String key = "";
+    	if (!ERXStringUtilities.isBlank(ERDBranchDelegate.BRANCH_PREFIX))
+    		key = ERDBranchDelegate.BRANCH_PREFIX + ".";
+    	key = key + branchName();
+    	return stringValueForBinding(key, (String)branch().valueForKey(ERDBranchDelegate.BRANCH_LABEL));
+    }
 
     /**
      * Calculates the branch choices for the current

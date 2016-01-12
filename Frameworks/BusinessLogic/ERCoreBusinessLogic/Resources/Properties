@@ -42,3 +42,8 @@ er.extensions.ERCoreBusinessLogic.hasLocalization=true
 # Provides a localized migration default. Use application properties to override.
 
 ERCoreBusinessLogic0.languages=(en)
+
+#########################################################################
+# Help Texts
+#########################################################################
+er.corebusinesslogic.ERCoreBusinessLogic.enablePropertyLevelHelpText=false
