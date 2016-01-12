@@ -119,10 +119,15 @@ public class ERCAuditTrailHandler {
                             }
                             if (rel.isToMany()) {
                                 EOEntity destinationEntity = rel.destinationEntity();
-                                Configuration destinationConfiguration = configureEntity(destinationEntity);
-                                String inverseName = rel.anyInverseRelationship().name();
-                                destinationConfiguration.notificationKeys.addObject(inverseName);
-                                source = rel.destinationEntity();
+                                // check for self-referencing relationships to
+                                // prevent stack overflow
+								if (configuration.objectForKey(destinationEntity.name()) == null) {
+									Configuration destinationConfiguration = configureEntity(destinationEntity);
+									String inverseName = rel.anyInverseRelationship().name();
+									destinationConfiguration.notificationKeys.addObject(inverseName);
+									source = rel.destinationEntity();
+								}
+                                
                             } else {
                                 config.keys.addObject(rel.name());
                             }
