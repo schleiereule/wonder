@@ -5,11 +5,13 @@ import org.apache.log4j.Logger;
 
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.directtoweb.D2W;
+import com.webobjects.directtoweb.D2WContext;
 import com.webobjects.directtoweb.D2WPage;
 import com.webobjects.directtoweb.ERD2WUtilities;
 import com.webobjects.directtoweb.EditPageInterface;
 import com.webobjects.directtoweb.EditRelationshipPageInterface;
 import com.webobjects.directtoweb.NextPageDelegate;
+import com.webobjects.eoaccess.EODatabaseDataSource;
 import com.webobjects.eoaccess.EOUtilities;
 import com.webobjects.eocontrol.EOClassDescription;
 import com.webobjects.eocontrol.EOEditingContext;
@@ -21,6 +23,7 @@ import er.directtoweb.delegates.ERDBranchInterface;
 import er.extensions.eof.ERXEC;
 import er.extensions.eof.ERXGenericRecord;
 import er.extensions.foundation.ERXValueUtilities;
+import er.modern.directtoweb.components.buttons.ERMDPageActionControllerButton;
 
 public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 	
@@ -54,12 +57,35 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 		}
 	}
 	
-	public void _queryRelated(WOComponent sender) {
-		EditRelationshipPageInterface erpi = ERD2WUtilities.enclosingComponentOfClass(sender, EditRelationshipPageInterface.class);
-		if(erpi != null) {
-			NSKeyValueCoding.Utility.takeValueForKey(erpi, "query", "inlineTaskSafely");
-		}
-	}
+    public void _queryRelated(WOComponent sender) {
+        EditRelationshipPageInterface erpi = ERD2WUtilities
+                .enclosingComponentOfClass(sender, EditRelationshipPageInterface.class);
+        if (erpi != null) {
+            D2WContext c = (D2WContext) NSKeyValueCoding.Utility.valueForKey(erpi, "d2wContext");
+            if (ERXValueUtilities.booleanValueWithDefault(
+                    c.valueForKey("shouldShowQueryPage"), true)) {
+                NSKeyValueCoding.Utility.takeValueForKey(erpi, "query",
+                        "inlineTaskSafely");
+            } else {
+                // go straight to the select page
+                EOEnterpriseObject eo = (EOEnterpriseObject) NSKeyValueCoding.Utility
+                        .valueForKey(erpi, "masterObject");
+                EOEditingContext ec = eo.editingContext();
+                String relationshipKey = (String) NSKeyValueCoding.Utility
+                        .valueForKey(erpi, "relationshipKey");
+                if(!ERXValueUtilities.isNull(eo) && !StringUtils.isBlank(relationshipKey)) {
+                    String destinationEntityName = eo
+                            .classDescriptionForDestinationKey(relationshipKey)
+                            .entityName();
+                    EODatabaseDataSource ds = new EODatabaseDataSource(ec, destinationEntityName);
+                    NSKeyValueCoding.Utility.takeValueForKey(erpi, ds,
+                            "selectDataSource");
+                    NSKeyValueCoding.Utility.takeValueForKey(erpi, "list",
+                            "inlineTaskSafely");
+                }
+            }
+        }
+    }
 	
 	public WOComponent _returnRelated(WOComponent sender) {
 		WOComponent nextPage = null;
