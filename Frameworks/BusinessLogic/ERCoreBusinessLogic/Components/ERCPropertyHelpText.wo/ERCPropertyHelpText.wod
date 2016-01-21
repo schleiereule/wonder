@@ -2,6 +2,15 @@ IsHelpTextEnabled : WOConditional {
 	condition = isHelpTextEnabled;
 }
 
+IsPageLevelHelpText : WOConditional {
+	condition = d2wContext.propertyKey;
+	negate = true;
+}
+
+IsPropertyLevelHelpText : WOConditional {
+	condition = d2wContext.propertyKey;
+}
+
 HasHelpText : WOConditional {
 	condition = hasHelpText;
 }

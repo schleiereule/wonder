@@ -54,24 +54,29 @@ public class ERCPropertyHelpText extends ERDCustomComponent {
         String helpTextKey = null;
         if (canGetValueForBinding("helpTextKey")) {
             helpTextKey = stringValueForBinding("helpTextKey");
-        } else if (d2wContext() != null && d2wContext().propertyKey() != null) {
-            if (d2wContext().propertyKey().indexOf('.') == -1) {
-                // it's a key on the current object
-                helpTextKey = d2wContext().entity().name() + "."
-                        + d2wContext().propertyKey();
-            } else if (d2wContext().valueForKey("object") != null) {
-                // it's a key path, let's find the target entity
-                EOEntity entity = ERD2WUtilities.entityForPropertyKeyPath(d2wContext());
-                if (entity != null) {
-                    helpTextKey = entity.name()
-                            + "."
-                            + ERXStringUtilities.lastPropertyKeyInKeyPath(d2wContext()
-                                    .propertyKey());
+        } else if (d2wContext() != null) {
+            if (d2wContext().propertyKey() == null) {
+                // we're outside of an attribute repetition, so
+                // this is a page-level help text
+                helpTextKey = d2wContext().pageName();
+            } else {
+                if (d2wContext().propertyKey().indexOf('.') == -1) {
+                    // it's a key on the current object
+                    helpTextKey = d2wContext().entity().name() + "."
+                            + d2wContext().propertyKey();
+                } else if (d2wContext().valueForKey("object") != null) {
+                    // it's a key path, let's find the target entity
+                    EOEntity entity = ERD2WUtilities
+                            .entityForPropertyKeyPath(d2wContext());
+                    if (entity != null) {
+                        helpTextKey = entity.name() + "." + ERXStringUtilities
+                                .lastPropertyKeyInKeyPath(d2wContext().propertyKey());
+                    }
+                } else if (d2wContext().valueForKey("object") == null) {
+                    // we're on a query page
+                    helpTextKey = d2wContext().entity().name() + "."
+                            + d2wContext().propertyKey();
                 }
-            } else if (d2wContext().valueForKey("object") == null) {
-                // we're on a query page
-                helpTextKey = d2wContext().entity().name() + "."
-                        + d2wContext().propertyKey();
             }
         }
         return helpTextKey;
@@ -190,7 +195,7 @@ public class ERCPropertyHelpText extends ERDCustomComponent {
         String prefix = helpTextPrefix();
         String key = helpTextKey();
         if (prefix != null) {
-            return prefix + "." + key;
+            key = prefix + "." + key;
         }
         return key;
     }
