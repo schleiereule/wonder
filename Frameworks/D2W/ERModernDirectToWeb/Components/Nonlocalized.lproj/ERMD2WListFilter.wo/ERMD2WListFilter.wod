@@ -11,3 +11,19 @@ SearchField: WOTextField {
 	value = searchValue;
 	type = "search";
 }
+
+showSearchChoices : WOConditional {
+	condition = searchChoices;
+}
+
+observeChoice : AjaxObserveField {
+	updateContainerID = d2wContext.idForMainContainer;
+	action = search;
+}
+
+SearchChoices : WOPopUpButton {
+	list = searchChoices;
+	item = searchChoiceItem;
+	selection = searchChoice;
+	displayString = searchChoicesDisplayString;
+}
