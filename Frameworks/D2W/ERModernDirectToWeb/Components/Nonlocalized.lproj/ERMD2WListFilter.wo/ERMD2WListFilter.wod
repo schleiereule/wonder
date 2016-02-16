@@ -1,3 +1,12 @@
+ShouldShow : WOConditional {
+	condition = shouldShow;
+}
+
+Wrapper : WOGenericContainer {
+	elementName = "div";
+	class = wrapperClass;
+}
+
 form : WOForm {
 }
 
@@ -5,6 +14,11 @@ observeField : AjaxObserveField {
 	updateContainerID = d2wContext.idForMainContainer;
 	observeFieldFrequency = 1;
 	action = search;
+	class = "ListFilterSearch";
+}
+
+showSearchField : WOConditional {
+	condition = d2wContext.searchKey;
 }
 
 SearchField: WOTextField {
@@ -12,18 +26,19 @@ SearchField: WOTextField {
 	type = "search";
 }
 
-showSearchChoices : WOConditional {
-	condition = searchChoices;
+showRestrictedChoices : WOConditional {
+	condition = filterChoices.count;
 }
 
 observeChoice : AjaxObserveField {
 	updateContainerID = d2wContext.idForMainContainer;
 	action = search;
+	class = "ListFilterChoices";
 }
 
-SearchChoices : WOPopUpButton {
-	list = searchChoices;
-	item = searchChoiceItem;
-	selection = searchChoice;
-	displayString = searchChoicesDisplayString;
+RestrictedChoices : WOPopUpButton {
+	list = filterChoices;
+	item = filterChoiceItem;
+	selection = filterChoice;
+	displayString = filterChoicesDisplayString;
 }

@@ -19,12 +19,16 @@ import er.modern.directtoweb.delegates.ERMD2WAttributeQueryDelegate;
 import er.modern.directtoweb.delegates.ERMD2WAttributeQueryDelegate.ERMD2WQueryComponent;
 
 /**
- * An ajax search field for ad-hoc filtering of lists. Similar to
- * ERDAjaxSearchDisplayGroup, but enables filtering over multiple attributes.
+ * Ajax-enabled ad-hoc filtering of lists. Similar to ERDAjaxSearchDisplayGroup, 
+ * but enables filtering over multiple attributes and/or a pop-up list of choices.
  * 
- * Gets displayed when the searchKey D2W key is not null.
+ * Gets displayed when either or both of searchKey and restrictedChoiceKey D2W keys is not null.
  * 
- * @d2wKey searchKey
+ * @d2wKey searchKey - either a single target key as a string or an array with multiple keys
+ * @d2wKey restrictedChoiceKey - key path that will return a list of filter choices
+ * @d2wKey keyWhenRelationship - specifies the display key on the choice
+ * @d2wKey restrictedChoiceTargetKey - target key path on which to qualify with the choice
+ * @d2wKey restrictedChoiceRecursionKey - key path from which to retrieve descendant choices, think "allChildrenCategories"
  * @d2wKey minimumCharacterCount
  * 
  */
@@ -34,18 +38,18 @@ public class ERMD2WListFilter extends ERDCustomQueryComponent implements
     private static final long serialVersionUID = 1L;
     
     public interface Keys extends ERDCustomQueryComponent.Keys {
-        public static final String searchChoices = "searchChoices";
-        public static final String searchChoicesDisplayKey = "searchChoicesDisplayKey";
-        public static final String searchChoicesKey = "searchChoicesKey";
-        public static final String searchChoicesRecursionKey = "searchChoicesRecursionKey";
+        public static final String restrictedChoiceKey = "restrictedChoiceKey";
+        public static final String keyWhenRelationship = "keyWhenRelationship";
+        public static final String restrictedChoiceTargetKey = "restrictedChoiceTargetKey";
+        public static final String restrictedChoiceRecursionKey = "restrictedChoiceRecursionKey";
         public static final String searchKey = "searchKey";
         public static final String typeAheadMinimumCharacterCount = "typeAheadMinimumCharacterCount";
     }
 
-    private Object _searchChoice;
+    private Object _filterChoice;
     private String _searchValue;
 
-    public Object searchChoiceItem;
+    public Object filterChoiceItem;
 
     public ERMD2WListFilter(WOContext context) {
         super(context);
@@ -55,6 +59,13 @@ public class ERMD2WListFilter extends ERDCustomQueryComponent implements
     public boolean synchronizesVariablesWithBindings() {
         return false;
     }
+    
+    /**
+     * @return true if searchKey or filterChoices is not null
+     */
+    public boolean shouldShow() {
+        return d2wContext().valueForKey(Keys.searchKey) != null || d2wContext().valueForKey(Keys.restrictedChoiceKey) != null;
+    }
 
     // actions
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -63,19 +74,19 @@ public class ERMD2WListFilter extends ERDCustomQueryComponent implements
         EOQualifier _qualifier = ERMD2WAttributeQueryDelegate.instance
                 .buildQualifier(this);
         
-        String searchChoicesKey = (String) d2wContext().valueForKey(Keys.searchChoicesKey);
-        if (!ERXStringUtilities.stringIsNullOrEmpty(searchChoicesKey)
-                && searchChoice() != null) {
-            if (d2wContext().valueForKey(Keys.searchChoicesRecursionKey) != null) {
+        String filterChoicesKey = (String) d2wContext().valueForKey(Keys.restrictedChoiceTargetKey);
+        if (!ERXStringUtilities.stringIsNullOrEmpty(filterChoicesKey)
+                && filterChoice() != null) {
+            if (d2wContext().valueForKey(Keys.restrictedChoiceRecursionKey) != null) {
                 String recursionKey = (String) d2wContext()
-                        .valueForKey(Keys.searchChoicesRecursionKey);
-                NSMutableArray deepChoices = new NSMutableArray(searchChoice());
+                        .valueForKey(Keys.restrictedChoiceRecursionKey);
+                NSMutableArray deepChoices = new NSMutableArray(filterChoice());
                 deepChoices.addObjects(NSKeyValueCoding.Utility
-                        .valueForKey(searchChoice(), recursionKey));
-                _qualifier = ERXQ.and(_qualifier, ERXQ.in(searchChoicesKey, ERXArrayUtilities.flatten(deepChoices)));
+                        .valueForKey(filterChoice(), recursionKey));
+                _qualifier = ERXQ.and(_qualifier, ERXQ.in(filterChoicesKey, ERXArrayUtilities.flatten(deepChoices)));
             } else {
                 _qualifier = ERXQ.and(_qualifier,
-                        ERXQ.equals(searchChoicesKey, searchChoice()));
+                        ERXQ.equals(filterChoicesKey, filterChoice()));
             }
         }
         
@@ -101,28 +112,28 @@ public class ERMD2WListFilter extends ERDCustomQueryComponent implements
         return _searchValue;
     }
 
-    public void setSearchChoice(Object searchChoice) {
-        _searchChoice = searchChoice;
+    public void setFilterChoice(Object filterChoice) {
+        _filterChoice = filterChoice;
     }
 
-    public Object searchChoice() {
-        return _searchChoice;
+    public Object filterChoice() {
+        return _filterChoice;
     }
     
-    public String searchChoicesDisplayString() {
-        String displayKey  = (String) d2wContext().valueForKey(Keys.searchChoicesDisplayKey);
-        return (String) NSKeyValueCoding.Utility.valueForKey(searchChoiceItem, displayKey);
+    public String filterChoicesDisplayString() {
+        String displayKey = (String) d2wContext().valueForKey(Keys.keyWhenRelationship);
+        return (String) NSKeyValueCoding.Utility.valueForKey(filterChoiceItem, displayKey);
     }
 
     @SuppressWarnings({ "rawtypes" })
-    public NSArray searchChoices() {
-        NSArray searchChoices = NSArray.emptyArray();
-        if (d2wContext().valueForKey(Keys.searchChoices) != null) {
-            String searchChoicesKey = (String) d2wContext()
-                    .valueForKey(Keys.searchChoices);
-            searchChoices = (NSArray) valueForKeyPath(searchChoicesKey);
+    public NSArray filterChoices() {
+        NSArray filterChoices = NSArray.emptyArray();
+        if (d2wContext().valueForKey(Keys.restrictedChoiceKey) != null) {
+            String filterChoicesKey = (String) d2wContext()
+                    .valueForKey(Keys.restrictedChoiceKey);
+            filterChoices = (NSArray) valueForKeyPath(filterChoicesKey);
         }
-        return searchChoices;
+        return filterChoices;
     }
 
     @Override
@@ -130,4 +141,15 @@ public class ERMD2WListFilter extends ERDCustomQueryComponent implements
         return displayGroup().dataSource();
     }
 
+    /**
+     * @return dynamic CSS class attribute, depending on whether both searchKey
+     *         and filterChoices are to be shown
+     */
+    public String wrapperClass() {
+        String wrapperClass = "ListFilter";
+        if (d2wContext().valueForKey(Keys.searchKey) != null && d2wContext().valueForKey(Keys.restrictedChoiceKey) != null) {
+            wrapperClass = wrapperClass.concat(" ComboListFilter");
+        }
+        return wrapperClass;
+    }
 }
