@@ -259,7 +259,6 @@
     10 : (task = 'edit' and (propertyKey = 'password' or smartAttribute.userInfo.erPrototype = 'password')) => componentName = "ERDEditPassword" [com.webobjects.directtoweb.Assignment],
     10 : (smartRelationship != null or smartAttribute != null or attribute != null or relationship != null) => propertyIsSortable = "true" [com.webobjects.directtoweb.BooleanAssignment],
     10 : (pageConfiguration like 'Create*' or pageConfiguration like 'EditWizard*' or pageConfiguration like 'InspectWizard*') => subTask = "wizard" [com.webobjects.directtoweb.Assignment],
-    10 : (task = 'edit' and (propertyKey = 'password' or smartAttribute.userInfo.erPrototype = 'password')) => componentName = "ERDEditPasswordConfirm" [com.webobjects.directtoweb.Assignment],
     10 : (pageConfiguration like 'EditCompact*' or pageConfiguration like 'InspectCompact*' or pageConfiguration like 'ListCompact*') => subTask = "compact" [com.webobjects.directtoweb.Assignment],
     10 : (pageConfiguration like 'ConfirmDelete*' or pageConfiguration like 'ConfirmCancelCreation*') => inspectConfigurationName = "inspectEmbeddedConfigurationName" [er.directtoweb.ERDKeyValueAssignment],
     10 : (task = 'edit' and session.javaScriptEnabled = 1 and smartAttribute.className = 'com.webobjects.foundation.NSTimestamp') => componentName = "ERDEditDateJavascript" [com.webobjects.directtoweb.Assignment],
