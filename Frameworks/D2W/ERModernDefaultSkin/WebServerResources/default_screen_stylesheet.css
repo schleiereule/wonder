@@ -322,10 +322,9 @@ ul.Level1Items {
 
 ul.Level2Items,
 ul.Level3Items {
-	background: url(tab2_bak.png) repeat-x 0 bottom;
+	background: url(tab2_bak.png) repeat 0 bottom;
 	margin: 0;
 	padding: 0;
-	height: 32px;
 	text-align: center;
 }
 
