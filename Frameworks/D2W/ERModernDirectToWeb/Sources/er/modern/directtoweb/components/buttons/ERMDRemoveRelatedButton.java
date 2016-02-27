@@ -81,6 +81,8 @@ public class ERMDRemoveRelatedButton extends ERMDDeleteButton {
     	WOActionResults result = null;
     	dataSource().deleteObject(object());
     	postDeleteNotification();
+    	// prevent erroneous entity choice after reset
+	    d2wContext().takeValueForKey(null, "object");
     	return result;
     }
     
