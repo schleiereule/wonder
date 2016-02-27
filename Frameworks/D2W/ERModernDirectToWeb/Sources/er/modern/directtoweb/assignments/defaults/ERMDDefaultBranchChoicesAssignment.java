@@ -12,9 +12,11 @@ import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.foundation.NSMutableDictionary;
 
 import er.directtoweb.assignments.ERDAssignment;
+import er.extensions.eof.ERXEOControlUtilities;
 import er.extensions.eof.ERXGuardedObjectInterface;
 import er.extensions.eof.ERXNonNullObjectInterface;
 import er.extensions.foundation.ERXValueUtilities;
+import er.modern.directtoweb.components.buttons.ERMDDeleteButton.Keys;
 
 public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 
@@ -92,6 +94,7 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 		boolean isEntityInspectable = ERXValueUtilities.booleanValue(c.valueForKey("isEntityInspectable"));
 		boolean canUpdate = eo instanceof ERXGuardedObjectInterface ? ((ERXGuardedObjectInterface) eo).canUpdate() : unguarded;
 		boolean canDelete = eo instanceof ERXGuardedObjectInterface ? ((ERXGuardedObjectInterface) eo).canDelete() : unguarded;
+		boolean isPendingDeletion = ERXEOControlUtilities.eoEquals(eo, (EOEnterpriseObject)c.valueForKey(Keys.objectPendingDeletion));
 		boolean isEntityWritable = !ERXValueUtilities.booleanValue(c.valueForKey("readOnly"));
 		boolean isConcrete = !e.isAbstractEntity();
 
@@ -101,13 +104,13 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 		if (rel.inverseRelationship() == null || isEntityWritable) {
 			choices.add("_queryRelated");
 		}
-		if (isEntityInspectable && (isNonNull || (!nullInterface))) {
+		if (isEntityInspectable && !isPendingDeletion && (isNonNull || (!nullInterface))) {
 			choices.add("_inspectRelated");
 		}
 		if (isEntityWritable && isEntityEditable && isConcrete && e.subEntities().isEmpty()) {
 			choices.add("_createRelated");
 		}
-		if (isEntityWritable && isEntityEditable && canUpdate) {
+		if (isEntityWritable && isEntityEditable && !isPendingDeletion && canUpdate) {
 			choices.add("_editRelated");
 			if (!rel.ownsDestination()) {
 				choices.add("_removeRelated");
