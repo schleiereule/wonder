@@ -151,6 +151,7 @@ public class ERMDDeleteButton extends ERMDActionButton {
 	    	    object().editingContext().saveChanges();
 	    	}
 	    	d2wContext().takeValueForKey(null, Keys.objectPendingDeletion);
+	    	d2wContext().takeValueForKey(null, "object");
 	    	postDeleteNotification();
     	} catch(NSValidation.ValidationException e) {
     		parent().validationFailedWithException(e, e.object(), e.key());
