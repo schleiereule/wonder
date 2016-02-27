@@ -16,6 +16,7 @@ TagField : WOTextField {
   id = id;
   style = ^style;
   class = ^class;
+  autocomplete = "off";
 }
 
 IsCaptionUI : WOConditional {

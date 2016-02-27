@@ -45,11 +45,11 @@ TabContentWrapper: ERXUniquingWrapper {
 }
 
 HasTabs: WOConditional {
-	condition=tabs.count;
+	condition=hasMultipleTabs;
 }
 
 HasNoTabs: WOConditional {
-	condition=tabs.count;
+	condition=hasMultipleTabs;
 	negate = true;
 }
 

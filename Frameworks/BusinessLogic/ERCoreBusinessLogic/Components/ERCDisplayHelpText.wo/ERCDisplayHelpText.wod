@@ -1,6 +1,6 @@
 HelpText : WOString {
 	value = helpText.value;
-	valueWhenEmpty = defaultValue;
+	valueWhenEmpty = "";
 	escapeHTML = ^escapeHTML;
 }
 

@@ -27,4 +27,8 @@ public class CCAjaxTabPanel extends CCTabPanel {
         super(context);
     }
     
+    public boolean hasMultipleTabs() {
+        return tabs().count() > 1;
+    }
+    
 }

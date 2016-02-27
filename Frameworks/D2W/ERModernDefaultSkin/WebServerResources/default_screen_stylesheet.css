@@ -322,10 +322,9 @@ ul.Level1Items {
 
 ul.Level2Items,
 ul.Level3Items {
-	background: url(tab2_bak.png) repeat-x 0 bottom;
+	background: url(tab2_bak.png) repeat 0 bottom;
 	margin: 0;
 	padding: 0;
-	height: 32px;
 	text-align: center;
 }
 
@@ -1365,15 +1364,31 @@ div.RtActionCell li {
 	position: relative;
 	top: 22px;
 	width: 40%;
-	padding: 0 100px;
+	padding: 0 50px;
 	margin: auto;
 	z-index: 100;
 }
 
-.ListFilter input {
+.ListFilter .ListFilterSearch  {
 	font-size: 16px;
-	padding: 1px 3px;
-	width: 70%;
+	display: inline-block;
+	width: 100%;
+}
+
+.ListFilter .ListFilterSearch input {
+	width: 100%;
+}
+
+.ListFilter .ListFilterChoices {
+	font-size: 16px;
+	margin-left: 20px;
+	display: inline-block;
+	width: 100%;
+}
+
+.ListFilter.ComboListFilter .ListFilterSearch, .ListFilter.ComboListFilter .ListFilterChoices {
+	/* input and select side-by-side, so reduce width */
+	width: 40%;
 }
 
 /* ATTACHMENT */
