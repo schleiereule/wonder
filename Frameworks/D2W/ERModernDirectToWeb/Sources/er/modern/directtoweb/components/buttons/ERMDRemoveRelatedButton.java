@@ -83,6 +83,7 @@ public class ERMDRemoveRelatedButton extends ERMDDeleteButton {
     	postDeleteNotification();
     	// prevent erroneous entity choice after reset
 	    d2wContext().takeValueForKey(null, "object");
+    	d2wContext().takeValueForKey(null, ERMDDeleteButton.Keys.objectPendingDeletion);
     	return result;
     }
     
