@@ -58,7 +58,7 @@ public class ERCPropertyHelpText extends ERDCustomComponent {
             if (d2wContext().propertyKey() == null) {
                 // we're outside of an attribute repetition, so
                 // this is a page-level help text
-                helpTextKey = d2wContext().pageName();
+                helpTextKey = (String) d2wContext().valueForKey("pageConfiguration");
             } else {
                 if (d2wContext().propertyKey().indexOf('.') == -1) {
                     // it's a key on the current object
@@ -126,12 +126,13 @@ public class ERCPropertyHelpText extends ERDCustomComponent {
      * @return the default help text key, as specified in Localizable.strings
      */
     public String defaultValue() {
-        String helpTextDefaultValue = null;
+        String helpTextDefaultValue = "";
         if (canGetValueForBinding("helpTextDefaultValue")) {
             helpTextDefaultValue = stringValueForBinding("helpTextDefaultValue");
-        } else {
-            helpTextDefaultValue = ERXLocalizer.currentLocalizer().localizedStringForKey(
-                    "HelpText.default." + helpTextKey());
+        } else if (ERXLocalizer.currentLocalizer()
+                .localizedStringForKey("HelpText.default." + helpTextKey()) != null) {
+            helpTextDefaultValue = ERXLocalizer.currentLocalizer()
+                    .localizedStringForKey("HelpText.default." + helpTextKey());
         }
         return helpTextDefaultValue;
     }
