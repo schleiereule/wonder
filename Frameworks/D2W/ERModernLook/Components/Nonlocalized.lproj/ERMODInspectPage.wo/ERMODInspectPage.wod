@@ -95,6 +95,11 @@ BottomActionBlock : WOGenericContainer {
 	class = d2wContext.classForBottomActionBlock;
 }
 
+BottomActions: ERD2WExtraDisplayPropertyKeysComponent {
+	localContext = d2wContext;
+	extraPropertiesKey = "belowControllerPropertyKeys";
+}
+
 ShowBottomActionBlock : WOConditional {
 	condition = d2wContext.showBottomActionBlock;
 }

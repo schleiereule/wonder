@@ -1,8 +1,8 @@
 <webobject name = "PageWrapper">
   <webobject name = "RequiredWrapper">
-      <webobject name = "ShowTopActionBlock">
-        <webobject name = "TopActionBlock">
-        <webobject name="ShouldShowDefaultPageButtons">
+    <webobject name = "ShowTopActionBlock">
+      <webobject name = "TopActionBlock">
+        <webobject name = "ShouldShowDefaultPageButtons">
           <ul class = "ActionList">
             <webobject name = "IsEditingConditional">
               <li><webobject name = "CancelButton" /></li>
@@ -18,22 +18,24 @@
             </webobject>
           </ul>
         </webobject>
-          <webobject name = "SecondaryActionBlock" />
-        </webobject>
+        <webobject name = "SecondaryActionBlock" />
       </webobject>
-      <webobject name = "InnerWrapper">
-        <webobject name = "AboveDisplayPropertyKeys" />
-        <webobject name = "ErrorBlock"/>
-        <webobject name = "InspectPageRepetition" />
-        <webobject name = "BelowDisplayPropertyKeys" />
-      </webobject><div class="InnerClear"></div>
-      <webobject name = "ShowBottomActionBlock">
-        <webobject name = "BottomActionBlock">
-        <webobject name="ShouldShowDefaultPageButtons">
+    </webobject>
+    <webobject name = "InnerWrapper">
+      <webobject name = "AboveDisplayPropertyKeys" />
+      <webobject name = "ErrorBlock" />
+      <webobject name = "InspectPageRepetition" />
+      <webobject name = "BelowDisplayPropertyKeys" />
+    </webobject>
+    <div class = "InnerClear"></div>
+    <webobject name = "ShowBottomActionBlock">
+      <webobject name = "BottomActionBlock">
+        <webobject name = "BottomActions" />
+        <webobject name = "ShouldShowDefaultPageButtons">
           <ul class = "ActionList">
             <webobject name = "IsEditingConditional">
-                <li><webobject name = "CancelButton" /></li>
-                <li><webobject name = "SubmitChanges" /></li>
+              <li><webobject name = "CancelButton" /></li>
+              <li><webobject name = "SubmitChanges" /></li>
             </webobject>
             <webobject name = "IsNotEditingConditional">
               <webobject name = "ShowCancel">
@@ -44,9 +46,9 @@
               </webobject>
             </webobject>
           </ul>
-         </webobject>
-          <webobject name = "SecondaryActionBlock" />
         </webobject>
+        <webobject name = "SecondaryActionBlock" />
       </webobject>
     </webobject>
+  </webobject>
 </webobject>

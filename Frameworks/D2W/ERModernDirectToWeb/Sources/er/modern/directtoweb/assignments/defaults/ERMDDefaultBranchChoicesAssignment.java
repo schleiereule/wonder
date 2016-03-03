@@ -58,6 +58,24 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 	public NSArray<String> dependentKeys(String keyPath) {
 		return dependentKeys.objectForKey(keyPath);
 	}
+	
+	public Object editControllerChoices(D2WContext c) {
+		String subTask = (String)c.valueForKey("subTask");
+		if("wizard".equals(subTask)) {
+			Integer count = (Integer)c.valueForKey("tabCount");
+			Integer index = (Integer)c.valueForKey("tabIndex");
+			if(count != null && index != null && count.intValue() > 1) {
+				if(index == 0) {
+					return new NSArray<String>("_cancelEdit","_nextStep");
+				} else if(index.intValue() + 1 == count.intValue()) {
+					return new NSArray<String>("_cancelEdit","_prevStep","_save");
+				} else {
+					return new NSArray<String>("_cancelEdit","_prevStep","_nextStep");
+				}
+			}
+		}
+		return new NSArray<String>("_cancelEdit","_save");
+	}
 
 	public Object toManyControllerChoices(D2WContext c) {
 		NSMutableArray<String> choices = new NSMutableArray<String>();

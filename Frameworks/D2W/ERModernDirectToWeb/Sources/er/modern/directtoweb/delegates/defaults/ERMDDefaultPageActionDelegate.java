@@ -10,19 +10,26 @@ import com.webobjects.directtoweb.D2WPage;
 import com.webobjects.directtoweb.ERD2WUtilities;
 import com.webobjects.directtoweb.EditPageInterface;
 import com.webobjects.directtoweb.EditRelationshipPageInterface;
+import com.webobjects.directtoweb.InspectPageInterface;
 import com.webobjects.directtoweb.NextPageDelegate;
 import com.webobjects.eoaccess.EODatabaseDataSource;
+import com.webobjects.eoaccess.EOGeneralAdaptorException;
 import com.webobjects.eoaccess.EOUtilities;
 import com.webobjects.eocontrol.EOClassDescription;
 import com.webobjects.eocontrol.EOEditingContext;
 import com.webobjects.eocontrol.EOEnterpriseObject;
 import com.webobjects.foundation.NSKeyValueCoding;
+import com.webobjects.foundation.NSValidation;
 
 import er.directtoweb.delegates.ERDBranchDelegate;
 import er.directtoweb.delegates.ERDBranchInterface;
+import er.directtoweb.pages.ERD2WInspectPage;
+import er.directtoweb.pages.ERD2WPage;
 import er.extensions.eof.ERXEC;
+import er.extensions.eof.ERXEOAccessUtilities;
 import er.extensions.eof.ERXGenericRecord;
 import er.extensions.foundation.ERXValueUtilities;
+import er.extensions.localization.ERXLocalizer;
 import er.modern.directtoweb.components.buttons.ERMDPageActionControllerButton;
 
 public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
@@ -35,7 +42,87 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 	private static final long serialVersionUID = 1L;
 
 	private static final Logger log = Logger.getLogger(ERMDDefaultPageActionDelegate.class);
+	
+	public boolean shouldSaveChanges(D2WContext c) { return ERXValueUtilities.booleanValue(c.valueForKey("shouldSaveChanges")); }
+	public boolean shouldValidateBeforeSave(D2WContext c) { return ERXValueUtilities.booleanValue(c.valueForKey("shouldValidateBeforeSave")); }
+	public boolean shouldRecoverFromOptimisticLockingFailure(D2WContext c) { return ERXValueUtilities.booleanValueWithDefault(c.valueForKey("shouldRecoverFromOptimisticLockingFailure"), false); }
+	public boolean shouldRevertUponSaveFailure(D2WContext c) { return ERXValueUtilities.booleanValueWithDefault(c.valueForKey("shouldRevertUponSaveFailure"), false); }
+	
+	public WOComponent _save(WOComponent sender) {
+		WOComponent nextPage = sender.context().page();
+		EOEnterpriseObject eo = object(sender);
+		D2WContext c = d2wContext(sender);
+		ERD2WPage page = (ERD2WPage)ERD2WUtilities.enclosingComponentOfClass(sender, InspectPageInterface.class);
+		
+		if(eo != null && eo.editingContext() == null) {
+			page.setErrorMessage(ERXLocalizer.currentLocalizer().localizedTemplateStringForKeyWithObject("ERD2WInspect.alreadyAborted", c));
+			page.clearValidationFailed();
+			return nextPage;
+		}
 
+		if(!page.errorMessages().isEmpty()) {
+			page.setErrorMessage(null);
+			return nextPage;
+		}
+		
+		if(eo == null) { return _nextPageFromDelegate(page); }
+		
+		boolean shouldRevert = false;
+		EOEditingContext ec = eo.editingContext();
+		ec.lock();
+		try {
+			if(shouldValidateBeforeSave(c)) {
+				if (ec.insertedObjects().containsObject(eo)) {
+					eo.validateForInsert();
+				} else {
+					eo.validateForUpdate();
+				}
+			}
+			boolean hasChanges = ec.hasChanges();
+			if(shouldSaveChanges(c) && hasChanges) {
+				try {
+					ec.saveChanges();
+					nextPage = _nextPageFromDelegate(page);
+					// Refresh object to update derived attributes
+					ec.refreshObject(eo);
+				} catch(RuntimeException e) {
+					if(shouldRevertUponSaveFailure(c)) { shouldRevert = true; }
+					throw e;
+				}
+			} else if(!hasChanges) {
+				nextPage = _nextPageFromDelegate(page);
+			}
+		} catch(NSValidation.ValidationException e) {
+			page.setErrorMessage(ERXLocalizer.currentLocalizer().localizedTemplateStringForKeyWithObject("CouldNotSave", e));
+			page.validationFailedWithException(e, e.object(), "saveChangesExceptionKey");
+		} catch(EOGeneralAdaptorException e) {
+			if(ERXEOAccessUtilities.isOptimisticLockingFailure(e) && shouldRecoverFromOptimisticLockingFailure(c)) {
+				EOEnterpriseObject obj = ERXEOAccessUtilities.refetchFailedObject(ec, e);
+				page.setErrorMessage(ERXLocalizer.currentLocalizer().localizedTemplateStringForKeyWithObject("CouldNotSavePleaseReapply", c));
+				page.validationFailedWithException(e, obj, "CouldNotSavePleaseReapply");
+			} else {
+				throw e;
+			}
+		} finally {
+			try {
+				if(shouldRevert) { ec.revert(); }
+			} finally {
+				ec.unlock();
+			}
+		}
+		
+		return nextPage;
+	}
+	
+    public WOComponent _cancelEdit(WOComponent sender) {
+		EOEnterpriseObject eo = object(sender);
+		ERD2WInspectPage page = ERD2WUtilities.enclosingComponentOfClass(sender, ERD2WInspectPage.class);
+		EOEditingContext ec = eo != null?eo.editingContext():null;
+		if (ec != null && page.shouldRevertChanges()) {
+            ec.revert();
+        }
+        return page.nextPage(false);
+	}
 	
 	public void _createRelated(WOComponent sender) {
 		EditRelationshipPageInterface erpi = ERD2WUtilities.enclosingComponentOfClass(sender, EditRelationshipPageInterface.class);
