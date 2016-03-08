@@ -1,5 +1,7 @@
 package er.corebusinesslogic;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.directtoweb.D2W;
@@ -62,20 +64,20 @@ public class ERCPropertyHelpText extends ERDCustomComponent {
             } else {
                 if (d2wContext().propertyKey().indexOf('.') == -1) {
                     // it's a key on the current object
-                    helpTextKey = d2wContext().entity().name() + "."
-                            + d2wContext().propertyKey();
+                    helpTextKey = d2wContext().entity().name() + "." + d2wContext().propertyKey();
                 } else if (d2wContext().valueForKey("object") != null) {
                     // it's a key path, let's find the target entity
-                    EOEntity entity = ERD2WUtilities
-                            .entityForPropertyKeyPath(d2wContext());
+                    EOEntity entity = ERD2WUtilities.entityForPropertyKeyPath(d2wContext());
                     if (entity != null) {
                         helpTextKey = entity.name() + "." + ERXStringUtilities
                                 .lastPropertyKeyInKeyPath(d2wContext().propertyKey());
+                    } else {
+                        // failed to find a target entity, use current
+                        helpTextKey = d2wContext().entity().name() + "." + d2wContext().propertyKey();
                     }
                 } else if (d2wContext().valueForKey("object") == null) {
                     // we're on a query page
-                    helpTextKey = d2wContext().entity().name() + "."
-                            + d2wContext().propertyKey();
+                    helpTextKey = d2wContext().entity().name() + "." + d2wContext().propertyKey();
                 }
             }
         }
@@ -139,7 +141,7 @@ public class ERCPropertyHelpText extends ERDCustomComponent {
 
     public boolean hasHelpText() {
         return (helpText() != null && helpText().value() != null)
-                || defaultValue() != null;
+                || StringUtils.isNotBlank(defaultValue());
     }
 
     public boolean isStateless() {
