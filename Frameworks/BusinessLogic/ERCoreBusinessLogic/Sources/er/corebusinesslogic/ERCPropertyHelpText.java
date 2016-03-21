@@ -132,9 +132,9 @@ public class ERCPropertyHelpText extends ERDCustomComponent {
         if (canGetValueForBinding("helpTextDefaultValue")) {
             helpTextDefaultValue = stringValueForBinding("helpTextDefaultValue");
         } else if (ERXLocalizer.currentLocalizer()
-                .localizedStringForKey("HelpText.default." + helpTextKey()) != null) {
+                .localizedStringForKey("HelpText.default." + key()) != null) {
             helpTextDefaultValue = ERXLocalizer.currentLocalizer()
-                    .localizedStringForKey("HelpText.default." + helpTextKey());
+                    .localizedStringForKey("HelpText.default." + key());
         }
         return helpTextDefaultValue;
     }
