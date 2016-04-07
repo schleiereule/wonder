@@ -2,6 +2,7 @@ package er.jasperreports;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
 import java.util.Map;
 
 import net.sf.jasperreports.engine.JRDataSource;
@@ -43,6 +44,25 @@ public class ERJRUtilities {
 			
 			String inputFileName = ERXFileUtilities.pathURLForResourceNamed(compiledReportName, frameworkName, null).getFile();
 			JasperRunManager.runReportToPdfFile(inputFileName, destFile.getPath(), parameters, dataSource);
+
+			return destFile;
+			
+		} catch (IOException e) {
+			throw new NestableRuntimeException("Failed to generate report " + compiledReportName, e);
+		} catch (JRException e) {
+			throw new NestableRuntimeException("Failed to generate report " + compiledReportName, e);
+		}
+	}
+	
+	public static File runCompiledReportToPDFFile(String compiledReportName, String frameworkName, Map parameters, Connection connection) {
+		try {
+			// TODO: Verify that the compiled report file exists so we can
+			// give a better error message, ie., fail early!
+
+			File destFile = File.createTempFile(compiledReportName + System.currentTimeMillis(), ".pdf");
+			
+			String inputFileName = ERXFileUtilities.pathURLForResourceNamed(compiledReportName, frameworkName, null).getFile();
+			JasperRunManager.runReportToPdfFile(inputFileName, destFile.getPath(), parameters, connection);
 
 			return destFile;
 			
