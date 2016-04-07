@@ -6,6 +6,7 @@ import com.webobjects.eoaccess.EOAttribute;
 import com.webobjects.eoaccess.EOEntity;
 import com.webobjects.eoaccess.EOModel;
 import com.webobjects.eoaccess.EOModelGroup;
+import com.webobjects.eoaccess.EOProperty;
 import com.webobjects.eoaccess.EORelationship;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSDictionary;
@@ -106,6 +107,13 @@ public class ERXPartialInitializer {
 								EOAttribute primaryAttribute = new EOAttribute(attributePropertyList, partialEntity);
 								primaryAttribute.awakeWithPropertyList(attributePropertyList);
 								partialEntity.addAttribute(primaryAttribute);
+								// check if the attribute is a class property
+								if (!partialExtensionEntity.classPropertyNames().contains(partialAttribute.name())) {
+									EOProperty p = partialEntity.propertyNamed(partialAttribute.name());
+									if (p != null) {
+										partialEntity.classProperties().remove(p);
+									}
+								}
 							}
 							else {
 								ERXModelGroup.log.debug("Skipping partial attribute " + partialExtensionEntity.name() + "." + partialAttribute.name() + " because " + partialEntity.name() + " already has an attribute of the same name.");
