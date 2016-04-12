@@ -9,6 +9,7 @@ import com.webobjects.eoaccess.EORelationship;
 import com.webobjects.eocontrol.EODataSource;
 import com.webobjects.eocontrol.EODetailDataSource;
 import com.webobjects.eocontrol.EOEnterpriseObject;
+import com.webobjects.eocontrol.EOGlobalID;
 
 import er.extensions.eof.ERXEOAccessUtilities;
 import er.extensions.foundation.ERXValueUtilities;
@@ -79,11 +80,18 @@ public class ERMDRemoveRelatedButton extends ERMDDeleteButton {
      */
     public WOActionResults removeAction() {
     	WOActionResults result = null;
+    	EOGlobalID globalID = object().editingContext().globalIDForObject(object());
     	dataSource().deleteObject(object());
-    	postDeleteNotification();
-    	// prevent erroneous entity choice after reset
-	    d2wContext().takeValueForKey(null, "object");
+
+        // remove the deleted object from the D2WContext if necessary,
+        // to prevent issues with inheritance and to-many relationships
+    	EOEnterpriseObject object = (EOEnterpriseObject) d2wContext().valueForKey("object");
+    	if (object != null && globalID.equals(object.editingContext().globalIDForObject(object))) {
+            d2wContext().takeValueForKey(null, "object");
+    	}
     	d2wContext().takeValueForKey(null, ERMDDeleteButton.Keys.objectPendingDeletion);
+
+    	postDeleteNotification();
     	return result;
     }
     

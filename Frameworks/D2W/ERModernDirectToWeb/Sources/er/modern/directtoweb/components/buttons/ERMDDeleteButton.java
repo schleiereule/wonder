@@ -16,6 +16,7 @@ import com.webobjects.eocontrol.EODataSource;
 import com.webobjects.eocontrol.EODetailDataSource;
 import com.webobjects.eocontrol.EOEditingContext;
 import com.webobjects.eocontrol.EOEnterpriseObject;
+import com.webobjects.eocontrol.EOGlobalID;
 import com.webobjects.foundation.NSMutableDictionary;
 import com.webobjects.foundation.NSNotificationCenter;
 import com.webobjects.foundation.NSValidation;
@@ -133,6 +134,8 @@ public class ERMDDeleteButton extends ERMDActionButton {
     	    // with EODetailDatasource, calling deleteObject
     	    // will only remove the object from the relationship
     	    ds.deleteObject(object());
+    	    
+    	    EOGlobalID globalID = obj.editingContext().globalIDForObject(obj);
 
     	    // for "owns destination" relationships, the following would
     	    // fail as the object will already be marked as deleted in the
@@ -150,8 +153,15 @@ public class ERMDDeleteButton extends ERMDActionButton {
                 // if we are editing a new object, then don't save
 	    	    object().editingContext().saveChanges();
 	    	}
+
+	    	// remove the deleted object from the D2WContext if necessary,
+	    	// to prevent issues with inheritance and to-many relationships
+	    	EOEnterpriseObject object = (EOEnterpriseObject) d2wContext().valueForKey("object");
+	    	if (object != null && globalID.equals(object.editingContext().globalIDForObject(object))) {
+	    	    d2wContext().takeValueForKey(null, "object");
+	    	}
 	    	d2wContext().takeValueForKey(null, Keys.objectPendingDeletion);
-	    	d2wContext().takeValueForKey(null, "object");
+
 	    	postDeleteNotification();
     	} catch(NSValidation.ValidationException e) {
     		parent().validationFailedWithException(e, e.object(), e.key());
