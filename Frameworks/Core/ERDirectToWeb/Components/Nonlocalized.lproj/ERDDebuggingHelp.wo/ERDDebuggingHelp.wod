@@ -106,8 +106,33 @@ String9: WOString {
 	value = currentKey;
 }
 
-TextField1: WOTextField {
-	value = key;
-	size = 10;
+d2wKeyObserver : AjaxObserveField {
+	updateContainerID = d2wKeyResultUC;
+	observeFieldFrequency = 1;
 }
 
+TextField1: WOText {
+	value = key;
+	rows = 3;
+	cols = 30;
+	style = "max-width:300px;";
+}
+
+d2wKeyResultUC : AjaxUpdateContainer {
+	id = d2wKeyResultUC;
+	elementName = "div";
+	style = "max-height:190px;max-width:500px;overflow:auto;";
+}
+
+isDump : ERXNonNullConditional {
+	condition = key;
+	negate = true;
+}
+
+D2WContextInspector : ERD2WContextInspector {
+	d2wContext = d2wContext;
+}
+
+isNotDump : ERXNonNullConditional {
+	condition = key;
+}

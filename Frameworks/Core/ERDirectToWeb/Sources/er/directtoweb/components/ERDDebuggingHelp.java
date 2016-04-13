@@ -8,6 +8,7 @@ package er.directtoweb.components;
 
 import org.apache.log4j.Level;
 
+import com.webobjects.appserver.WOActionResults;
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.appserver.WOSession;
@@ -114,8 +115,14 @@ public class ERDDebuggingHelp extends WOComponent implements ERXDebugMarker.Debu
     }
     
     public Object debugValueForKey() {
-        if(key != null && !"".equals(key))
-            return d2wContext().valueForKeyPath(key);
+        if ("dump".equals(key)) {
+            return d2wContext().toString();
+        } else if (key != null && !"".equals(key)) {
+            try {
+                return d2wContext().valueForKeyPath(key);
+            } catch (Exception e) {
+            }
+        }
         return null;
     }
     
@@ -151,5 +158,13 @@ public class ERDDebuggingHelp extends WOComponent implements ERXDebugMarker.Debu
     	dict.removeObjectForKey("componentLevelKeys");
         return dict;
     }
- 
+    
+    public String d2wKeyResultUC() {
+        return "d2wKeyResultUC" + d2wContext().valueForKeyPath("pageConfiguration");
+    }
+
+    public WOActionResults d2wKeyLookup() {
+        return null;
+    }
+
 }
