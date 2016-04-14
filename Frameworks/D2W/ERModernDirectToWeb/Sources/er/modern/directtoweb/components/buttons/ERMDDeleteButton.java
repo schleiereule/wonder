@@ -157,7 +157,7 @@ public class ERMDDeleteButton extends ERMDActionButton {
 	    	// remove the deleted object from the D2WContext if necessary,
 	    	// to prevent issues with inheritance and to-many relationships
 	    	EOEnterpriseObject object = (EOEnterpriseObject) d2wContext().valueForKey("object");
-	    	if (object != null && globalID.equals(object.editingContext().globalIDForObject(object))) {
+	    	if (globalID != null && object != null && globalID.equals(object.editingContext().globalIDForObject(object))) {
 	    	    d2wContext().takeValueForKey(null, "object");
 	    	}
 	    	d2wContext().takeValueForKey(null, Keys.objectPendingDeletion);
