@@ -16,12 +16,14 @@ import com.webobjects.eoaccess.EODatabaseDataSource;
 import com.webobjects.eoaccess.EOGeneralAdaptorException;
 import com.webobjects.eoaccess.EOUtilities;
 import com.webobjects.eocontrol.EOClassDescription;
+import com.webobjects.eocontrol.EODetailDataSource;
 import com.webobjects.eocontrol.EOEditingContext;
 import com.webobjects.eocontrol.EOEnterpriseObject;
 import com.webobjects.foundation.NSKeyValueCoding;
+import com.webobjects.foundation.NSMutableDictionary;
+import com.webobjects.foundation.NSNotificationCenter;
 import com.webobjects.foundation.NSValidation;
 
-import er.ajax.AjaxUpdateContainer;
 import er.directtoweb.delegates.ERDBranchDelegate;
 import er.directtoweb.delegates.ERDBranchInterface;
 import er.directtoweb.pages.ERD2WInspectPage;
@@ -31,6 +33,7 @@ import er.extensions.eof.ERXEOAccessUtilities;
 import er.extensions.eof.ERXGenericRecord;
 import er.extensions.foundation.ERXValueUtilities;
 import er.extensions.localization.ERXLocalizer;
+import er.modern.directtoweb.ERMDNotificationNameRegistry;
 
 public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 
@@ -60,6 +63,7 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 		return ERXValueUtilities.booleanValueWithDefault(c.valueForKey("shouldRevertUponSaveFailure"), false);
 	}
 
+	@D2WDelegate(requiresFormSubmit = true)
 	public WOComponent _save(WOComponent sender) {
 		WOComponent nextPage = sender.context().page();
 		EOEnterpriseObject eo = object(sender);
@@ -128,23 +132,24 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 				ec.unlock();
 			}
 		}
-		//String id = (String) page.d2wContext().valueForKey("idForParentMainContainer");
-		//AjaxUpdateContainer.updateContainerWithID(id, sender.context());
+		postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_SAVE_ACTION, c);
 		return nextPage;
 	}
 
+	@D2WDelegate(requiresFormSubmit = false)
 	public WOComponent _cancelEdit(WOComponent sender) {
+		D2WContext c = d2wContext(sender);
 		EOEnterpriseObject eo = object(sender);
 		ERD2WInspectPage page = ERD2WUtilities.enclosingComponentOfClass(sender, ERD2WInspectPage.class);
-		//String id = (String) page.d2wContext().valueForKey("idForParentMainContainer");
-		//AjaxUpdateContainer.updateContainerWithID(id, sender.context());
 		EOEditingContext ec = eo != null ? eo.editingContext() : null;
 		if (ec != null && page.shouldRevertChanges()) {
 			ec.revert();
 		}
+		postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_CANCEL_EDIT_ACTION, c);
 		return page.nextPage(false);
 	}
 
+	@D2WDelegate(requiresFormSubmit = false)
 	public void _createRelated(WOComponent sender) {
 		EditRelationshipPageInterface erpi = ERD2WUtilities.enclosingComponentOfClass(sender, EditRelationshipPageInterface.class);
 		if (erpi != null) {
@@ -165,6 +170,7 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 		}
 	}
 
+	@D2WDelegate(requiresFormSubmit = false)
 	public void _queryRelated(WOComponent sender) {
 		EditRelationshipPageInterface erpi = ERD2WUtilities.enclosingComponentOfClass(sender, EditRelationshipPageInterface.class);
 		if (erpi != null) {
@@ -236,6 +242,12 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 			nextPage = page.nextPage();
 		}
 		return nextPage;
+	}
+
+	protected void postNotification(String notificationName, D2WContext d2wContext) {
+		NSMutableDictionary<String, Object> userInfo = new NSMutableDictionary<String, Object>();
+		userInfo.put("pageConfiguration", d2wContext.valueForKey("pageConfiguration"));
+		NSNotificationCenter.defaultCenter().postNotification(notificationName, null, userInfo);
 	}
 
 }

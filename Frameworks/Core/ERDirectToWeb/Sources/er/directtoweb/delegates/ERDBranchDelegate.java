@@ -22,6 +22,7 @@ import com.webobjects.appserver.WOComponent;
 import com.webobjects.directtoweb.D2WContext;
 import com.webobjects.directtoweb.NextPageDelegate;
 import com.webobjects.eocontrol.EOEnterpriseObject;
+import com.webobjects.eocontrol.EOSortOrdering;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSForwardException;
@@ -33,268 +34,345 @@ import er.directtoweb.interfaces.ERDMessagePageInterface;
 import er.directtoweb.pages.ERD2WPage;
 import er.extensions.foundation.ERXArrayUtilities;
 import er.extensions.foundation.ERXDictionaryUtilities;
+import er.extensions.foundation.ERXProperties;
+import er.extensions.foundation.ERXStringUtilities;
 import er.extensions.localization.ERXLocalizer;
 
 /**
  * The branch delegate is used in conjunction with the
- * {@link ERDMessagePageInterface ERDMessagePageInterface} to allow
- * flexible branching for message pages. Branch delegates can
- * only be used with templates that implement the 
- * {@link ERDBranchInterface ERDBranchInterface}.
+ * {@link ERDMessagePageInterface ERDMessagePageInterface} to allow flexible
+ * branching for message pages. Branch delegates can only be used with templates
+ * that implement the {@link ERDBranchInterface ERDBranchInterface}.
  */
 public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 	/**
-	 * Do I need to update serialVersionUID?
-	 * See section 5.6 <cite>Type Changes Affecting Serialization</cite> on page 51 of the 
-	 * <a href="http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf">Java Object Serialization Spec</a>
+	 * Do I need to update serialVersionUID? See section 5.6 <cite>Type Changes
+	 * Affecting Serialization</cite> on page 51 of the
+	 * <a href="http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf">Java Object
+	 * Serialization Spec</a>
 	 */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Runtime flags for the delegate, so you can have one delegate for all tasks.
+	 * Runtime flags for the delegate, so you can have one delegate for all
+	 * tasks.
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.METHOD)
 	public @interface D2WDelegate {
 		/**
-		 * Returns the names of the scope where you can have this method. One of "selection,object"
+		 * Returns the names of the scope where you can have this method. One of
+		 * "selection,object"
 		 */
 		public String scope() default "";
 
 		/**
-		 * Returns the names of the tasks where you can have this method. Example "query,select"
+		 * Returns the names of the tasks where you can have this method.
+		 * Example "query,select"
 		 */
 		public String availableTasks() default "";
-		
+
 		/**
-		 * Returns the names of the pages where you can have this method. Example "ListWebMaster,QueryWebMaster"
+		 * Returns the names of the pages where you can have this method.
+		 * Example "ListWebMaster,QueryWebMaster"
 		 */
 		public String availablePages() default "";
-	}
-	
-    /** logging support */
-    public final static Logger log = Logger.getLogger(ERDBranchDelegate.class);
 
-    /** holds the WOComponent class array used to lookup branch delegate methods */
-    // MOVEME: Should belong in a WO constants class
-    public final static Class[] WOComponentClassArray = new Class[] { WOComponent.class };
-    
-    public static final String BRANCH_CHOICES = "branchChoices";
-    public static final String BRANCH_BUTTON_ID = "branchButtonID";
-    public static final String BRANCH_NAME = "branchName";
-    public static final String BRANCH_LABEL = "branchButtonLabel";
-    public static final String BRANCH_PREFIX = "Button";
-    
-    /**
-     * Implementation of the {@link NextPageDelegate NextPageDelegate}
-     * interface. This method provides the dynamic dispatch based on
-     * the selected branch provided by the sender. Will call the 
-     * method &lt;branchName&gt;(WOComponent) on itself returning the 
-     * result. 
-     * @param sender template invoking the branch delegate
-     * @return result of dynamic method lookup and execution on itself.
-     */
-    public final WOComponent nextPage(WOComponent sender) {
-        WOComponent nextPage = null;
-        if (sender instanceof ERDBranchInterface) {
-            String branchName = ((ERDBranchInterface)sender).branchName();
-            if( branchName != null ) {
-                if (log.isDebugEnabled())
-                    log.debug("Branching to branch: " + branchName);
-                try {
-                    Method m = getClass().getMethod(branchName, WOComponentClassArray);
-                    nextPage = (WOComponent)m.invoke(this, new Object[] { sender });
-                } catch (InvocationTargetException ite) {
-                    log.error("Invocation exception occurred in ERBranchDelegate: " + ite.getTargetException() + " for branch name: " + branchName, ite.getTargetException());
-                    throw new NSForwardException(ite.getTargetException());
-                } catch (Exception e) {
-                    log.error("Exception occurred in ERBranchDelegate: " + e.toString() + " for branch name: " + branchName);
-                    throw new NSForwardException(e);
-                }
-            }
-        } else {
-            log.warn("Branch delegate being used with a component that does not implement the ERBranchInterface");
-        }
-        return nextPage;
-    }
-    
-    /**
-     * Utility to build branch choice dictionaries in code.
-     * @param method name of the method in question
-     * @param label label for the button, a beautified method name will be used if set to null.
-     * @return NSDictionary suitable as a branch choice.
-     */
-    protected NSDictionary branchChoiceDictionary(String method, String label) {
-    	if(label == null) {
-    		label = ERXLocalizer.currentLocalizer().localizedDisplayNameForKey(BRANCH_PREFIX, method);
-    	}
-    	return ERXDictionaryUtilities.dictionaryWithObjectsAndKeys(new Object [] { method, BRANCH_NAME, label, BRANCH_LABEL, method +  "Action", BRANCH_BUTTON_ID});
-    }
-    
-    /**
-     * Calculates which branches to show in the display first
-     * asking the context for the key <b>branchChoices</b>. If
-     * this returns null then 
-     * @param context current D2W context
-     * @return array of branch names.
-     */
-    public NSArray branchChoicesForContext(D2WContext context) {
-        NSArray choices = (NSArray)context.valueForKey(BRANCH_CHOICES);
-        if (choices == null) {
-            choices = defaultBranchChoices(context);
-        } else {
-        	NSMutableArray translatedChoices = new NSMutableArray();
-        	for (Iterator iter = choices.iterator(); iter.hasNext();) {
-        		Object o = iter.next();
+		/**
+		 * Returns the name of the button group for this method. Intended for
+		 * grouping/sorting."
+		 */
+		public String group() default "";
+
+		/**
+		 * Returns true if the method requires a form submit.
+		 */
+		public boolean requiresFormSubmit() default true;
+	}
+
+	/** logging support */
+	public final static Logger log = Logger.getLogger(ERDBranchDelegate.class);
+
+	/**
+	 * holds the WOComponent class array used to lookup branch delegate methods
+	 */
+	// MOVEME: Should belong in a WO constants class
+	public final static Class[] WOComponentClassArray = new Class[] { WOComponent.class };
+
+	public static final String BRANCH_CHOICES = "branchChoices";
+	public static final String BRANCH_BUTTON_ID = "branchButtonID";
+	public static final String BRANCH_NAME = "branchName";
+	public static final String BRANCH_LABEL = "branchButtonLabel";
+	public static final String BRANCH_PREFIX = "Button";
+	public static final String BRANCH_GROUP = "branchGroup";
+	public static final String BRANCH_REQUIRESFORMSUBMIT = "branchRequiresFormSubmit";
+
+	/**
+	 * Implementation of the {@link NextPageDelegate NextPageDelegate}
+	 * interface. This method provides the dynamic dispatch based on the
+	 * selected branch provided by the sender. Will call the method
+	 * &lt;branchName&gt;(WOComponent) on itself returning the result.
+	 * 
+	 * @param sender
+	 *            template invoking the branch delegate
+	 * @return result of dynamic method lookup and execution on itself.
+	 */
+	public final WOComponent nextPage(WOComponent sender) {
+		WOComponent nextPage = null;
+		if (sender instanceof ERDBranchInterface) {
+			String branchName = ((ERDBranchInterface) sender).branchName();
+			if (branchName != null) {
+				if (log.isDebugEnabled())
+					log.debug("Branching to branch: " + branchName);
+				try {
+					Method m = getClass().getMethod(branchName, WOComponentClassArray);
+					nextPage = (WOComponent) m.invoke(this, new Object[] { sender });
+				} catch (InvocationTargetException ite) {
+					log.error("Invocation exception occurred in ERBranchDelegate: " + ite.getTargetException() + " for branch name: " + branchName, ite.getTargetException());
+					throw new NSForwardException(ite.getTargetException());
+				} catch (Exception e) {
+					log.error("Exception occurred in ERBranchDelegate: " + e.toString() + " for branch name: " + branchName);
+					throw new NSForwardException(e);
+				}
+			}
+		} else {
+			log.warn("Branch delegate being used with a component that does not implement the ERBranchInterface");
+		}
+		return nextPage;
+	}
+
+	/**
+	 * Utility to build branch choice dictionaries in code.
+	 * 
+	 * @param method
+	 *            name of the method in question
+	 * @param label
+	 *            label for the button, a beautified method name will be used if
+	 *            set to null.
+	 * @return NSDictionary suitable as a branch choice.
+	 */
+	protected NSDictionary branchChoiceDictionary(String method, String label) {
+		if (label == null) {
+			label = ERXLocalizer.currentLocalizer().localizedDisplayNameForKey(BRANCH_PREFIX, method);
+		}
+		return branchChoiceDictionary(method, label, null, true);
+	}
+
+	/**
+	 * Utility to build branch choice dictionaries in code.
+	 * 
+	 * @param method
+	 *            name of the method in question
+	 * @param label
+	 *            label for the button, a beautified method name will be used if
+	 *            set to null.
+	 * @param group
+	 *            name of the group of the method
+	 * @return NSDictionary suitable as a branch choice.
+	 */
+	protected NSDictionary branchChoiceDictionary(String method, String label, String group, boolean requiresFormSubmit) {
+		if (label == null) {
+			label = ERXLocalizer.currentLocalizer().localizedDisplayNameForKey(BRANCH_PREFIX, method);
+		}
+		if (ERXStringUtilities.isBlank(group)) {
+			group = ERXProperties.stringForKey("er.directtoweb.delegates.ERDBranchDelegate.defaultGroup");
+		}
+		return ERXDictionaryUtilities.dictionaryWithObjectsAndKeys(
+				new Object[] { method, BRANCH_NAME, label, BRANCH_LABEL, method + "Action", BRANCH_BUTTON_ID, group, BRANCH_GROUP, requiresFormSubmit, BRANCH_REQUIRESFORMSUBMIT });
+	}
+
+	/**
+	 * Calculates which branches to show in the display first asking the context
+	 * for the key <b>branchChoices</b>. If this returns null then
+	 * 
+	 * @param context
+	 *            current D2W context
+	 * @return array of branch names.
+	 */
+	public NSArray branchChoicesForContext(D2WContext context) {
+		NSArray choices = (NSArray) context.valueForKey(BRANCH_CHOICES);
+		if (choices == null) {
+			choices = defaultBranchChoices(context);
+		} else {
+			NSMutableArray translatedChoices = new NSMutableArray();
+			for (Iterator iter = choices.iterator(); iter.hasNext();) {
+				Object o = iter.next();
 				String method = null;
 				String label = null;
-	       		NSMutableDictionary entry = new NSMutableDictionary();
-        		if (o instanceof NSDictionary) {
-        			entry.addEntriesFromDictionary((NSDictionary) o);
-        			method = (String) entry.objectForKey(BRANCH_NAME);
-        			label = (String) entry.objectForKey(BRANCH_LABEL);
-        		} else if (o instanceof String) {
-                    method = (String) o;
-                    entry.setObjectForKey(method, BRANCH_NAME);
-                }
-                if (label == null) {
-        			label = ERXLocalizer.currentLocalizer().localizedDisplayNameForKey(BRANCH_PREFIX, method);
-           		} else if(label.startsWith(BRANCH_PREFIX + ".")){
-           			String localizerKey = label;
-        			String localized = ERXLocalizer.currentLocalizer().localizedStringForKey(label);
-        			if(localized == null) {
-        				label = ERXLocalizer.currentLocalizer().localizedDisplayNameForKey(BRANCH_PREFIX, method);
-            			ERXLocalizer.currentLocalizer().takeValueForKey(label, localizerKey);
-            		} else {
-            			label = localized;
-        			}
-           		} else {
-           			// assume it's a user-provided value. If we have an entry in the localizer, use it
-           			// otherwise just return it.
-        			label = ERXLocalizer.currentLocalizer().localizedStringForKeyWithDefault(label);
-        		}
-        		entry.setObjectForKey(label, BRANCH_LABEL);
-        		entry.setObjectForKey(method +  "Action", BRANCH_BUTTON_ID);
-        		translatedChoices.addObject(entry);
-        	}
-        	choices = translatedChoices;
-        }
-        return choices;
-    }
+				NSMutableDictionary entry = new NSMutableDictionary();
+				if (o instanceof NSDictionary) {
+					entry.addEntriesFromDictionary((NSDictionary) o);
+					method = (String) entry.objectForKey(BRANCH_NAME);
+					label = (String) entry.objectForKey(BRANCH_LABEL);
+				} else if (o instanceof String) {
+					method = (String) o;
+					entry.setObjectForKey(method, BRANCH_NAME);
+				}
+				if (label == null) {
+					label = ERXLocalizer.currentLocalizer().localizedDisplayNameForKey(BRANCH_PREFIX, method);
+				} else if (label.startsWith(BRANCH_PREFIX + ".")) {
+					String localizerKey = label;
+					String localized = ERXLocalizer.currentLocalizer().localizedStringForKey(label);
+					if (localized == null) {
+						label = ERXLocalizer.currentLocalizer().localizedDisplayNameForKey(BRANCH_PREFIX, method);
+						ERXLocalizer.currentLocalizer().takeValueForKey(label, localizerKey);
+					} else {
+						label = localized;
+					}
+				} else {
+					// assume it's a user-provided value. If we have an entry in
+					// the localizer, use it
+					// otherwise just return it.
+					label = ERXLocalizer.currentLocalizer().localizedStringForKeyWithDefault(label);
+				}
+				String group = ERXProperties.stringForKey("er.directtoweb.delegates.ERDBranchDelegate.defaultGroup");
+				boolean requiresFormSubmit = true;
+				try {
+					Method m = getClass().getMethod(method, new Class[] { WOComponent.class });
+					if (m.isAnnotationPresent(D2WDelegate.class)) {
+						D2WDelegate info = m.getAnnotation(D2WDelegate.class);
+						group = info.group();
+						requiresFormSubmit = info.requiresFormSubmit();
+					}
+				} catch (NoSuchMethodException e) {
+					log.error("Caught no such method exception while calculating the branch choices for context: " + this + " exception: " + e.getMessage());
+				} catch (SecurityException e) {
+					log.error("Caught security exception while calculating the branch choices for context: " + this + " exception: " + e.getMessage());
+				}
+				entry.setObjectForKey(group, BRANCH_GROUP);
+				entry.setObjectForKey(requiresFormSubmit, BRANCH_REQUIRESFORMSUBMIT);
+				entry.setObjectForKey(label, BRANCH_LABEL);
+				entry.setObjectForKey(method + "Action", BRANCH_BUTTON_ID);
+				translatedChoices.addObject(entry);
+			}
+			choices = translatedChoices;
+		}
+		return choices;
+	}
 
-    /**
-     * Uses reflection to find all of the public methods that don't start with 
-     * an underscore and take a single WOComponent as a parameter are returned.
-     * The methods are sorted by this key.
-     * @param context current D2W context
-     */
-    protected NSArray defaultBranchChoices(D2WContext context) {
-        NSArray choices = NSArray.EmptyArray;
-        try {
-        	String task = context.task();
-        	String pageName = context.dynamicPage();
-            NSMutableArray methodChoices = new NSMutableArray();
-            Method methods[] = getClass().getMethods();
-            for (Enumeration e = new NSArray(methods).objectEnumerator(); e.hasMoreElements();) {
-                Method method = (Method)e.nextElement();
-                if (method.getParameterTypes().length == 1 
-                        &&  method.getParameterTypes()[0] == WOComponent.class 
-                        && !method.getName().equals("nextPage")
-                        && method.getName().charAt(0) != '_'
-                        && ((method.getModifiers() & Modifier.PUBLIC) == Modifier.PUBLIC) 
-                ) {
-                    boolean isAllowed = true;
-                    if(method.isAnnotationPresent(D2WDelegate.class)) {
-                    	D2WDelegate info = method.getAnnotation(D2WDelegate.class);
-                    	String scope = info.scope();
-                    	String availableTasks = info.availableTasks();
-                    	String availablePages = info.availablePages();
-						if(scope.length() > 0) {
-							if("object".equals(scope) && context.valueForKey("object") == null) {
+	/**
+	 * Uses reflection to find all of the public methods that don't start with
+	 * an underscore and take a single WOComponent as a parameter are returned.
+	 * The methods are sorted by this key.
+	 * 
+	 * @param context
+	 *            current D2W context
+	 */
+	protected NSArray defaultBranchChoices(D2WContext context) {
+		NSArray choices = NSArray.EmptyArray;
+		try {
+			String task = context.task();
+			String pageName = context.dynamicPage();
+			NSMutableArray methodChoices = new NSMutableArray();
+			Method methods[] = getClass().getMethods();
+			for (Enumeration e = new NSArray(methods).objectEnumerator(); e.hasMoreElements();) {
+				String group = null;
+				Method method = (Method) e.nextElement();
+				if (method.getParameterTypes().length == 1 && method.getParameterTypes()[0] == WOComponent.class && !method.getName().equals("nextPage") && method.getName().charAt(0) != '_'
+						&& ((method.getModifiers() & Modifier.PUBLIC) == Modifier.PUBLIC)) {
+					boolean isAllowed = true;
+					boolean requiresFormSubmit = true;
+					if (method.isAnnotationPresent(D2WDelegate.class)) {
+						D2WDelegate info = method.getAnnotation(D2WDelegate.class);
+						String scope = info.scope();
+						String availableTasks = info.availableTasks();
+						String availablePages = info.availablePages();
+						group = info.group();
+						requiresFormSubmit = info.requiresFormSubmit();
+						if (scope.length() > 0) {
+							if ("object".equals(scope) && context.valueForKey("object") == null) {
 								isAllowed = false;
 							}
-							if(!"object".equals(scope) && context.valueForKey("object") != null) {
+							if (!"object".equals(scope) && context.valueForKey("object") != null) {
 								isAllowed = false;
 							}
 						}
-						if(availableTasks.length() > 0 && !availableTasks.contains(task)) {
+						if (availableTasks.length() > 0 && !availableTasks.contains(task)) {
 							isAllowed = false;
 						}
-						if(availablePages.length() > 0 && !availablePages.contains(pageName)) {
+						if (availablePages.length() > 0 && !availablePages.contains(pageName)) {
 							isAllowed = false;
 						}
-                    }
-                    if(isAllowed) {
-                    	NSDictionary branch = branchChoiceDictionary(method.getName(), null);
-                    	methodChoices.addObject(branch);      
-                    }
-                }
-            }
-            choices = ERXArrayUtilities.sortedArraySortedWithKey(methodChoices, BRANCH_LABEL);
-        } catch (SecurityException e) {
-            log.error("Caught security exception while calculating the branch choices for delegate: " 
-                    + this + " exception: " + e.getMessage());
-        }
-        return choices;
-    }
- 
-    /**
-     * Gets the D2W context from the innermost enclosing D2W component of the sender.
-     * @param sender
-     */
-    protected D2WContext d2wContext(WOComponent sender) {
-    	if(ERDirectToWeb.D2WCONTEXT_SELECTOR.implementedByObject(sender)) {
-            return (D2WContext) sender.valueForKey(ERDirectToWeb.D2WCONTEXT_SELECTOR.name());
-    	}
-        throw new IllegalStateException("Can't figure out d2wContext from: " + sender);
-    }
-    
-    /**
-     * return the innermost object which might be of interest
-     * @param sender
-     */
-    protected EOEnterpriseObject object(WOComponent sender) {
-        return object(d2wContext(sender));
-    }
-    
-    /**
-     * Returns the current object form the d2w context
-     * @param context
-     */
-    protected EOEnterpriseObject object(D2WContext context) {
-        return (EOEnterpriseObject) context.valueForKey(ERD2WPage.Keys.object);
-    }
+					}
+					if (isAllowed) {
+						NSDictionary branch = branchChoiceDictionary(method.getName(), null, group, requiresFormSubmit);
+						methodChoices.addObject(branch);
+					}
+				}
+			}
+			// choices =
+			// ERXArrayUtilities.sortedArraySortedWithKey(methodChoices,
+			// BRANCH_LABEL);
+			choices = ERXArrayUtilities.sortedArraySortedWithKeys(methodChoices, new NSArray<>(BRANCH_GROUP, BRANCH_LABEL), EOSortOrdering.CompareAscending);
+		} catch (SecurityException e) {
+			log.error("Caught security exception while calculating the branch choices for delegate: " + this + " exception: " + e.getMessage());
+		}
+		return choices;
+	}
 
-    /**
-     * Utility to remove entries based on an array of keys
-     * @param keys
-     * @param choices
-     */
-    protected NSArray choiceByRemovingKeys(NSArray keys, NSArray choices) {
-        NSMutableArray result = new NSMutableArray(choices.count());
-        for (Enumeration e = choices.objectEnumerator(); e.hasMoreElements();) {
-            NSDictionary choice = (NSDictionary) e.nextElement();
-            if(!keys.containsObject(choice.objectForKey(BRANCH_NAME))) {
-                result.addObject(choice);
-            }
-        }
-        return result;
-    }
+	/**
+	 * Gets the D2W context from the innermost enclosing D2W component of the
+	 * sender.
+	 * 
+	 * @param sender
+	 */
+	protected D2WContext d2wContext(WOComponent sender) {
+		if (ERDirectToWeb.D2WCONTEXT_SELECTOR.implementedByObject(sender)) {
+			return (D2WContext) sender.valueForKey(ERDirectToWeb.D2WCONTEXT_SELECTOR.name());
+		}
+		throw new IllegalStateException("Can't figure out d2wContext from: " + sender);
+	}
 
-    /**
-     * Utility to leave entries based on an array of keys
-     * @param keys
-     * @param choices
-     */
-    protected NSArray choiceByLeavingKeys(NSArray keys, NSArray choices) {
-        NSMutableArray result = new NSMutableArray(choices.count());
-        for (Enumeration e = choices.objectEnumerator(); e.hasMoreElements();) {
-            NSDictionary choice = (NSDictionary) e.nextElement();
-            if(keys.containsObject(choice.objectForKey(BRANCH_NAME))) {
-                result.addObject(choice);
-            }
-        }
-        return result;
-    }
+	/**
+	 * return the innermost object which might be of interest
+	 * 
+	 * @param sender
+	 */
+	protected EOEnterpriseObject object(WOComponent sender) {
+		return object(d2wContext(sender));
+	}
+
+	/**
+	 * Returns the current object form the d2w context
+	 * 
+	 * @param context
+	 */
+	protected EOEnterpriseObject object(D2WContext context) {
+		return (EOEnterpriseObject) context.valueForKey(ERD2WPage.Keys.object);
+	}
+
+	/**
+	 * Utility to remove entries based on an array of keys
+	 * 
+	 * @param keys
+	 * @param choices
+	 */
+	protected NSArray choiceByRemovingKeys(NSArray keys, NSArray choices) {
+		NSMutableArray result = new NSMutableArray(choices.count());
+		for (Enumeration e = choices.objectEnumerator(); e.hasMoreElements();) {
+			NSDictionary choice = (NSDictionary) e.nextElement();
+			if (!keys.containsObject(choice.objectForKey(BRANCH_NAME))) {
+				result.addObject(choice);
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Utility to leave entries based on an array of keys
+	 * 
+	 * @param keys
+	 * @param choices
+	 */
+	protected NSArray choiceByLeavingKeys(NSArray keys, NSArray choices) {
+		NSMutableArray result = new NSMutableArray(choices.count());
+		for (Enumeration e = choices.objectEnumerator(); e.hasMoreElements();) {
+			NSDictionary choice = (NSDictionary) e.nextElement();
+			if (keys.containsObject(choice.objectForKey(BRANCH_NAME))) {
+				result.addObject(choice);
+			}
+		}
+		return result;
+	}
 
 }

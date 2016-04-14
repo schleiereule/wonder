@@ -11,7 +11,7 @@ BranchButton : CCSmartAjaxButton {
 	value = branchButtonLabel;
 	useAjax = d2wContext.useAjaxControlsWhenEmbedded;
 	updateContainerID = d2wContext.idForMainContainer;
-	dontSubmitForm = true;
+	dontSubmitForm = dontSubmitForm;
 }
 
 HasChoices: WOConditional {

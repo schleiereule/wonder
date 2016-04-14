@@ -153,6 +153,22 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 	public String branchButtonID() {
 		return (String) branch().valueForKey(ERDBranchDelegate.BRANCH_BUTTON_ID);
 	}
+	
+	/**
+	 * Implementation of the {@link ERDBranchDelegate ERDBranchDelegate}
+	 * 
+	 * @return true if the selected branch requires a form submit.
+	 */
+	public Boolean branchRequiresFormSubmit() {
+		return (Boolean) branch().valueForKey(ERDBranchDelegate.BRANCH_REQUIRESFORMSUBMIT);
+	}
+	
+	public Boolean dontSubmitForm() {
+		if (branchRequiresFormSubmit())
+			return false;
+		else
+			return true;
+	}
 
 	/**
 	 * Calculates the branch choices for the current page. This method is just a
@@ -161,7 +177,6 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 	 * 
 	 * @return array of branch choices
 	 */
-
 	public NSArray branchChoices() {
 		if (branchDelegate() != null) {
 			branchChoices = branchDelegate().branchChoicesForContext(d2wContext());
