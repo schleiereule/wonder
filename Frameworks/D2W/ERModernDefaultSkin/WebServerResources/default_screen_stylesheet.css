@@ -1562,7 +1562,28 @@ span span.Tooltip.HelpTooltip.PropertyHelpTooltip + a {
 	font-weight: bold;
 }
 
+.D2WPropertyDebugInfo, .DebugHelp table, .D2WPropertyDebugInfo th, .D2WPropertyDebugInfo td {
+	font-weight: normal;
+	padding: 4px;
+	color: black;
+	background-color: #eae9eb;
+}
+
+.D2WPropertyDebugInfoToolTip {
+	z-index: 100;
+}
+
+.D2WPropertyDebugInfoToolTip span {
+	position: absolute;
+}
+
+.D2WPropertyDebugInfoToolTip:hover table {
+	display: table;
+}
+
 .D2WPropertyDebugInfo {
+	position: relative;
+	display: none;
 	z-index: 100;
 	background-color: #ddd;
 }
@@ -1571,7 +1592,6 @@ span span.Tooltip.HelpTooltip.PropertyHelpTooltip + a {
 	display: none;
 }
 
-.D2WPropertyDebugInfo {}
 #ERD2WDebugFlags {
 	position: fixed;
 	bottom: 25px;
@@ -1587,3 +1607,4 @@ span span.Tooltip.HelpTooltip.PropertyHelpTooltip + a {
 	opacity: 0.6;
 	-moz-opacity:0.6;
 }
+
