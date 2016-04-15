@@ -126,7 +126,7 @@ TextField1: WOText {
 
 d2wKeyUC : AjaxUpdateContainer {
 	id = d2wKeyResultUC;
-	style = "max-height:190px;max-width:500px;overflow:auto;"
+	style = "max-height:190px;max-width:500px;overflow:auto;";
 }
 
 isKeyEmpty : ERXNonNullConditional {
