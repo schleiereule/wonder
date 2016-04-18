@@ -92,6 +92,9 @@ public class ERMDRemoveRelatedButton extends ERMDDeleteButton {
     	d2wContext().takeValueForKey(null, ERMDDeleteButton.Keys.objectPendingDeletion);
 
     	postDeleteNotification();
+        // remove the object from the D2WContext if necessary, to
+        // prevent issues with inheritance and to-many relationships
+        d2wContext().takeValueForKey(null, "object");
     	return result;
     }
     

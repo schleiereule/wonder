@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import org.apache.log4j.Logger;
-
 import com.webobjects.appserver.WOActionResults;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.directtoweb.ConfirmPageInterface;
@@ -50,9 +48,6 @@ public class ERMDDeleteButton extends ERMDActionButton {
 	
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-	private static final Logger log = Logger.getLogger(ERMDDeleteButton.class);
-	
 	public final static String DisplayGroupObjectDeleted = "DisplayGroupObjectDeleted";
 	
 	public interface Keys extends ERMDActionButton.Keys {
@@ -121,6 +116,8 @@ public class ERMDDeleteButton extends ERMDActionButton {
     	EOEnterpriseObject obj = (EOEnterpriseObject)d2wContext().valueForKey(Keys.objectPendingDeletion);
         EODataSource ds = dataSource();
         
+        // keep track of the GID of the object to be deleted
+        EOGlobalID globalID = obj.editingContext().globalIDForObject(obj);
         // check whether the relationship is marked "owns destination"
         boolean isOwnsDestination = false;
         if (ds != null && ds instanceof EODetailDataSource) {
@@ -134,8 +131,6 @@ public class ERMDDeleteButton extends ERMDActionButton {
     	    // with EODetailDatasource, calling deleteObject
     	    // will only remove the object from the relationship
     	    ds.deleteObject(object());
-    	    
-    	    EOGlobalID globalID = obj.editingContext().globalIDForObject(obj);
 
     	    // for "owns destination" relationships, the following would
     	    // fail as the object will already be marked as deleted in the
@@ -156,8 +151,9 @@ public class ERMDDeleteButton extends ERMDActionButton {
 
 	    	// remove the deleted object from the D2WContext if necessary,
 	    	// to prevent issues with inheritance and to-many relationships
-	    	EOEnterpriseObject object = (EOEnterpriseObject) d2wContext().valueForKey("object");
-	    	if (globalID != null && object != null && (object.editingContext() == null || globalID.equals(object.editingContext().globalIDForObject(object)))) {
+	    	EOEnterpriseObject contextObject = (EOEnterpriseObject) d2wContext().valueForKey("object");
+	    	if (contextObject.editingContext() == null || 
+	    	        globalID.equals(contextObject.editingContext().globalIDForObject(contextObject))) {
 	    	    d2wContext().takeValueForKey(null, "object");
 	    	}
 	    	d2wContext().takeValueForKey(null, Keys.objectPendingDeletion);
