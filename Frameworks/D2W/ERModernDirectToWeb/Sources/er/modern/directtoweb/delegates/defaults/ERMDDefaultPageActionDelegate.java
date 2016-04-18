@@ -16,7 +16,6 @@ import com.webobjects.eoaccess.EODatabaseDataSource;
 import com.webobjects.eoaccess.EOGeneralAdaptorException;
 import com.webobjects.eoaccess.EOUtilities;
 import com.webobjects.eocontrol.EOClassDescription;
-import com.webobjects.eocontrol.EODetailDataSource;
 import com.webobjects.eocontrol.EOEditingContext;
 import com.webobjects.eocontrol.EOEnterpriseObject;
 import com.webobjects.foundation.NSKeyValueCoding;
@@ -132,7 +131,10 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 				ec.unlock();
 			}
 		}
-		postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_SAVE_ACTION, c);
+		NSMutableDictionary<String, Object> userInfo = new NSMutableDictionary<String, Object>();
+		userInfo.put("pageConfiguration", c.valueForKey("pageConfiguration"));
+		userInfo.put("newObject", eo);
+		NSNotificationCenter.defaultCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_SAVE_ACTION, null, userInfo);
 		return nextPage;
 	}
 
@@ -145,7 +147,9 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 		if (ec != null && page.shouldRevertChanges()) {
 			ec.revert();
 		}
-		postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_CANCEL_EDIT_ACTION, c);
+		NSMutableDictionary<String, Object> userInfo = new NSMutableDictionary<String, Object>();
+		userInfo.put("pageConfiguration", c.valueForKey("pageConfiguration"));
+		NSNotificationCenter.defaultCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_CANCEL_EDIT_ACTION, null, userInfo);
 		return page.nextPage(false);
 	}
 
@@ -242,12 +246,6 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 			nextPage = page.nextPage();
 		}
 		return nextPage;
-	}
-
-	protected void postNotification(String notificationName, D2WContext d2wContext) {
-		NSMutableDictionary<String, Object> userInfo = new NSMutableDictionary<String, Object>();
-		userInfo.put("pageConfiguration", d2wContext.valueForKey("pageConfiguration"));
-		NSNotificationCenter.defaultCenter().postNotification(notificationName, null, userInfo);
 	}
 
 }
