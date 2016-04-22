@@ -129,29 +129,6 @@ public class ERMODInspectPage extends ERD2WInspectPageTemplate {
 		}
 	}
 
-	/**
-	 * Perform cancel action. Overridden to reset the task (i.e: if the original
-	 * page task was inspect, and it was switched to edit).
-	 */
-	@Override
-	public WOComponent cancelAction() {
-		resetTask();
-		return super.cancelAction();
-	}
-
-	/**
-	 * Perform the submitAction. Overridden to rest the task (i.e: if the
-	 * original page task was inspect, and it was switched to edit).
-	 */
-	@Override
-	public WOComponent submitAction() throws Throwable {
-		resetTask();
-		// NSLog.out.appendln("***ERMODInspectPage.submitAction: "
-		// + object().editingContext() + " - " +
-		// object().editingContext().parentObjectStore() +" ***");
-		return super.submitAction();
-	}
-
 	private void resetTask() {
 		if (_previousPageConfig != null)
 			d2wContext().takeValueForKey(_previousPageConfig, Keys.pageConfiguration);

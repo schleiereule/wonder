@@ -42,11 +42,6 @@ InspectPageRepetition: WOSwitchComponent {
 	object = object;
 }
 
-IsEditingConditional: WOConditional {
-	_unroll = true;
-	condition = isEditing;
-}
-
 IsNotEditingConditional: WOConditional {
 	_unroll = true;
 	condition = isEditing;
