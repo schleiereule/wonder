@@ -3,6 +3,20 @@ AboveDisplayPropertyKeys: ERD2WExtraDisplayPropertyKeysComponent {
 	extraPropertiesKey = "aboveDisplayPropertyKeys";
 }
 
+useFocus: WOConditional {
+	condition = d2wContext.useFocus;
+}
+
+IsEditing: WOKeyValueConditional {
+	key = "task";
+	value = "edit";
+}
+
+Script: WOJavaScript {
+	scriptString = tabScriptString;
+	hideInComment = true;
+}
+
 BelowDisplayPropertyKeys: ERD2WExtraDisplayPropertyKeysComponent {
 	localContext = d2wContext;
 	extraPropertiesKey = "belowDisplayPropertyKeys";
