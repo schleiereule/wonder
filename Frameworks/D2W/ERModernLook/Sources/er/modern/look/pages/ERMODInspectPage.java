@@ -34,6 +34,7 @@ import er.modern.directtoweb.ERMDNotificationNameRegistry;
  * @d2wKey saveButtonLabel
  * 
  * @author davidleber
+ * @author schleiereule
  */
 public class ERMODInspectPage extends ERD2WInspectPageTemplate {
 	/**
@@ -94,6 +95,11 @@ public class ERMODInspectPage extends ERD2WInspectPageTemplate {
 		}
 	}
 
+	/**
+	 * Prevent the update if the notification targets a different pageConfiguration
+	 * @param notification
+	 * @return
+	 */
 	private Boolean shouldHandleNotification(NSNotification notification) {
 		if (notification.userInfo() != null) {
 			Object no = notification.userInfo().valueForKey("pageConfiguration");
@@ -107,8 +113,9 @@ public class ERMODInspectPage extends ERD2WInspectPageTemplate {
 	}
 
 	/**
-	 * Perform the edit action. Overridden to use ajax behaviour if
-	 * useAjaxControlsWhenEmbedded is true
+	 * Perform the edit action. Overridden to support ajax behaviour. When
+	 * useAjaxControlsWhenEmbedded is true, then we will switch the behaviour of
+	 * this page to edit and update ajax update the form.
 	 */
 	@Override
 	public WOComponent editAction() {
@@ -129,6 +136,10 @@ public class ERMODInspectPage extends ERD2WInspectPageTemplate {
 		}
 	}
 
+	/**
+	 * Reset the behaviour of the page to it's original one (i.e: if it was
+	 * inspect that was switched to edit).
+	 */
 	private void resetTask() {
 		if (_previousPageConfig != null)
 			d2wContext().takeValueForKey(_previousPageConfig, Keys.pageConfiguration);
