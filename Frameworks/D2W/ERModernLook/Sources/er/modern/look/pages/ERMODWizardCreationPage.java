@@ -9,13 +9,19 @@ import com.webobjects.directtoweb.D2WContext;
 import com.webobjects.eoaccess.EOEntity;
 import com.webobjects.eocontrol.EOEnterpriseObject;
 import com.webobjects.foundation.NSMutableDictionary;
+import com.webobjects.foundation.NSNotification;
 import com.webobjects.foundation.NSNotificationCenter;
+import com.webobjects.foundation.NSSelector;
 
+import er.ajax.AjaxUpdateContainer;
 import er.directtoweb.pages.ERD2WWizardCreationPage;
 import er.directtoweb.pages.templates.ERD2WWizardCreationPageTemplate;
+import er.extensions.eof.ERXConstant;
 import er.extensions.eof.ERXEOControlUtilities;
 import er.extensions.eof.ERXGenericRecord;
 import er.extensions.foundation.ERXValueUtilities;
+import er.modern.directtoweb.ERMDNotificationNameRegistry;
+import er.modern.look.pages.ERMODInspectPage.Keys;
 
 /**
  * A wizard inspect/edit template. Can be used in-line, and supports ajax updates
@@ -33,6 +39,8 @@ import er.extensions.foundation.ERXValueUtilities;
  * @d2wKey useAjaxControlsWhenEmbedded
  * 
  * @author davidleber
+ * @author schleiereule
+ * 
  */
 public class ERMODWizardCreationPage extends ERD2WWizardCreationPageTemplate {
   /**
@@ -49,94 +57,94 @@ public class ERMODWizardCreationPage extends ERD2WWizardCreationPageTemplate {
 		public static final String idForMainContainer = "idForMainContainer";
 	}
 	
-	public boolean showCancelDialog;
-	
 	public ERMODWizardCreationPage(WOContext wocontext) {
 		super(wocontext);
 	}
 	
 	@Override
 	public void awake() {
+		NSNotificationCenter.defaultCenter().addObserver(this, new NSSelector<Void>("handleSaveNotification", ERXConstant.NotificationClassArray),
+				ERMDNotificationNameRegistry.BUTTON_PERFORMED_SAVE_ACTION, null);
+		NSNotificationCenter.defaultCenter().addObserver(this, new NSSelector<Void>("handleCancelEditNotification", ERXConstant.NotificationClassArray),
+				ERMDNotificationNameRegistry.BUTTON_PERFORMED_CANCEL_EDIT_ACTION, null);
+		NSNotificationCenter.defaultCenter().addObserver(this, new NSSelector<Void>("handleNextStepNotification", ERXConstant.NotificationClassArray),
+				ERMDNotificationNameRegistry.BUTTON_PERFORMED_NEXT_STEP_ACTION, null);
+		NSNotificationCenter.defaultCenter().addObserver(this, new NSSelector<Void>("handlePreviousStepNotification", ERXConstant.NotificationClassArray),
+				ERMDNotificationNameRegistry.BUTTON_PERFORMED_PREVIOUS_STEP_ACTION, null);
 		super.awake();
 		clearValidationFailed();
 	}
 	
-	
-	/**
-	 * Change to the previous step. Overridden to set _currentStep here instead of in appendToResponse 
-	 * so ajax requests work.
-	 */
 	@Override
-	@SuppressWarnings("unchecked")
-    public WOComponent previousStep() {
-        // if we had an error message and are going back, we don't want the message
-        // to show up on the previous page; the error message will reappear
-        // when the user gets back to the initial page
-        errorMessages = new NSMutableDictionary();
-        if (showPrevious() && _currentStep > 1) _currentStep--;
-        setCurrentTab(tabSectionsContents().objectAtIndex(_currentStep-1));
-        return null;
-    }
-	
-	/**
-	 * Change to the next step. Overridden to set _currentStep here instead of in appendToResponse 
-	 * so ajax requests work
-	 */
-	@Override
-    public WOComponent nextStep() {
-        // FIXME: This is no longer needed.  We now have validationKeys that will serve the same purpose.
-        NSNotificationCenter.defaultCenter().postNotification(ERD2WWizardCreationPage.WILL_GOTO_NEXT_PAGE, null);
-        if (errorMessages.count()==0 && _currentStep < tabSectionsContents().count())
-            _currentStep++;
-        
-        setCurrentTab(tabSectionsContents().objectAtIndex(_currentStep-1));
-        return null;
-    }
-	
-	/**
-	 * Perform the cancel action. Overridden to handle showing a cancel dialog in-line if 
-	 * useAjaxControlsWhenEmbedded is true.
-	 */
-	@Override
-	public WOComponent cancelAction() {
-		boolean useAjax = ERXValueUtilities.booleanValue(d2wContext().valueForKey(Keys.useAjaxControlsWhenEmbedded));
-		if (useAjax && showCancel()) {
-			if (_currentStep>1 && ERXEOControlUtilities.isNewObject(object())) { 
-				showCancelDialog = true;
-				return null;
-			} else {
-				return super.superCancelAction();
-			}
-		} else {
-			return super.cancelAction();
+	public void sleep() {
+		NSNotificationCenter.defaultCenter().removeObserver(this, ERMDNotificationNameRegistry.BUTTON_PERFORMED_SAVE_ACTION, null);
+		NSNotificationCenter.defaultCenter().removeObserver(this, ERMDNotificationNameRegistry.BUTTON_PERFORMED_CANCEL_EDIT_ACTION, null);
+		NSNotificationCenter.defaultCenter().removeObserver(this, ERMDNotificationNameRegistry.BUTTON_PERFORMED_NEXT_STEP_ACTION, null);
+		NSNotificationCenter.defaultCenter().removeObserver(this, ERMDNotificationNameRegistry.BUTTON_PERFORMED_PREVIOUS_STEP_ACTION, null);
+		super.sleep();
+	}
+
+	public void handleSaveNotification(NSNotification notification) {
+		if (shouldHandleNotification(notification)) {
+			boolean useAjax = ERXValueUtilities.booleanValue(d2wContext().valueForKey(Keys.useAjaxControlsWhenEmbedded));
+			if (useAjax)
+				AjaxUpdateContainer.safeUpdateContainerWithID((String) d2wContext().valueForKey("idForParentMainContainer"), context());
+		}
+	}
+
+	public void handleCancelEditNotification(NSNotification notification) {
+		if (shouldHandleNotification(notification)) {
+			boolean useAjax = ERXValueUtilities.booleanValue(d2wContext().valueForKey(Keys.useAjaxControlsWhenEmbedded));
+			if (useAjax)
+				AjaxUpdateContainer.safeUpdateContainerWithID((String) d2wContext().valueForKey("idForParentMainContainer"), context());
 		}
 	}
 	
-	/**
-	 * Action called when the cancel button is clicked.
-	 */
-	public WOComponent doCancelAction() {
-		showCancelDialog = false;
-		return super.superCancelAction();
+	public void handleNextStepNotification(NSNotification notification) {
+		if (shouldHandleNotification(notification)) {
+			boolean useAjax = ERXValueUtilities.booleanValue(d2wContext().valueForKey(Keys.useAjaxControlsWhenEmbedded));
+			if (useAjax)
+				AjaxUpdateContainer.safeUpdateContainerWithID((String) d2wContext().valueForKey("idForMainContainer"), context());
+		}
 	}
 	
+	public void handlePreviousStepNotification(NSNotification notification) {
+		if (shouldHandleNotification(notification)) {
+			boolean useAjax = ERXValueUtilities.booleanValue(d2wContext().valueForKey(Keys.useAjaxControlsWhenEmbedded));
+			if (useAjax)
+				AjaxUpdateContainer.safeUpdateContainerWithID((String) d2wContext().valueForKey("idForMainContainer"), context());
+		}
+	}
+
 	/**
-	 * Action called when the cancel dialog is dismissed.
+	 * Prevent the update if the notification targets a different pageConfiguration
+	 * @param notification
+	 * @return
 	 */
-	public WOActionResults dismissCancelDialogAction() {
-		showCancelDialog = false;
-		return null;
+	private Boolean shouldHandleNotification(NSNotification notification) {
+		if (notification.userInfo() != null) {
+			Object no = notification.userInfo().valueForKey("pageConfiguration");
+			if ((no != null) && (no instanceof String)) {
+				if (((String) d2wContext().valueForKey("pageConfiguration")).equalsIgnoreCase((String) no)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
-	/**
-	 * Show the cancel button. From parent: Should we show the cancel button? It's only visible 
-	 * when we have a nextPage set up. Overridden to allow us to show the cancel button if the 
-	 * page is embedded and shouldShowCancelButton is true.
-	 */
-	@Override
-    public boolean showCancel() {
-        return ((_nextPageDelegate != null || _nextPage != null) || d2wContext().valueForKey(Keys.parentPageConfiguration) != null) && shouldShowCancelButton();
-    }
+	
+	// previousStep() {
+    // if we had an error message and are going back, we don't want the message
+    // to show up on the previous page; the error message will reappear
+    // when the user gets back to the initial page
+    // errorMessages = new NSMutableDictionary();
+	
+	// nextStep() {
+    // FIXME: This is no longer needed.  We now have validationKeys that will serve the same purpose.
+    // NSNotificationCenter.defaultCenter().postNotification(ERD2WWizardCreationPage.WILL_GOTO_NEXT_PAGE, null);
+    // if (errorMessages.count()==0 && _currentStep < tabSectionsContents().count())
+	
 	
 	/**
 	 * Sets the page object. Overridden to reset the current step if the object changes
@@ -149,33 +157,6 @@ public class ERMODWizardCreationPage extends ERD2WWizardCreationPageTemplate {
 		}
 		super.setObject(eoenterpriseobject);
 	}
-
-	/**
-	 * Return the ajax update container id for the cancel button.
-	 */
-	public String cancelUpdateContainerID() {
-		Object result = null;
-		if (!showCancelDialog)
-			result = d2wContext().valueForKey(Keys.idForParentMainContainer);
-		else 
-			result = d2wContext().valueForKey(Keys.idForMainContainer);
-		return (String)result;
-	}
-	
-	/**
-	 * Performs submit action. Overridden to reset the nested validation setting on the
-	 * object.
-	 */
-	// FIXME - Is this needed here? davidleber
-	@Override
-	public WOComponent submitAction() throws Throwable {
-		WOComponent result = super.submitAction();
-		if (object() instanceof ERXGenericRecord) {
-			((ERXGenericRecord)object()).setValidatedWhenNested(true);
-		}
-		return result;
-	}
-	
 	
 	// What follows is a hack.
 	// I am not proud of it, but there it is.
