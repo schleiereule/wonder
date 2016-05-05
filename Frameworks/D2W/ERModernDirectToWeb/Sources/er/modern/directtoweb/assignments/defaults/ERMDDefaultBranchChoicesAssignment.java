@@ -28,15 +28,17 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public static final NSArray<String> toManyRelationshipDependentKeys = 
-			new NSArray<String>("task", "entity", "parentRelationship", "frame", "isEntityEditable", "readOnly", "shouldShowQueryRelatedButton");
-	public static final NSArray<String> toOneRelationshipDependentKeys = 
-			new NSArray<String>("task", "entity", "parentRelationship", "frame", "isEntityDeletable", "isEntityEditable", "isEntityInspectable", "readOnly", "object.canDelete", "object.canUpdate", "object.isNonNull");
+	public static final NSArray<String> editControllerDependentKeys = new NSArray<String>("task", "subTask", "tabCount", "tabIndex");
+	public static final NSArray<String> toManyRelationshipDependentKeys = new NSArray<String>("task", "entity", "parentRelationship", "frame", "isEntityEditable", "readOnly",
+			"shouldShowQueryRelatedButton");
+	public static final NSArray<String> toOneRelationshipDependentKeys = new NSArray<String>("task", "entity", "parentRelationship", "frame", "isEntityDeletable", "isEntityEditable",
+			"isEntityInspectable", "readOnly", "object.canDelete", "object.canUpdate", "object.isNonNull");
 
 	public static final NSDictionary<String, NSArray<String>> dependentKeys;
 
 	static {
 		NSMutableDictionary<String, NSArray<String>> keys = new NSMutableDictionary<String, NSArray<String>>();
+		keys.setObjectForKey(editControllerDependentKeys, "editControllerChoices");
 		keys.setObjectForKey(toManyRelationshipDependentKeys, "toManyControllerChoices");
 		keys.setObjectForKey(toOneRelationshipDependentKeys, "toOneControllerChoices");
 		dependentKeys = keys.immutableClone();
@@ -58,23 +60,23 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 	public NSArray<String> dependentKeys(String keyPath) {
 		return dependentKeys.objectForKey(keyPath);
 	}
-	
+
 	public Object editControllerChoices(D2WContext c) {
-		String subTask = (String)c.valueForKey("subTask");
-		if("wizard".equals(subTask)) {
-			Integer count = (Integer)c.valueForKey("tabCount");
-			Integer index = (Integer)c.valueForKey("tabIndex");
-			if(count != null && index != null && count.intValue() > 1) {
-				if(index == 0) {
-					return new NSArray<String>("_cancelEdit","_nextStep");
-				} else if(index.intValue() + 1 == count.intValue()) {
-					return new NSArray<String>("_cancelEdit","_prevStep","_save");
+		String subTask = (String) c.valueForKey("subTask");
+		if ("wizard".equals(subTask)) {
+			Integer count = (Integer) c.valueForKey("tabCount");
+			Integer index = (Integer) c.valueForKey("tabIndex");
+			if (count != null && index != null && count.intValue() > 1) {
+				if (index == 0) {
+					return new NSArray<String>("_cancelEdit", "_nextStep");
+				} else if (index.intValue() + 1 == count.intValue()) {
+					return new NSArray<String>("_cancelEdit", "_prevStep", "_save");
 				} else {
-					return new NSArray<String>("_cancelEdit","_prevStep","_nextStep");
+					return new NSArray<String>("_cancelEdit", "_prevStep", "_nextStep");
 				}
 			}
 		}
-		return new NSArray<String>("_cancelEdit","_save");
+		return new NSArray<String>("_cancelEdit", "_save");
 	}
 
 	public Object toManyControllerChoices(D2WContext c) {
@@ -84,7 +86,7 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 		boolean isEntityEditable = ERXValueUtilities.booleanValue(c.valueForKey("isEntityEditable"));
 		boolean isEntityWritable = !ERXValueUtilities.booleanValue(c.valueForKey("readOnly"));
 		boolean isConcrete = !e.isAbstractEntity();
-		
+
 		boolean isEntityQueryable = ERXValueUtilities.booleanValue(c.valueForKey("shouldShowQueryRelatedButton"));
 
 		if (!c.frame()) {
@@ -112,7 +114,7 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 		boolean isEntityInspectable = ERXValueUtilities.booleanValue(c.valueForKey("isEntityInspectable"));
 		boolean canUpdate = eo instanceof ERXGuardedObjectInterface ? ((ERXGuardedObjectInterface) eo).canUpdate() : unguarded;
 		boolean canDelete = eo instanceof ERXGuardedObjectInterface ? ((ERXGuardedObjectInterface) eo).canDelete() : unguarded;
-		boolean isPendingDeletion = ERXEOControlUtilities.eoEquals(eo, (EOEnterpriseObject)c.valueForKey(Keys.objectPendingDeletion));
+		boolean isPendingDeletion = ERXEOControlUtilities.eoEquals(eo, (EOEnterpriseObject) c.valueForKey(Keys.objectPendingDeletion));
 		boolean isEntityWritable = !ERXValueUtilities.booleanValue(c.valueForKey("readOnly"));
 		boolean isConcrete = !e.isAbstractEntity();
 
@@ -139,18 +141,18 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 		}
 		return choices;
 	}
-	
+
 	public Object editListControllerChoices(D2WContext c) {
 		NSMutableArray<String> choices = new NSMutableArray<String>();
 		EOEnterpriseObject eo = (EOEnterpriseObject) c.valueForKey("object");
 		choices.add("_editListRelated");
 		return choices;
 	}
-	
+
 	private Class<?> classForEntity(EOEntity entity) {
 		try {
 			return Class.forName(entity.className());
-		} catch(ClassNotFoundException e) {
+		} catch (ClassNotFoundException e) {
 			throw NSForwardException._runtimeExceptionForThrowable(e);
 		}
 	}

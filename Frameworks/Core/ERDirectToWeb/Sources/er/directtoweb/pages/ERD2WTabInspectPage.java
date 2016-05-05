@@ -107,39 +107,6 @@ public class ERD2WTabInspectPage extends ERD2WInspectPage implements ERDTabEditP
         }
         return url;
     }
-
-	/**
-     * <p>Constructs a JavaScript string that will give a particular field focus when the page is loaded.  If the key
-     * <code>firstResponderKey</code> from the d2wContext resolves, the script will attempt to focus on the form field
-     * belonging to the property key named by the <code>firstResponderKey</code>.  Otherwise, the script will just focus
-     * on the first field in the form.</p>
-     *
-     * <p>Note that the key <code>useFocus</code> must resolve to <code>true</code> in order for the script to be
-     * generated.</p>
-     * @return a JavaScript string.
-     */
-    @Override
-    public String tabScriptString() {
-		if (d2wContext().valueForKey(Keys.firstResponderKey) != null) {
-            return scriptForFirstResponderActivation();
-        } else {
-            String formName = ERXWOForm.formName(context(), "EditForm");
-            String result = "var focusedElement = document.querySelector('form[name=\"" + formName + "\"] input:focus');"
-                    // only continue when no form element is focused, yet
-                    + "if (focusedElement == undefined) {"
-                    + "    var focusableElements = document.querySelectorAll('form[name=\"" + formName + "\"] input');"
-                    + "    var qualifiedTypes = ['text', 'textarea'];"
-                    + "    for (i = 0; i < focusableElements.length; i++) { "
-                    + "        var anElement = focusableElements[i];"
-                    + "        if (qualifiedTypes.include(anElement.type.toLowerCase())) {"
-                    + "            anElement.focus();"
-                    + "            break;"
-                    + "        }"
-                    + "    }"
-                    + "}";
-            return result;
-        }
-    }
  
     private boolean d2wContextValueForKey(String key, boolean defaultValue) {
         return ERXValueUtilities.booleanValueWithDefault(d2wContext().valueForKey(key), defaultValue);

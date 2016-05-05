@@ -18,15 +18,20 @@ import com.webobjects.eoaccess.EOUtilities;
 import com.webobjects.eocontrol.EOClassDescription;
 import com.webobjects.eocontrol.EOEditingContext;
 import com.webobjects.eocontrol.EOEnterpriseObject;
+import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSKeyValueCoding;
 import com.webobjects.foundation.NSMutableDictionary;
 import com.webobjects.foundation.NSNotificationCenter;
 import com.webobjects.foundation.NSValidation;
 
+import er.ajax.AjaxUpdateContainer;
+import er.directtoweb.ERD2WContainer;
 import er.directtoweb.delegates.ERDBranchDelegate;
 import er.directtoweb.delegates.ERDBranchInterface;
 import er.directtoweb.pages.ERD2WInspectPage;
 import er.directtoweb.pages.ERD2WPage;
+import er.directtoweb.pages.ERD2WWizardCreationPage;
+import er.directtoweb.pages.templates.ERD2WWizardCreationPageTemplate;
 import er.extensions.eof.ERXEC;
 import er.extensions.eof.ERXEOAccessUtilities;
 import er.extensions.eof.ERXGenericRecord;
@@ -60,6 +65,38 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 
 	public boolean shouldRevertUponSaveFailure(D2WContext c) {
 		return ERXValueUtilities.booleanValueWithDefault(c.valueForKey("shouldRevertUponSaveFailure"), false);
+	}
+	
+	@D2WDelegate(requiresFormSubmit = true)
+	public void _nextStep(WOComponent sender) {
+		NSNotificationCenter.defaultCenter().postNotification(ERD2WWizardCreationPage.WILL_GOTO_NEXT_PAGE, null);
+		ERD2WWizardCreationPageTemplate page = ERD2WUtilities.enclosingComponentOfClass(sender, ERD2WWizardCreationPageTemplate.class);
+		NSArray<ERD2WContainer> tabs = page.tabSectionsContents();
+		ERD2WContainer tab = page.currentTab();
+		int index = tabs.indexOf(tab);
+		if(page.errorMessages().isEmpty() && index + 1 < tabs.count()) {
+			ERD2WContainer next = tabs.objectAtIndex(index + 1);
+			page.setCurrentTab(next);
+		}
+		NSMutableDictionary<String, Object> userInfo = new NSMutableDictionary<String, Object>();
+		userInfo.put("pageConfiguration", d2wContext(sender).valueForKey("pageConfiguration"));
+		NSNotificationCenter.defaultCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_NEXT_STEP_ACTION, null, userInfo);
+	}
+	
+	@D2WDelegate(requiresFormSubmit = true)
+	public void _prevStep(WOComponent sender) {
+		ERD2WWizardCreationPageTemplate page = ERD2WUtilities.enclosingComponentOfClass(sender, ERD2WWizardCreationPageTemplate.class);
+		NSArray<ERD2WContainer> tabs = page.tabSectionsContents();
+		ERD2WContainer tab = page.currentTab();
+		int index = tabs.indexOf(tab);
+		if(index != 0) {
+			page.clearValidationFailed();
+			ERD2WContainer prev = tabs.objectAtIndex(index - 1);
+			page.setCurrentTab(prev);
+		}
+		NSMutableDictionary<String, Object> userInfo = new NSMutableDictionary<String, Object>();
+		userInfo.put("pageConfiguration", d2wContext(sender).valueForKey("pageConfiguration"));
+		NSNotificationCenter.defaultCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_PREVIOUS_STEP_ACTION, null, userInfo);
 	}
 
 	@D2WDelegate(requiresFormSubmit = true)

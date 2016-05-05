@@ -27,6 +27,7 @@ import er.directtoweb.ERD2WFactory;
 import er.directtoweb.interfaces.ERDEditPageInterface;
 import er.directtoweb.interfaces.ERDFollowPageInterface;
 import er.directtoweb.interfaces.ERDObjectSaverInterface;
+import er.directtoweb.pages.ERD2WPage.Keys;
 import er.extensions.appserver.ERXComponentActionRedirector;
 import er.extensions.components._private.ERXWOForm;
 import er.extensions.eof.ERXEOAccessUtilities;
@@ -342,16 +343,24 @@ public class ERD2WInspectPage extends ERD2WPage implements InspectPageInterface,
      */
     public String tabScriptString() {
 		if (d2wContext().valueForKey(Keys.firstResponderKey) != null) {
-			return scriptForFirstResponderActivation();
-		} else {
-			String result="";
-			String formName = ERXWOForm.formName(context(), "EditForm");
-			if (formName!=null) {
-				result="var elem = document."+formName+".elements[0];"+
-				"if (elem!=null && (elem.type == 'text' || elem.type ==  'area')) elem.focus();";
-			}
-			return result;
-		}
+            return scriptForFirstResponderActivation();
+        } else {
+            String formName = ERXWOForm.formName(context(), "EditForm");
+            String result = "var focusedElement = document.querySelector('form[name=\"" + formName + "\"] input:focus');"
+                    // only continue when no form element is focused, yet
+                    + "if (focusedElement == undefined) {"
+                    + "    var focusableElements = document.querySelectorAll('form[name=\"" + formName + "\"] input');"
+                    + "    var qualifiedTypes = ['text', 'textarea'];"
+                    + "    for (i = 0; i < focusableElements.length; i++) { "
+                    + "        var anElement = focusableElements[i];"
+                    + "        if (qualifiedTypes.include(anElement.type.toLowerCase())) {"
+                    + "            anElement.focus();"
+                    + "            break;"
+                    + "        }"
+                    + "    }"
+                    + "}";
+            return result;
+        }
     }
 
 	/**

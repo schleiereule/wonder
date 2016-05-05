@@ -3,19 +3,23 @@ AboveDisplayPropertyKeys: ERD2WExtraDisplayPropertyKeysComponent {
 	extraPropertiesKey = "aboveDisplayPropertyKeys";
 }
 
+useFocus: WOConditional {
+	condition = d2wContext.useFocus;
+}
+
+IsEditing: WOKeyValueConditional {
+	key = "task";
+	value = "edit";
+}
+
+Script: WOJavaScript {
+	scriptString = tabScriptString;
+	hideInComment = true;
+}
+
 BelowDisplayPropertyKeys: ERD2WExtraDisplayPropertyKeysComponent {
 	localContext = d2wContext;
 	extraPropertiesKey = "belowDisplayPropertyKeys";
-}
-
-CancelButton: CCSmartAjaxButton {
-	alt = "Reverts your changes";
-	value = d2wContext.cancelButtonLabel;
-	action = cancelAction;
-	dontSubmitForm = true;
-	class = "Button PageButton CancelPageButton";
-	useAjax = d2wContext.useAjaxControlsWhenEmbedded;
-	updateContainerID = d2wContext.idForParentMainContainer;
 }
 
 SecondaryActionBlock: ERMODSecondaryActionButtons {
@@ -38,13 +42,8 @@ RequiredWrapper : ERMODRequiredWrapper {
 
 InspectPageRepetition: WOSwitchComponent {
 	WOComponentName = d2wContext.repetitionComponentName;
-	d2wContext = localContext;
+	d2wContext = localContext; //VALID
 	object = object;
-}
-
-IsEditingConditional: WOConditional {
-	_unroll = true;
-	condition = isEditing;
 }
 
 IsNotEditingConditional: WOConditional {
@@ -74,15 +73,6 @@ ReturnButton: CCSmartAjaxButton {
 
 ShowCancel: WOConditional {
 	condition = showCancel;
-}
-
-SubmitChanges: CCSmartAjaxButton {
-	action = submitAction;
-	alt = "Saves your changes";
-	value = d2wContext.saveButtonLabel;
-	class = "Button PageButton SubmitPageButton";
-	useAjax = d2wContext.useAjaxControlsWhenEmbedded;
-    updateContainerID = d2wContext.idForParentMainContainer;
 }
 
 TopActionBlock : WOGenericContainer {
