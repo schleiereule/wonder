@@ -1,7 +1,9 @@
 package er.modern.directtoweb.components;
 
 import com.webobjects.appserver.WOContext;
+import com.webobjects.appserver.WORequest;
 import com.webobjects.directtoweb.D2WUtils;
+import com.webobjects.foundation.NSValidation;
 
 import er.coolcomponents.CCDatePicker;
 import er.directtoweb.components.ERDCustomEditComponent;
@@ -189,5 +191,17 @@ public class ERMDDatePicker extends ERDCustomEditComponent {
 	 */
 	public Boolean hideControl() {
 		return ERXValueUtilities.BooleanValueWithDefault(valueForBinding("datePickerHideControl"), null);
+	}
+	
+	@Override
+	public void takeValuesFromRequest(WORequest request, WOContext context) {
+		super.takeValuesFromRequest(request, context);
+		try {
+			object().validateTakeValueForKeyPath(objectPropertyValue(), key());
+		}catch (NSValidation.ValidationException v) {
+            parent().validationFailedWithException(v,objectPropertyValue(),key());
+        } catch(Exception e) {
+            parent().validationFailedWithException(e,objectPropertyValue(),key());           
+        }
 	}
 }
