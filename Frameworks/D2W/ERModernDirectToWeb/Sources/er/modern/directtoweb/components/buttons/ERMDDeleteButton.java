@@ -154,7 +154,7 @@ public class ERMDDeleteButton extends ERMDActionButton {
 	    	}
 	    	d2wContext().takeValueForKey(null, Keys.objectPendingDeletion);
 
-	    	postDeleteNotification();
+	    	postDeleteNotification(obj);
     	} catch(NSValidation.ValidationException e) {
     		parent().validationFailedWithException(e, e.object(), e.key());
     	}
@@ -175,8 +175,7 @@ public class ERMDDeleteButton extends ERMDActionButton {
     /**
      * Utility method to post the delete notification to the parent component
      */
-    public void postDeleteNotification() {
-    	Object obj = parentD2WPage();
+    public void postDeleteNotification(EOEnterpriseObject obj) {
     	String OBJECT_KEY = "object";
     	NSMutableDictionary<String, Object> userInfo = new NSMutableDictionary<String, Object>(obj, OBJECT_KEY);
 		if (dataSource() instanceof EODetailDataSource) {
