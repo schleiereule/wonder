@@ -169,7 +169,15 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 		else
 			return true;
 	}
-
+	
+	// Hack for ERMODWizardCreationPage because the next/previous buttons must use an AjaxSubmitButton
+	public Boolean useAjaxSubmitButton() {
+		if ((branchButtonID().startsWith("_nextStep")) || (branchButtonID().startsWith("_prevStep")))
+			return true;
+		else
+			return false;
+	}
+	
 	/**
 	 * Calculates the branch choices for the current page. This method is just a
 	 * cover for calling the method <code>branchChoicesForContext</code> on the

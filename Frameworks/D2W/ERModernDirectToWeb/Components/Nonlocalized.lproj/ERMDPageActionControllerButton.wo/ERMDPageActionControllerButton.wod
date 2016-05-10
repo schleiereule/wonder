@@ -4,6 +4,15 @@ BranchButtonRepetition: WORepetition {
 	checkHashCodes = false;
 }
 
+UseAjaxSubmitButton : WOConditional {
+	condition = useAjaxSubmitButton;
+}
+
+NotUseAjaxSubmitButton : WOConditional {
+	condition = useAjaxSubmitButton;
+	negate = true;
+}
+
 BranchButton : CCSmartAjaxButton {
 	alt = branchButtonAlt;
 	action = performAction;
@@ -12,6 +21,18 @@ BranchButton : CCSmartAjaxButton {
 	useAjax = d2wContext.useAjaxControlsWhenEmbedded;
 	updateContainerID = d2wContext.idForMainContainer;
 	dontSubmitForm = dontSubmitForm;
+}
+
+BranchButton2 : AjaxSubmitButton {
+	alt = branchButtonAlt;
+	button = false;
+	action = performAction;
+	class = buttonCssClass;
+	updateContainerID = d2wContext.idForMainContainer;
+}
+
+BranchButton2Label : WOString {
+	value = branchButtonLabel;
 }
 
 HasChoices: WOConditional {
