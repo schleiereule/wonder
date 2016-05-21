@@ -80,6 +80,7 @@ public class ERMDRemoveRelatedButton extends ERMDDeleteButton {
      */
     public WOActionResults removeAction() {
     	WOActionResults result = null;
+    	EOEnterpriseObject deletedObject = object();
     	EOGlobalID globalID = object().editingContext().globalIDForObject(object());
     	dataSource().deleteObject(object());
 
@@ -90,8 +91,8 @@ public class ERMDRemoveRelatedButton extends ERMDDeleteButton {
             d2wContext().takeValueForKey(null, "object");
     	}
     	d2wContext().takeValueForKey(null, ERMDDeleteButton.Keys.objectPendingDeletion);
-
-    	postDeleteNotification(object());
+    	// TODO post remove notification
+    	postDeleteNotification(deletedObject);
         // remove the object from the D2WContext if necessary, to
         // prevent issues with inheritance and to-many relationships
         d2wContext().takeValueForKey(null, "object");
