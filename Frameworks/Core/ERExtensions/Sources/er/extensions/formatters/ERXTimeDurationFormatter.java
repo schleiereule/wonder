@@ -5,6 +5,8 @@ import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.concurrent.TimeUnit;
 
+import er.extensions.localization.ERXLocalizer;
+
 
 
 /**
@@ -36,7 +38,14 @@ public class ERXTimeDurationFormatter extends NumberFormat {
 	private final boolean _showLargestUnitOnly;
 	private final boolean _omitSecondsPart;
 	
+	private ERXLocalizer _localizer;
 	
+	ERXLocalizer localizer() {
+		if (_localizer == null) {
+			_localizer = ERXLocalizer.currentLocalizer();
+		}
+		return _localizer;
+	}
 	
 	/**
 	 * Defaults to TimeUnit.SECONDS, showing all time units and showing seconds part of the time description.
@@ -93,11 +102,12 @@ public class ERXTimeDurationFormatter extends NumberFormat {
 
 		if (value == 0) {
 			StringBuilder b = new StringBuilder();
-			b.append("less than 1 ");
+			b.append(localizer().localizedStringForKeyWithDefault("ERXTimeDurationFormatter.lessThanOne"));
+			b.append(" ");
 			if (omitSecondsPart) {
-				b.append("minute");
+				b.append(localizer().localizedStringForKeyWithDefault("ERXTimeDurationFormatter.minute"));
 			} else {
-				b.append("second");
+				b.append(localizer().localizedStringForKeyWithDefault("ERXTimeDurationFormatter.second"));
 			} //~ if (omitSecondsPart)
 			return b.toString();
 		}
@@ -123,9 +133,11 @@ public class ERXTimeDurationFormatter extends NumberFormat {
 		if (value > 0) {
 			b.append(value);
 			if (value > 1) {
-				b.append(" days");
+				b.append(" ");
+				b.append(localizer().localizedStringForKeyWithDefault("ERXTimeDurationFormatter.days"));
 			} else {
-				b.append(" day");
+				b.append(" ");
+				b.append(localizer().localizedStringForKeyWithDefault("ERXTimeDurationFormatter.day"));
 			} //~ if (value > 1)
 			if (showLargestUnitOnly) shouldStopAddingComponents = true;
 	
@@ -137,9 +149,11 @@ public class ERXTimeDurationFormatter extends NumberFormat {
 			}
 			b.append(hoursPart);
 			if (hoursPart > 1) {
-				b.append(" hours");
+				b.append(" ");
+				b.append(localizer().localizedStringForKeyWithDefault("ERXTimeDurationFormatter.hours"));
 			} else {
-				b.append(" hour");
+				b.append(" ");
+				b.append(localizer().localizedStringForKeyWithDefault("ERXTimeDurationFormatter.hour"));
 			} //~ if (hoursPart > 1)
 			if (showLargestUnitOnly) shouldStopAddingComponents = true;
 			
@@ -151,9 +165,11 @@ public class ERXTimeDurationFormatter extends NumberFormat {
 			}
 			b.append(minutesPart);
 			if (minutesPart > 1) {
-				b.append(" minutes");
+				b.append(" ");
+				b.append(localizer().localizedStringForKeyWithDefault("ERXTimeDurationFormatter.minutes"));
 			} else {
-				b.append(" minute");
+				b.append(" ");
+				b.append(localizer().localizedStringForKeyWithDefault("ERXTimeDurationFormatter.minute"));
 			} //~ if (minutesPart > 1)
 			if (showLargestUnitOnly) shouldStopAddingComponents = true;
 		}
@@ -164,9 +180,11 @@ public class ERXTimeDurationFormatter extends NumberFormat {
 			}
 			b.append(secondsPart);
 			if (secondsPart > 1) {
-				b.append(" seconds");
+				b.append(" ");
+				b.append(localizer().localizedStringForKeyWithDefault("ERXTimeDurationFormatter.seconds"));
 			} else {
-				b.append(" second");
+				b.append(" ");
+				b.append(localizer().localizedStringForKeyWithDefault("ERXTimeDurationFormatter.second"));
 			} //~ if (secondsPart > 1)
 			if (showLargestUnitOnly) shouldStopAddingComponents = true;
 		}
