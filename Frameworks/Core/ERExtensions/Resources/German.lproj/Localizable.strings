@@ -15,4 +15,13 @@
 	"ERXFlickrBatchNavigation.page" = "pro Seite";
 	"ERXFlickrBatchNavigation.show" = "Zeige: ";
 	"ERXFlickrBatchNavigation.all" = "Alle";
+	"ERXTimeDurationFormatter.lessThanOne" = "weniger als eine";
+	"ERXTimeDurationFormatter.second" = "Sekunde";
+	"ERXTimeDurationFormatter.seconds" = "Sekunden";
+	"ERXTimeDurationFormatter.minute" = "Minute";
+	"ERXTimeDurationFormatter.minutes" = "Minuten";
+	"ERXTimeDurationFormatter.hour" = "Stunde";
+	"ERXTimeDurationFormatter.hours" = "Stunden";
+	"ERXTimeDurationFormatter.day" = "Tag";
+	"ERXTimeDurationFormatter.days" = "Tage";
 }
