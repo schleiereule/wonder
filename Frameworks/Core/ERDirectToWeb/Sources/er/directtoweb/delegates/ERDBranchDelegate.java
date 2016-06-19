@@ -155,7 +155,21 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 		if (label == null) {
 			label = ERXLocalizer.currentLocalizer().localizedDisplayNameForKey(BRANCH_PREFIX, method);
 		}
-		return branchChoiceDictionary(method, label, null, true);
+		String group = ERXProperties.stringForKey("er.directtoweb.delegates.ERDBranchDelegate.defaultGroup");
+		boolean requiresFormSubmit = true;
+		try {
+			Method m = getClass().getMethod(method, new Class[] { WOComponent.class });
+			if (m.isAnnotationPresent(D2WDelegate.class)) {
+				D2WDelegate info = m.getAnnotation(D2WDelegate.class);
+				group = info.group();
+				requiresFormSubmit = info.requiresFormSubmit();
+			}
+		} catch (NoSuchMethodException e) {
+			log.error("Caught no such method exception while calculating the branch choices for context: " + this + " exception: " + e.getMessage());
+		} catch (SecurityException e) {
+			log.error("Caught security exception while calculating the branch choices for context: " + this + " exception: " + e.getMessage());
+		}
+		return branchChoiceDictionary(method, label, group, requiresFormSubmit);
 	}
 
 	/**
