@@ -9,7 +9,12 @@
         <webobject name = "ShowAsList">
           <ul class = "ERDControllerButtonFlyOverList">
             <webobject name = "Choices">
-              <li><webobject name = "ChoiceLink" /></li>
+              <webobject name = "ShowNoGroupSeparator">
+                <li><webobject name = "ChoiceLink" /></li>
+              </webobject>
+              <webobject name = "ShowGroupSeparator">
+                <li class="LastGroupEntry"><webobject name = "ChoiceLink" /></li>
+              </webobject>
             </webobject>
           </ul>
         </webobject>

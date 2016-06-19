@@ -58,3 +58,12 @@ ShowAsButtons: WOConditional {
 ShowAsList: WOConditional {
 	condition = true;
 }
+
+ShowGroupSeparator: WOConditional {
+	condition = isLastGroupEntry;
+}
+
+ShowNoGroupSeparator: WOConditional {
+	condition = isLastGroupEntry;
+	negate = true;
+}

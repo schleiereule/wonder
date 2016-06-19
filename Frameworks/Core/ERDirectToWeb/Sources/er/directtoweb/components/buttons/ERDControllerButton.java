@@ -43,6 +43,18 @@ public class ERDControllerButton extends ERDActionButton implements ERDBranchInt
         return "buttonList".equals(valueForBinding("controllerButtonUIStyle"));
     }
     
+    public boolean isLastGroupEntry() {
+    	if (branch == branchChoices.lastObject())
+    		return false;
+    	int index = branchChoices.indexOfObject(branch);
+    	String group = (String) branch.objectForKey("branchGroup");
+    	NSDictionary nextBranch = (NSDictionary) branchChoices.get(index + 1);
+    	String nextGroup = (String) nextBranch.objectForKey("branchGroup");
+    	if (group.equalsIgnoreCase(nextGroup))
+    		return false;
+    	return true;
+    }
+    
     public String cssForChoice() {
     	String css = (String) branch.objectForKey("branchClass");
     	if(css == null) {
