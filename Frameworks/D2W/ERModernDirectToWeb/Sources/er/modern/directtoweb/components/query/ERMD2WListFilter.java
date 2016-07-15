@@ -4,7 +4,6 @@ import com.webobjects.appserver.WOActionResults;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.appserver.WOResponse;
 import com.webobjects.eoaccess.EODatabaseDataSource;
-import com.webobjects.eocontrol.EOArrayDataSource;
 import com.webobjects.eocontrol.EODataSource;
 import com.webobjects.eocontrol.EOQualifier;
 import com.webobjects.foundation.NSArray;
