@@ -1369,6 +1369,12 @@ div.RtActionCell li {
 	z-index: 100;
 }
 
+/* adapt position when used in relationship editing component */
+.InspectAttrVal .ListFilter {
+	top: -5px;
+	padding: 5px 50px;
+}
+
 .ListFilter .ListFilterSearch  {
 	font-size: 16px;
 	display: inline-block;
@@ -1377,6 +1383,11 @@ div.RtActionCell li {
 
 .ListFilter .ListFilterSearch input {
 	width: 100%;
+}
+
+/* apply lighter border when used in relationship editing component */
+.ListFilter .ListFilterSearch input {
+	border: 1px solid #aaa;
 }
 
 .ListFilter .ListFilterChoices {
