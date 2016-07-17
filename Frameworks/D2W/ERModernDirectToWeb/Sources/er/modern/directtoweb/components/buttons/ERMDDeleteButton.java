@@ -130,7 +130,7 @@ public class ERMDDeleteButton extends ERMDActionButton {
     	try {
     		// with EODetailDatasource, calling deleteObject
     	    // will only remove the object from the relationship
-    	    ds.deleteObject(object());
+    		if (ds != null) ds.deleteObject(object());
     	    
     	    // for "owns destination" relationships, the following would
     	    // fail as the object will already be marked as deleted in the
