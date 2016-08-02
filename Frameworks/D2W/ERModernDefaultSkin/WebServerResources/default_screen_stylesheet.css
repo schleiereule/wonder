@@ -579,6 +579,7 @@ ul.L2WithChildren li.Nav2Selected {
 }
 .ShowNestedActionCell a {
 	padding: 0.5em;
+	width: 18px;
 }
 
 .EmbeddedObjTable .RtActionCell,

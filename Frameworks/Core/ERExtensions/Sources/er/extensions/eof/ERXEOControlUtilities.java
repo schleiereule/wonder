@@ -2,7 +2,8 @@ package er.extensions.eof;
 
 import java.util.Enumeration;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.webobjects.eoaccess.EOAdaptorChannel;
 import com.webobjects.eoaccess.EOAttribute;
@@ -59,6 +60,8 @@ import er.extensions.eof.ERXEOAccessUtilities.DatabaseContextOperation;
 import er.extensions.foundation.ERXArrayUtilities;
 import er.extensions.foundation.ERXDictionaryUtilities;
 import er.extensions.foundation.ERXKeyValueCodingUtilities;
+import er.extensions.foundation.ERXStringUtilities;
+import er.extensions.foundation.UUIDUtilities;
 import er.extensions.jdbc.ERXSQLHelper;
 import er.extensions.validation.ERXValidationException;
 import er.extensions.validation.ERXValidationFactory;
@@ -70,10 +73,7 @@ import er.extensions.validation.ERXValidationFactory;
  * EOControl provides infrastructure for creating and managing enterprise objects.
  */
 public class ERXEOControlUtilities {
-
-    /** logging support */
-    public static final Logger log = Logger.getLogger(ERXEOControlUtilities.class);
-
+    private static final Logger log = LoggerFactory.getLogger(ERXEOControlUtilities.class);
 
     /**
      * Provides the same functionality as the equivalent method
@@ -314,8 +314,7 @@ public class ERXEOControlUtilities {
     public static EOEnterpriseObject createAndInsertObject(EOEditingContext editingContext,
                                                            String entityName,
                                                            NSDictionary objectInfo) {
-        if (log.isDebugEnabled())
-            log.debug("Creating object of type: " + entityName);
+        log.debug("Creating object of type: {}", entityName);
         EOClassDescription cd=EOClassDescription.classDescriptionForEntityName(entityName);
         if (cd==null)
             throw new RuntimeException("Could not find class description for entity named "+entityName);
@@ -1033,8 +1032,8 @@ public class ERXEOControlUtilities {
     public static EOEnterpriseObject sharedObjectMatchingKeyAndValue(String entityName, String key, Object value) {
         NSArray filtered = sharedObjectsMatchingKeyAndValue(entityName, key, value);
         if (filtered.count() > 1)
-            log.warn("Found multiple shared objects for entityName: " + entityName + " matching key: "
-                     + key + " value: " + value + " matched against: " + filtered);
+            log.warn("Found multiple shared objects for entityName: {} matching key: {} value: {} matched against: {}",
+                    entityName, key, value, filtered);
         return filtered.count() > 0 ? (EOEnterpriseObject)filtered.lastObject() : null;
     }
 
@@ -1054,7 +1053,7 @@ public class ERXEOControlUtilities {
         if (sharedEos != null) {
             filtered = EOQualifier.filteredArrayWithQualifier(sharedEos, qualifier);
         } else {
-            log.warn("Unable to find any shared objects for entity name: " + entityName);
+            log.warn("Unable to find any shared objects for entity name: {}", entityName);
         }
         return filtered != null ? filtered : NSArray.EmptyArray;
     }
@@ -1078,7 +1077,7 @@ public class ERXEOControlUtilities {
         }
 
         if (sharedEos == null) {
-            log.warn("Unable to find any shared objects for the entity named: " + entityName);
+            log.warn("Unable to find any shared objects for the entity named: {}", entityName);
         }
         return sharedEos != null ? sharedEos : NSArray.EmptyArray;
     }
@@ -1246,7 +1245,7 @@ public class ERXEOControlUtilities {
 		            if (arr != null) {
 		                primaryKey = arr.lastObject();
 		            } else {
-		                log.warn("Could not get primary key array for entity: " + entityName);
+		                log.warn("Could not get primary key array for entity: {}", entityName);
 		            }
 		            willRetryAfterHandlingDroppedConnection = false;
 	            }
@@ -1267,7 +1266,7 @@ public class ERXEOControlUtilities {
 	            }
             }
         } catch (Exception e) {
-            log.error("Caught exception when generating primary key for entity: " + entityName, e);
+            log.error("Caught exception when generating primary key for entity: {}", entityName, e);
             throw new NSForwardException(e);
         } finally {
             dbContext.unlock();
@@ -1311,6 +1310,13 @@ public class ERXEOControlUtilities {
         if(pk instanceof String || pk instanceof Number) {
             return pk.toString();
         }
+        if (pk instanceof NSData) {
+        	byte[] pkBytes = ((NSData)pk)._bytesNoCopy();
+        	if (pkBytes.length == 16) {
+        		return UUIDUtilities.encodeAsPrettyString(pkBytes);
+        	}
+        	return ERXStringUtilities.byteArrayToHexString(pkBytes);
+        }
         return NSPropertyListSerialization.stringFromPropertyList(pk);
     }
 
@@ -1344,6 +1350,9 @@ public class ERXEOControlUtilities {
                     if(attribute.adaptorValueType() == EOAttribute.AdaptorDateType && !(value instanceof NSTimestamp)) {
                         value = new NSTimestampFormatter("%Y-%m-%d %H:%M:%S %Z").parseObject((String)value);
                     }
+                    if(attribute.adaptorValueType() == EOAttribute.AdaptorBytesType && attribute.width() == 16 && !(value instanceof NSData)) {
+                    	value = UUIDUtilities.decodeStringAsNSData((String)value);
+                    }
                     value = attribute.validateValue(value);
                     pk.setObjectForKey(value, attribute.name());
                     if(pks.count() == 1) {
@@ -1360,6 +1369,9 @@ public class ERXEOControlUtilities {
             	}
                 EOAttribute attribute = pks.objectAtIndex(0);
                 Object value = rawValue;
+                if(attribute.adaptorValueType() == EOAttribute.AdaptorBytesType && attribute.width() == 16 && !(value instanceof NSData)) {
+                	value = UUIDUtilities.decodeStringAsNSData((String)value);
+                }
                 value = attribute.validateValue(value);
                 pk.setObjectForKey(value, attribute.name());
             }

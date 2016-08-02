@@ -24,22 +24,18 @@ import er.extensions.foundation.ERXValueUtilities;
  * @binding displayGroup
  * @binding d2wContext
  * 
- * @d2wKey componentName
- * @d2wKey object
- * @d2wKey displayNameForProperty
- * @d2wKey sortKeyForList
- * @d2wKey sortCaseInsensitive
- * @d2wKey propertyIsSortable
- * @d2wKey pageConfiguration
- * @d2wKey parentPageConfiguration
- * @d2wKey classForAttributeColumn
- * @d2wKey classForObjectTable
- * @d2wKey tableHeaderComponentName
- * @d2wKey classForObjectTableHeader
- * @d2wKey updateContainerID
  * @d2wKey baseClassForObjectRow
+ * @d2wKey componentName
+ * @d2wKey displayNameForProperty
+ * @d2wKey extraListComponentName
+ * @d2wKey justification
  * @d2wKey nestedRelationship
- * 
+ * @d2wKey object
+ * @d2wKey propertyIsSortable 
+ * @d2wKey showNestedRelationshipEditor
+ * @d2wKey sortCaseInsensitive
+ * @d2wKey sortKeyForList
+
  * @author fpeters
  */
 public class ERMDNestingListPageRepetition extends ERMDListPageRepetition {
@@ -47,22 +43,6 @@ public class ERMDNestingListPageRepetition extends ERMDListPageRepetition {
     private static final long serialVersionUID = 1L;
 
     public interface Keys {
-
-        public static String inlineTask = "inlineTask";
-
-        public static String inspectEmbeddedConfigurationName = "inspectEmbeddedConfigurationName";
-
-        public static String editEmbeddedConfigurationName = "editEmbeddedConfigurationName";
-
-        public static String createEmbeddedConfigurationName = "createEmbeddedConfigurationName";
-
-        public static String queryEmbeddedConfigurationName = "queryEmbeddedConfigurationName";
-
-        public static String displayPropertyKeys = "displayPropertyKeys";
-
-        public static String subTask = "subTask";
-
-        public static String isEntityCreatable = "isEntityCreatable";
 
         public static String nestedRelationship = "nestedRelationship";
 
@@ -135,10 +115,10 @@ public class ERMDNestingListPageRepetition extends ERMDListPageRepetition {
     }
 
 	public boolean showNestedRelationshipEditor() {
-		// use globalID hash as unique key for this object
+        // use globalID hash as unique key for this object
 		return ERXValueUtilities.booleanValue(d2wContext().valueForKeyPath(Keys.
 				showNestedRelationshipEditor + uniqueObjectID()));
-	}
+    }
 
     /**
      * @return the column count for the nested td's colspan
@@ -147,7 +127,7 @@ public class ERMDNestingListPageRepetition extends ERMDListPageRepetition {
         int columnCount = displayPropertyKeyCount();
         if (d2wContext().valueForKey(Keys.nestedRelationship) != null) {
         	// additional column for toggle action
-        	columnCount++;
+        columnCount++;
         }
         if (hasLeftActions()) {
             columnCount++;
@@ -180,7 +160,7 @@ public class ERMDNestingListPageRepetition extends ERMDListPageRepetition {
                 + "_" + uniqueObjectID();
         return idForNestedUpdateContainer;
     }
-    
+
     /**
      * @return a unique ID, based on the D2WContext's object value
      */

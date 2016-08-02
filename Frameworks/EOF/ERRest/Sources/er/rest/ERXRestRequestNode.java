@@ -11,7 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.webobjects.eoaccess.EOEntityClassDescription;
 import com.webobjects.eocontrol.EOClassDescription;
@@ -27,6 +28,7 @@ import er.extensions.appserver.ERXResponse;
 import er.extensions.eof.ERXKey;
 import er.extensions.eof.ERXKeyFilter;
 import er.extensions.foundation.ERXArrayUtilities;
+import er.extensions.foundation.ERXProperties;
 import er.rest.format.ERXRestFormat;
 import er.rest.format.ERXWORestResponse;
 import er.rest.format.IERXRestWriter;
@@ -36,10 +38,12 @@ import er.rest.format.IERXRestWriter;
  * etc), we needed a document model that is more abstract than just an org.w3c.dom. Or, rather, one that isn't obnoxious
  * to use.
  * 
+ * @property <code>ERXRest.includeNullValues</code> Boolean property to enable null values in return. Defaults
+ *           to true.
  * @author mschrag
  */
 public class ERXRestRequestNode implements NSKeyValueCoding, NSKeyValueCodingAdditions {
-    private static final Logger log = Logger.getLogger(ERXRestRequestNode.class);
+    private static final Logger log = LoggerFactory.getLogger(ERXRestRequestNode.class);
     
 	private boolean _array;
 	private String _name;
@@ -202,9 +206,9 @@ public class ERXRestRequestNode implements NSKeyValueCoding, NSKeyValueCodingAdd
 					// MS: name has to be after toJavaCollection, because the naming delegate could rename it ... little
 					// sketchy, i know
 					String name = child.name();
-					// if (value != null) {
-					dict.put(name, value);
-					// }
+					if (value != null || ERXProperties.booleanForKeyWithDefault("ERXRest.includeNullValues", true)) {
+						dict.put(name, value);
+					}
 				}
 				if (dict.isEmpty()) {
 					result = null;
@@ -275,9 +279,9 @@ public class ERXRestRequestNode implements NSKeyValueCoding, NSKeyValueCodingAdd
 				for (ERXRestRequestNode child : _children) {
 					String name = child.name();
 					Object value = child.toNSCollection(delegate, associatedObjects);
-					// if (value != null) {
-					dict.put(name, value);
-					// }
+					if (value != NSKeyValueCoding.NullValue || ERXProperties.booleanForKeyWithDefault("ERXRest.includeNullValues", true)) {
+						dict.put(name, value);
+					}
 				}
 				if (dict.isEmpty()) {
 					result = NSKeyValueCoding.NullValue;
@@ -887,7 +891,7 @@ public class ERXRestRequestNode implements NSKeyValueCoding, NSKeyValueCodingAdd
                         childrenObjects = EOSortOrdering.sortedArrayUsingKeyOrderArray((NSArray<?>)childrenObjects, sortOrderings);
                 }
                 else {
-                        log.warn("Skipping sort orderings for '" + key + "' on " + obj + " because sort orderings are only supported for NSArrays.");
+                    log.warn("Skipping sort orderings for '{}' on {} because sort orderings are only supported for NSArrays.", key, obj);
                 }
         }
         for (Object childObj : childrenObjects) {
