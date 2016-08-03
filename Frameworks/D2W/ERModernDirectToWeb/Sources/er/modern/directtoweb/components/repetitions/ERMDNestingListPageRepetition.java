@@ -54,28 +54,6 @@ public class ERMDNestingListPageRepetition extends ERMDListPageRepetition {
         super(context);
     }
 
-    /**
-     * Returns the name of the current inline page configuration
-     */
-    public String inspectConfiguration() {
-        String result = null;
-        if ("create".equals(inlineTask())) {
-            result = (String) d2wContext().valueForKey(
-                    Keys.createEmbeddedConfigurationName);
-        } else if ("edit".equals(inlineTask())) {
-            result = (String) d2wContext()
-                    .valueForKey(Keys.editEmbeddedConfigurationName);
-        } else {
-            result = (String) d2wContext().valueForKey(
-                    Keys.inspectEmbeddedConfigurationName);
-        }
-        return result;
-    }
-
-    public String inlineTask() {
-        return (String) d2wContext().valueForKey(Keys.inlineTask);
-    }
-
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public NSDictionary childRelationshipBindings() {
         NSArray masterObjectAndRelationshipKey = new NSArray(d2wContext()
@@ -114,10 +92,10 @@ public class ERMDNestingListPageRepetition extends ERMDListPageRepetition {
         return d2wContext().valueForKey(Keys.nestedRelationship) != null;
     }
 
-	public boolean showNestedRelationshipEditor() {
+    public boolean showNestedRelationshipEditor() {
         // use globalID hash as unique key for this object
-		return ERXValueUtilities.booleanValue(d2wContext().valueForKeyPath(Keys.
-				showNestedRelationshipEditor + uniqueObjectID()));
+        return ERXValueUtilities.booleanValue(d2wContext().valueForKeyPath(Keys.
+                showNestedRelationshipEditor + uniqueObjectID()));
     }
 
     /**
@@ -126,7 +104,7 @@ public class ERMDNestingListPageRepetition extends ERMDListPageRepetition {
     public int columnCount() {
         int columnCount = displayPropertyKeyCount();
         if (d2wContext().valueForKey(Keys.nestedRelationship) != null) {
-        	// additional column for toggle action
+            // additional column for toggle action
         columnCount++;
         }
         if (hasLeftActions()) {
@@ -197,37 +175,37 @@ public class ERMDNestingListPageRepetition extends ERMDListPageRepetition {
     public boolean hasChildren() {
         EOEnterpriseObject object = (EOEnterpriseObject) d2wContext().valueForKey(
                 "object");
-		boolean hasChildren = ERXValueUtilities.booleanValue(object.valueForKeyPath(
-				d2wContext().valueForKey(Keys.nestedRelationship) + ".@count"));
-    	return hasChildren; 
+        boolean hasChildren = ERXValueUtilities.booleanValue(object.valueForKeyPath(
+                d2wContext().valueForKey(Keys.nestedRelationship) + ".@count"));
+        return hasChildren; 
     }
     
     /*
-	 * The remainder handles the icon toggling – the same could be achieved by simply
-	 * putting the icons in a dependent update container, but that would
-	 * potentially introduce a lot of update containers.
-	 */
+     * The remainder handles the icon toggling – the same could be achieved by simply
+     * putting the icons in a dependent update container, but that would
+     * potentially introduce a lot of update containers.
+     */
 
     public String idForDoOpenIcon() {
-    	return idForNestedUpdateContainer() + "_open";
+        return idForNestedUpdateContainer() + "_open";
     }
     
     public String idForDoCloseIcon() {
-    	return idForNestedUpdateContainer() + "_close";
+        return idForNestedUpdateContainer() + "_close";
     }
 
-	public String toggleIconsScript() {
-		String toggleIconsScript = "function(){$('" + idForDoOpenIcon() + 
-				"', '" + idForDoCloseIcon() + "').invoke('toggle');}";
-		return toggleIconsScript;
-	}
-	
-	public String initialStyleForDoOpenIcon() {
-		return showNestedRelationshipEditor() ? "display:none;" : "";
-	}
-	
-	public String initialStyleForDoCloseIcon() {
-		return showNestedRelationshipEditor() ? "" : "display:none;";
-	}
+    public String toggleIconsScript() {
+        String toggleIconsScript = "function(){$('" + idForDoOpenIcon() + 
+                "', '" + idForDoCloseIcon() + "').invoke('toggle');}";
+        return toggleIconsScript;
+    }
+    
+    public String initialStyleForDoOpenIcon() {
+        return showNestedRelationshipEditor() ? "display:none;" : "";
+    }
+    
+    public String initialStyleForDoCloseIcon() {
+        return showNestedRelationshipEditor() ? "" : "display:none;";
+    }
 
 }

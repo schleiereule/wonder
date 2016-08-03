@@ -633,17 +633,6 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 		return relationshipDisplayGroup().displayedObjects().count();
 	}
 
-	/**
-	 * @return a unique ID for the repetition container
-	 */
-	public String idForRepetitionContainer() {
-		String repetitionContainerID = (String) d2wContext().valueForKey("idForRepetitionContainer");
-		// use master object to generate globally unique ID
-		// - allows for nesting of relationship components
-		repetitionContainerID = repetitionContainerID.concat("_" + masterObject().hashCode());
-		return repetitionContainerID;
-	}
-
 	public Boolean showBottomActionBlock() {
 		Boolean showBottomActionBlock = ERXValueUtilities.booleanValue(d2wContext().valueForKey("showBottomActionBlock"));
 		if (displayEditList()) {
