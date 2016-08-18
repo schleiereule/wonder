@@ -39,6 +39,7 @@ import er.extensions.foundation.ERXProperties;
  * 
  * @property er.extensions.partials.enabled
  * @author mschrag
+ * @author schleiereule
  */
 public class ERXPartialInitializer {
 	private static final Logger log = LoggerFactory.getLogger(ERXModelGroup.class);
@@ -84,6 +85,9 @@ public class ERXPartialInitializer {
 		Enumeration modelsEnum = modelGroup.models().objectEnumerator();
 		while (modelsEnum.hasMoreElements()) {
 			EOModel model = (EOModel) modelsEnum.nextElement();
+			
+			// TODO merge userInfo from model
+			
 			Enumeration entitiesEnum = model.entities().objectEnumerator();
 			while (entitiesEnum.hasMoreElements()) {
 				EOEntity partialExtensionEntity = (EOEntity) entitiesEnum.nextElement();
@@ -104,8 +108,7 @@ public class ERXPartialInitializer {
 								NSMutableDictionary<String, Object> attributePropertyList = new NSMutableDictionary<String, Object>();
 								partialAttribute.encodeIntoPropertyList(attributePropertyList);
 								String factoryMethodArgumentType = (String) attributePropertyList.objectForKey("factoryMethodArgumentType");
-								// OFFICIALLY THE DUMBEST DAMN THING I'VE EVER
-								// SEEN
+								// OFFICIALLY THE DUMBEST DAMN THING I'VE EVER SEEN
 								if ("EOFactoryMethodArgumentIsString".equals(factoryMethodArgumentType)) {
 									attributePropertyList.setObjectForKey("EOFactoryMethodArgumentIsNSString", "factoryMethodArgumentType");
 								}
@@ -117,12 +120,21 @@ public class ERXPartialInitializer {
 									EOProperty p = partialEntity.propertyNamed(partialAttribute.name());
 									if (p != null) {
 										partialEntity.classProperties().remove(p);
+										log.debug("Removing partial attribute {}.{} from {}.classProperties because it is not defined as class property.", partialExtensionEntity.name(), partialAttribute.name(), partialEntity.name());
+									}
+								}
+								// check if the attribute is used for locking
+								if (!partialExtensionEntity.attributesUsedForLocking().contains(partialAttribute)) {
+									EOAttribute a = partialEntity.attributeNamed(partialAttribute.name());
+									if (a != null) {
+										partialEntity.attributesUsedForLocking().remove(a);
+										log.debug("Removing partial attribute {}.{} from {} attributesUsedForLocking because it is not defined as locking attribute.", partialExtensionEntity.name(), partialAttribute.name(), partialEntity.name());
 									}
 								}
 							}
 							else {
-								log.debug("Skipping partial attribute {}.{} because {} already has an attribute of the same name.",
-										partialExtensionEntity.name(), partialAttribute.name(), partialEntity.name());
+								// TODO merge userInfo from attribute
+								log.debug("Skipping partial attribute {}.{} because {} already has an attribute of the same name.", partialExtensionEntity.name(), partialAttribute.name(), partialEntity.name());
 							}
 						}
 
@@ -136,10 +148,18 @@ public class ERXPartialInitializer {
 								EORelationship primaryRelationship = new EORelationship(relationshipPropertyList, partialEntity);
 								primaryRelationship.awakeWithPropertyList(relationshipPropertyList);
 								partialEntity.addRelationship(primaryRelationship);
+								// check if the relationship is a class property
+								if (!partialExtensionEntity.classPropertyNames().contains(partialRelationship.name())) {
+									EOProperty p = partialEntity.propertyNamed(partialRelationship.name());
+									if (p != null) {
+										partialEntity.classProperties().remove(p);
+										log.debug("Removing partial relationship {}.{} from {} classProperties because it is not defined as class property.", partialExtensionEntity.name(), partialRelationship.name(), partialEntity.name());
+									}
+								}
 							}
 							else {
-								log.debug("Skipping partial relationship {}.{} because {} already has a relationship of the same name.",
-										partialExtensionEntity.name(), partialRelationship.name(), partialEntity.name());
+								// TODO merge userInfo from relationship
+								log.debug("Skipping partial relationship {}.{} because {} already has a relationship of the same name.", partialExtensionEntity.name(), partialRelationship.name(), partialEntity.name());
 							}
 						}
 
