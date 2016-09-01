@@ -9,6 +9,7 @@ package er.directtoweb.components.strings;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.directtoweb.D2WDisplayString;
 import com.webobjects.eocontrol.EOEnterpriseObject;
+import com.webobjects.foundation.NSArray;
 
 /**
  * <div class="en">
@@ -58,6 +59,10 @@ public class ERD2WDisplayString extends D2WDisplayString {
           }
         }
         return eo.userPresentableDescription();
+      } else if (object instanceof NSArray) {
+          String stringRepresentation = (String) super.objectPropertyValue().toString();
+          stringRepresentation = stringRepresentation.substring(1, stringRepresentation.length() - 1);
+          return stringRepresentation;
       }
       return super.objectPropertyValue();
     }
