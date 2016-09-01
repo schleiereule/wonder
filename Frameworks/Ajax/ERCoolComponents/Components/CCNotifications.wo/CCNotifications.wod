@@ -1,0 +1,4 @@
+alertifyJs : ERXJavaScript {
+	filename = "Notifications/alertify.js"; 
+	framework = "ERCoolComponents";
+}

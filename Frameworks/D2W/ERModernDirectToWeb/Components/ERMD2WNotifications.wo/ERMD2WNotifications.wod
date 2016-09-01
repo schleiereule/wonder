@@ -1,0 +1,5 @@
+IsEnableNotifications : WOConditional {
+	condition = d2wContext.enableUINotifications;
+}
+
+Notifications : CCNotifications {}

@@ -44,3 +44,7 @@ ShowHeader : WOConditional {
 IncludeBusyIndictator : WOConditional {
   condition = d2wContext.includeBusyIndicator;
 }
+
+Notifications : ERMD2WNotifications {
+	d2wContext = d2wContext;
+}
