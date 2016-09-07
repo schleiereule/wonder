@@ -148,6 +148,10 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 			} else if (!hasChanges) {
 				nextPage = _nextPageFromDelegate(page);
 			}
+			NSMutableDictionary<String, Object> userInfo = new NSMutableDictionary<String, Object>();
+			userInfo.put("pageConfiguration", c.valueForKey("pageConfiguration"));
+			userInfo.put("newObject", eo);
+			NSNotificationCenter.defaultCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_SAVE_ACTION, null, userInfo);
 		} catch (NSValidation.ValidationException e) {
 			page.setErrorMessage(ERXLocalizer.currentLocalizer().localizedTemplateStringForKeyWithObject("CouldNotSave", e));
 			page.validationFailedWithException(e, e.object(), "saveChangesExceptionKey");
@@ -168,10 +172,6 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 				ec.unlock();
 			}
 		}
-		NSMutableDictionary<String, Object> userInfo = new NSMutableDictionary<String, Object>();
-		userInfo.put("pageConfiguration", c.valueForKey("pageConfiguration"));
-		userInfo.put("newObject", eo);
-		NSNotificationCenter.defaultCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_SAVE_ACTION, null, userInfo);
 		return nextPage;
 	}
 
