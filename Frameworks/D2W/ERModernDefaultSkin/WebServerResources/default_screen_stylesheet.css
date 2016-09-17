@@ -1477,6 +1477,10 @@ div.RtActionCell li {
 	display: table-row;
 }
 
+.ListFilter .icon-search {
+	margin-right: 5px;
+}
+
 .ListFilter .ListFilterSearch, .ListFilter .ListFilterChoices {
 	font-size: 16px;
 	display: table-cell;
