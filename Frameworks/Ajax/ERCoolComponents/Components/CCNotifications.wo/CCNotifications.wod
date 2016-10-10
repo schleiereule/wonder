@@ -2,3 +2,16 @@ alertifyJs : ERXJavaScript {
 	filename = "Notifications/alertify.js"; 
 	framework = "ERCoolComponents";
 }
+
+notificationUC : AjaxUpdateContainer {
+	id = "CCNotificationUC";
+}
+
+notifications : WORepetition {
+	list = pendingNotifications;
+	item = aNotification;
+}
+
+aNotification : ERXJavaScript {
+	scriptString = alertifyNotification;
+}
