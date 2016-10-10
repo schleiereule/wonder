@@ -388,5 +388,20 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 		}
 		return result;
 	}
+	
+	/**
+	 * Utility to add entries based on an array of keys
+	 * 
+	 * @param keys
+	 * @param choices
+	 */
+	protected NSArray choiceByAddingKeys(NSArray keys, NSArray choices) {
+		NSMutableArray result = choices.mutableClone();
+		for (Object key : keys) {
+			NSDictionary branch = branchChoiceDictionary((String) key, null);
+			result.addObject(branch);
+		}
+		return result;
+	}
 
 }
