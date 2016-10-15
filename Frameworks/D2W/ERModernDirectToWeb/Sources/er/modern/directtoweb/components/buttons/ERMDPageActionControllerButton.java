@@ -14,22 +14,23 @@ import er.directtoweb.delegates.ERDBranchInterface;
 import er.extensions.foundation.ERXStringUtilities;
 
 public class ERMDPageActionControllerButton extends ERMDActionButton implements ERDBranchInterface {
-	
+
 	/**
-	 * Do I need to update serialVersionUID?
-	 * See section 5.6 <cite>Type Changes Affecting Serialization</cite> on page 51 of the 
-	 * <a href="http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf">Java Object Serialization Spec</a>
+	 * Do I need to update serialVersionUID? See section 5.6 <cite>Type Changes
+	 * Affecting Serialization</cite> on page 51 of the
+	 * <a href="http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf">Java Object
+	 * Serialization Spec</a>
 	 */
 	private static final long serialVersionUID = 1L;
 
-    /** logging support */
-    private static final Logger log = Logger.getLogger(ERMDPageActionControllerButton.class);
-	
-    public ERMDPageActionControllerButton(WOContext context) {
-        super(context);
-    }
-    
-    //---------------- CSS Support --------------------//
+	/** logging support */
+	private static final Logger log = Logger.getLogger(ERMDPageActionControllerButton.class);
+
+	public ERMDPageActionControllerButton(WOContext context) {
+		super(context);
+	}
+
+	// ---------------- CSS Support --------------------//
 	public String buttonCssClass() {
 		String cssClass = "Button PageButton";
 		String branchName = branchName();
@@ -49,12 +50,7 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 		}
 		return cssClass;
 	}
-	
-	 //---------------- ALT Support --------------------//
-	public String branchButtonAlt() {
-		return branchButtonLabel() + ".Alt";
-	}
-	
+
 	public ERDBranchDelegateInterface branchDelegate() {
 		if (branchDelegate == null) {
 			WOComponent current = parent();
@@ -112,6 +108,7 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 	 */
 	public void setBranch(NSDictionary value) {
 		branch = value;
+		d2wContext().takeValueForKey(value, "branch");
 	}
 
 	/**
@@ -153,7 +150,7 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 	public String branchButtonID() {
 		return (String) branch().valueForKey(ERDBranchDelegate.BRANCH_BUTTON_ID);
 	}
-	
+
 	/**
 	 * Implementation of the {@link ERDBranchDelegate ERDBranchDelegate}
 	 * 
@@ -162,22 +159,23 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 	public Boolean branchRequiresFormSubmit() {
 		return (Boolean) branch().valueForKey(ERDBranchDelegate.BRANCH_REQUIRESFORMSUBMIT);
 	}
-	
+
 	public Boolean dontSubmitForm() {
 		if (branchRequiresFormSubmit())
 			return false;
 		else
 			return true;
 	}
-	
-	// Hack for ERMODWizardCreationPage because the next/previous buttons must use an AjaxSubmitButton
+
+	// Hack for ERMODWizardCreationPage because the next/previous buttons must
+	// use an AjaxSubmitButton
 	public Boolean useAjaxSubmitButton() {
 		if ((branchButtonID().startsWith("_nextStep")) || (branchButtonID().startsWith("_prevStep")))
 			return true;
 		else
 			return false;
 	}
-	
+
 	/**
 	 * Calculates the branch choices for the current page. This method is just a
 	 * cover for calling the method <code>branchChoicesForContext</code> on the

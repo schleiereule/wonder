@@ -14,7 +14,7 @@ NotUseAjaxSubmitButton : WOConditional {
 }
 
 BranchButton : CCSmartAjaxButton {
-	alt = branchButtonAlt;
+	alt = d2wContext.alternativeText;
 	action = performAction;
 	class = buttonCssClass;
 	value = branchButtonLabel;
@@ -24,7 +24,7 @@ BranchButton : CCSmartAjaxButton {
 }
 
 BranchButton2 : AjaxSubmitButton {
-	alt = branchButtonAlt;
+	alt = d2wContext.alternativeText;
 	button = false;
 	action = performAction;
 	class = buttonCssClass;
