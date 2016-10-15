@@ -51,5 +51,6 @@
     15 : (task = 'list' and parentPageConfiguration != null) => allowInlineEditing = "false" [com.webobjects.directtoweb.BooleanAssignment],
     20 : (task != 'edit' and RuleIsDisabled isEqual: 'YES') => hasForm = "false" [com.webobjects.directtoweb.BooleanAssignment],
     20 : *true* => datePickerHideControl = "true" [com.webobjects.directtoweb.BooleanAssignment],
+    100 : *true* => alternativeText = "<ERMDDefaultUIStringAssignment>" [er.modern.directtoweb.assignments.defaults.ERMDDefaultUIStringAssignment],
     100 : *true* => isEntityRemoveable = "true" [com.webobjects.directtoweb.BooleanAssignment]
 )
