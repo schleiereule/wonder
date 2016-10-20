@@ -1,0 +1,13 @@
+opentipJs : ERXJavaScript {
+	filename = "opentip-native.min.js";
+	framework = "ERCoolComponents";
+}
+
+opentipCss : ERXStyleSheet {
+	filename = "opentip.css";
+	framework = "ERCoolComponents";
+}
+
+TargetClass : WOString {
+	value = ^targetClass;
+}
