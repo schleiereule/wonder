@@ -1609,14 +1609,12 @@ span span.Tooltip.HelpTooltip.PropertyHelpTooltip + a {
 }
 
 .Tooltip .TooltipTrigger {
-	position: absolute;
-	font-size: 10px;
-	padding: 1px 5px 2px 4px;
+    position: relative;
+    top: -2px;
+    left: 1px;
 }
 
 .Tooltip .TooltipTrigger.TooltipTriggerWithText {
-	font-weight: bold;
-	font-size: 12px;
 }
 
 .Tooltip .TooltipHelpText {
@@ -1644,6 +1642,12 @@ span span.Tooltip.HelpTooltip.PropertyHelpTooltip + a {
 
 .ListObjTableHd span.Tooltip {
 	   display: none;
+}
+
+.ERCPropertyHelpTextIcon {
+    fill: #aaa;
+    height: 16px;
+    width: 16px;
 }
 
 /* DEBUG FLAGS */
