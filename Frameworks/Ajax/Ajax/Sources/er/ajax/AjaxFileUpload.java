@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.text.NumberFormat;
+import java.util.UUID;
 
 import com.webobjects.appserver.WOActionResults;
 import com.webobjects.appserver.WOApplication;
@@ -155,9 +156,10 @@ public class AjaxFileUpload extends WOComponent {
 	public String id() {
 		String id = _id;
 		if (id == null) {
-			id = (String) valueForBinding("id");
+			// id = (String) valueForBinding("id");
 			if (id == null) {
-				id = ERXWOContext.safeIdentifierName(context(), true);
+				// id = ERXWOContext.safeIdentifierName(context(), true); // and set _id = null in uploadSucceeded()
+				id = UUID.randomUUID().toString().replace("-", "_");
 			}
 			_id = id;
 		}
@@ -379,6 +381,7 @@ public class AjaxFileUpload extends WOComponent {
 		}
 		finally {
 			uploadFinished();
+			_id = null;
 		}
 		WOActionResults results = (WOActionResults) valueForBinding("succeededAction");
 		return results;
