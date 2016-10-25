@@ -1,10 +1,10 @@
 opentipJs : ERXJavaScript {
-	filename = "opentip-native.min.js";
+	filename = "opentip/opentip-native.min.js";
 	framework = "ERCoolComponents";
 }
 
 opentipCss : ERXStyleSheet {
-	filename = "opentip.css";
+	filename = "opentip/opentip.css";
 	framework = "ERCoolComponents";
 }
 
