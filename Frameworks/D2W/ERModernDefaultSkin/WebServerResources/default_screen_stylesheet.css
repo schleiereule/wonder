@@ -1096,7 +1096,6 @@ span.ErrorLabel {
 
 .BottomBatchNav {
 	padding-top: 10px;
-	width: 610px;
 	overflow: auto;
 	margin: 0 auto;
 }
@@ -1108,29 +1107,57 @@ span.ErrorLabel {
 
 .paginator a,
 .paginator span {
-	background: url(pag_step_shad.png) no-repeat;
-	float: left;
-	height: 25px;
+	background: url("pag_step_shad.png") 0 0 no-repeat;
+	background-size: cover;
+    min-width: 25px;
+    width: auto;
+    height: 25px;
+    padding-left: 2px;
+    padding-right: 2px;
+    margin-right: 5px;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+	display: inline-block;
+	border: 1px solid #CDCDCD;
 	line-height: 25px;
 	text-align: center;
-	width: 25px;
-	color: #666;
 	font-weight: bold;
-	margin-right: 5px;
+	color: #666;
 }
 
+.EmbeddedTopBatchNav .paginator a,
+.EmbeddedTopBatchNav .paginator span,
 .EmbeddedBottomBatchNav .paginator a,
 .EmbeddedBottomBatchNav .paginator span {
 	background: url(pag_step.png) no-repeat;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
 }
 
 .paginator .paginatorCurrentPage {
-	background: url(pag_current_shad.png) no-repeat;
-	color: #fff;
+	background: url("pag_current_shad.png") 0 0 no-repeat;
+	background-size: cover;
+	min-width: 25px;
+	width: auto;
+	height: 25px;
+	padding-left: 2px;
+	padding-right: 2px;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	display: inline-block;
+	border: 1px solid #112136;
+	color: #fff;	
 }
 
+.EmbeddedTopBatchNav .paginator .paginatorCurrentPage,
 .EmbeddedBottomBatchNav .paginator .paginatorCurrentPage {
 	background: url(pag_current.png) no-repeat;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
 }
 
 .paginator .paginatorAtStart,
@@ -1138,8 +1165,11 @@ span.ErrorLabel {
 	background: url(pag_prev_shad.png) no-repeat;
 	width: 57px;
 	padding-left: 10px;
+	border: none;
 }
 
+.EmbeddedTopBatchNav .paginator .paginatorAtStart,
+.EmbeddedTopBatchNav .paginator .paginatorPrev,
 .EmbeddedBottomBatchNav .paginator .paginatorAtStart,
 .EmbeddedBottomBatchNav .paginator .paginatorPrev {
 	background: url(pag_prev.png) no-repeat;
@@ -1150,8 +1180,11 @@ span.ErrorLabel {
 	background: url(pag_next_shad.png) no-repeat;
 	width: 57px;
 	padding-right: 10px;
+	border: none;
 }
 
+.EmbeddedTopBatchNav .paginator .paginatorNext,
+.EmbeddedTopBatchNav .paginator .paginatorAtEnd,
 .EmbeddedBottomBatchNav .paginator .paginatorNext,
 .EmbeddedBottomBatchNav .paginator .paginatorAtEnd {
 	background: url(pag_next.png) no-repeat;
@@ -1160,6 +1193,7 @@ span.ErrorLabel {
 .paginator .paginatorAtStart,
 .paginator .paginatorAtEnd {
 	color: #bbb;
+	border: none;
 }
 
 .paginatorResults,
@@ -1180,9 +1214,19 @@ span.ErrorLabel {
 	width: inherit;
 }
 
+.EmbeddedTopBatchNav .paginator,
 .EmbeddedBottomBatchNav .paginator {
 	margin-right: 0;
 }
+
+
+.EmbeddedTopBatchNav {
+	float: right;
+	padding: 0;
+	margin: 10px 0 12px 0;
+	width: inherit;
+}
+
 
 .BatchSize {
 	color: #666;
@@ -1217,7 +1261,7 @@ span.ErrorLabel {
 }
 
 .ERMDBatchSize_BatchForm input {
-	width: 20px;
+	width: 20px !important;
 	line-height: 20px;
 	padding: 0 3px;
 	border: 1px solid #aaa;
