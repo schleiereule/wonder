@@ -361,14 +361,15 @@
             width = 10000000; 
         }, 
         {
-            columnName = uuid; 
-            externalType = bytea; 
+            adaptorValueConversionMethodName = toString; 
+            columnName = ""; 
+            externalType = uuid; 
+            factoryMethodArgumentType = EOFactoryMethodArgumentIsNSString; 
             name = uuid; 
-            valueClassName = NSData; 
-            width = 16; 
+            valueClassName = "java.util.UUID"; 
+            valueFactoryMethodName = fromString; 
         }
     ); 
-    attributesUsedForLocking = (boolean, id, jodaDateTime); 
     className = EOGenericRecord; 
     classProperties = (
         amount, 
@@ -403,6 +404,7 @@
         stringArray, 
         stringDictionary, 
         type, 
+        uuid, 
         varchar10, 
         varchar100, 
         varchar1000, 
@@ -448,5 +450,5 @@
     }; 
     isAbstractEntity = Y; 
     name = EOJDBCPostgresqlPrototypes; 
-    primaryKeyAttributes = (eofKey, id, uuid); 
+    primaryKeyAttributes = (eofKey, id); 
 }

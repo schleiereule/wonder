@@ -355,34 +355,15 @@
             valueType = c; 
         }, 
         {
-            columnName = uuid; 
-            externalType = BINARY; 
+            adaptorValueConversionMethodName = toString; 
+            columnName = ""; 
+            externalType = CHAR; 
+            factoryMethodArgumentType = EOFactoryMethodArgumentIsNSString; 
             name = uuid; 
-            valueClassName = NSData; 
-            width = 16; 
+            valueClassName = "java.util.UUID"; 
+            valueFactoryMethodName = fromString; 
+            width = 36; 
         }
-    ); 
-    attributesUsedForLocking = (
-        blob, 
-        boolean, 
-        charFlag, 
-        flag, 
-        id, 
-        intBoolean, 
-        intNumber, 
-        ipAddress, 
-        javaEnum, 
-        longText, 
-        mutableArray, 
-        mutableDictionary, 
-        osType, 
-        shortString, 
-        type, 
-        varchar10, 
-        varchar100, 
-        varchar16, 
-        varchar50, 
-        varcharLarge
     ); 
     className = EOGenericRecord; 
     classProperties = (
@@ -418,6 +399,7 @@
         stringArray, 
         stringDictionary, 
         type, 
+        uuid, 
         varchar10, 
         varchar100, 
         varchar1000, 

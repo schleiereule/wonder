@@ -81,7 +81,7 @@
             width = 28; 
         }, 
         {
-            columnName = eofKey; 
+            columnName = ""; 
             externalType = RAW; 
             name = eofKey; 
             valueClassName = NSData; 
@@ -200,7 +200,7 @@
         }, 
         {
             columnName = ""; 
-            externalType = BLOB; 
+            externalType = CLOB; 
             name = longText; 
             valueClassName = NSString; 
         }, 
@@ -346,35 +346,15 @@
             valueClassName = NSString; 
         }, 
         {
-            columnName = uuid; 
-            externalType = RAW; 
+            adaptorValueConversionMethodName = toString; 
+            columnName = ""; 
+            externalType = VARCHAR2; 
+            factoryMethodArgumentType = EOFactoryMethodArgumentIsNSString; 
             name = uuid; 
-            valueClassName = NSData; 
-            width = 16; 
+            valueClassName = "java.util.UUID"; 
+            valueFactoryMethodName = fromString; 
+            width = 36; 
         }
-    ); 
-    attributesUsedForLocking = (
-        amount, 
-        blob, 
-        boolean, 
-        charFlag, 
-        flag, 
-        id, 
-        intBoolean, 
-        intNumber, 
-        ipAddress, 
-        javaEnum, 
-        longText, 
-        mutableArray, 
-        mutableDictionary, 
-        osType, 
-        shortString, 
-        type, 
-        varchar10, 
-        varchar100, 
-        varchar16, 
-        varchar50, 
-        varcharLarge
     ); 
     className = EOGenericRecord; 
     classProperties = (
@@ -410,6 +390,7 @@
         stringArray, 
         stringDictionary, 
         type, 
+        uuid, 
         varchar10, 
         varchar100, 
         varchar1000, 
@@ -448,5 +429,5 @@
     }; 
     isAbstractEntity = Y; 
     name = EOJDBCOraclePrototypes; 
-    primaryKeyAttributes = (eofKey, id, uuid); 
+    primaryKeyAttributes = (eofKey, id); 
 }
