@@ -1,5 +1,7 @@
 package er.modern.look.pages;
 
+import java.util.UUID;
+
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.directtoweb.D2W;
@@ -28,12 +30,13 @@ import er.extensions.foundation.ERXValueUtilities;
  * @author davidleber
  */
 public class ERMODListPage extends ERD2WListPageTemplate implements ListPageInterface {
-  /**
-   * Do I need to update serialVersionUID?
-   * See section 5.6 <cite>Type Changes Affecting Serialization</cite> on page 51 of the 
-   * <a href="http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf">Java Object Serialization Spec</a>
-   */
-  private static final long serialVersionUID = 1L;
+	/**
+	 * Do I need to update serialVersionUID? See section 5.6 <cite>Type Changes
+	 * Affecting Serialization</cite> on page 51 of the
+	 * <a href="http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf">Java Object
+	 * Serialization Spec</a>
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public interface Keys extends ERD2WListPageTemplate.Keys {
 		public static final String useAjaxControlsWhenEmbedded = "useAjaxControlsWhenEmbedded";
@@ -43,15 +46,33 @@ public class ERMODListPage extends ERD2WListPageTemplate implements ListPageInte
 		public static final String allowInlineEditing = "allowInlineEditing";
 		public static final String shouldShowCancelButton = "shouldShowCancelButton";
 	}
-	
+
 	public ERMODListPage(WOContext wocontext) {
 		super(wocontext);
 	}
-	
+
+	private String _componentID;
+
+	private String componentID() {
+		if (_componentID == null)
+			_componentID = UUID.randomUUID().toString().replace("-", "_");
+		return _componentID;
+	}
+
 	/**
-	 * Show the cancel button. From parent: Should we show the cancel button? It's only visible 
-	 * when we have a nextPage set up. Overridden to allow us to show the cancel button if query 
-	 * page is embedded and shouldShowCancelButton is true.
+	 * @return a unique ID for the repetition container
+	 */
+	public String idForRepetitionContainer() {
+		String repetitionContainerID = (String) d2wContext().valueForKey("idForRepetitionContainer");
+		repetitionContainerID = repetitionContainerID.concat("_" + componentID());
+		return repetitionContainerID;
+	}
+
+	/**
+	 * Show the cancel button. From parent: Should we show the cancel button?
+	 * It's only visible when we have a nextPage set up. Overridden to allow us
+	 * to show the cancel button if query page is embedded and
+	 * shouldShowCancelButton is true.
 	 */
 	@Override
 	public boolean showCancel() {
@@ -59,11 +80,11 @@ public class ERMODListPage extends ERD2WListPageTemplate implements ListPageInte
 		Object parentConfig = d2wContext().valueForKeyPath(Keys.parentPageConfiguration);
 		return super.showCancel() || (parentConfig != null && showCancelButton);
 	}
-	
+
 	/**
 	 * Perform the back action. Overridden to handle in-line and ajax behaviour.
-	 * If in-line then we will usually just return null the current page, and if we're using ajax
-	 * we will need to reset the current inlineTask.
+	 * If in-line then we will usually just return null the current page, and if
+	 * we're using ajax we will need to reset the current inlineTask.
 	 */
 	@Override
 	public WOComponent backAction() {
@@ -78,8 +99,8 @@ public class ERMODListPage extends ERD2WListPageTemplate implements ListPageInte
 		}
 		if (useAjaxWhenEmbedded) {
 			if (parent() != null) {
-				D2WPage parent = (D2WPage)ERD2WUtilities.enclosingPageOfClass(this, D2WPage.class);
-				if (parent != null) 
+				D2WPage parent = (D2WPage) ERD2WUtilities.enclosingPageOfClass(this, D2WPage.class);
+				if (parent != null)
 					parent.takeValueForKeyPath(null, "d2wContext.inlineTask");
 			}
 		}

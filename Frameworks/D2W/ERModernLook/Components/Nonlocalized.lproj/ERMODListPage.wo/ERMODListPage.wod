@@ -29,7 +29,7 @@ NavigationBar: WOSwitchComponent {
 	WOComponentName = d2wContext.batchNavigationBarComponentName;
 	displayGroup = displayGroup;
     d2wContext = d2wContext;
-    updateContainerID = d2wContext.idForRepetitionContainer;
+    updateContainerID = idForRepetitionContainer;
 }
 
 PageWrapper: WOSwitchComponent {
@@ -54,7 +54,7 @@ ReturnButton: CCSmartAjaxButton {
 
 RequiredWrapper : ERMODRequiredWrapper {
 	d2wContext = d2wContext;
-	watchedContainerID = d2wContext.idForRepetitionContainer;
+	watchedContainerID = idForRepetitionContainer;
 }
 
 ShowCancel: WOConditional {
@@ -98,7 +98,7 @@ TopNavBatchSize : WOGenericContainer {
 
 RepetitionUpdateContainer : AjaxUpdateContainer {
 	elementName = "div";
-	id = d2wContext.idForRepetitionContainer;
+	id = idForRepetitionContainer;
 }
 
 
@@ -133,7 +133,7 @@ InnerWrapper : WOGenericContainer {
 
 BatchSizeControl : ERMDBatchSizeControl {
   displayGroup = displayGroup;
-  updateContainerID = d2wContext.idForRepetitionContainer;
+  updateContainerID = idForRepetitionContainer;
   d2wContext = d2wContext;
 }
 
