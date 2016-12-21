@@ -354,6 +354,13 @@
             valueClassName = "java.util.UUID"; 
             valueFactoryMethodName = fromString; 
             width = 36; 
+        }, 
+        {
+            columnName = ""; 
+            externalType = VARCHAR2; 
+            factoryMethodArgumentType = EOFactoryMethodArgumentIsNSString; 
+            name = stringType; 
+            width = 50; 
         }
     ); 
     className = EOGenericRecord; 
@@ -389,6 +396,7 @@
         shortString, 
         stringArray, 
         stringDictionary, 
+        stringType, 
         type, 
         uuid, 
         varchar10, 
@@ -417,6 +425,7 @@
             longText, 
             osType, 
             shortString, 
+            stringType, 
             varchar10, 
             varchar100, 
             varchar1000, 

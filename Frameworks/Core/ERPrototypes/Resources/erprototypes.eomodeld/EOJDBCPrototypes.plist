@@ -349,6 +349,23 @@
             valueClassName = NSString; 
             valueType = c; 
             width = 10000000; 
+        }, 
+        {
+            adaptorValueConversionMethodName = toString; 
+            columnName = ""; 
+            externalType = VARCHAR; 
+            factoryMethodArgumentType = EOFactoryMethodArgumentIsNSString; 
+            name = uuid; 
+            valueClassName = "java.util.UUID"; 
+            valueFactoryMethodName = fromString; 
+            width = 36; 
+        }, 
+        {
+            columnName = ""; 
+            externalType = varchar; 
+            factoryMethodArgumentType = EOFactoryMethodArgumentIsNSString; 
+            name = stringType; 
+            width = 50; 
         }
     ); 
     attributesUsedForLocking = (boolean, id, jodaDateTime); 
@@ -385,7 +402,9 @@
         shortString, 
         stringArray, 
         stringDictionary, 
+        stringType, 
         type, 
+        uuid, 
         varchar10, 
         varchar100, 
         varchar1000, 
@@ -418,6 +437,7 @@
             mutableDictionary, 
             osType, 
             shortString, 
+            stringType, 
             type, 
             varchar10, 
             varchar100, 
