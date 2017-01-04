@@ -251,6 +251,9 @@ public abstract class ERD2WPage extends D2WPage implements ERXExceptionHolder, E
         // interrupts the repetition over the property keys, preventing the nullification of the value at the end of the repetition.  This causes
         // weird stuff to happen.
         d2wContext().takeValueForKey(null, "propertyKey");
+        
+        _pageController = null;
+        
         super.sleep();
     }
 
