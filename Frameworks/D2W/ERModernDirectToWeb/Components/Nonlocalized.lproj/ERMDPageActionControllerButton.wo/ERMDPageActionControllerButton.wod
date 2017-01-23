@@ -21,6 +21,7 @@ BranchButton : CCSmartAjaxButton {
 	useAjax = d2wContext.useAjaxControlsWhenEmbedded;
 	updateContainerID = d2wContext.idForMainContainer;
 	dontSubmitForm = dontSubmitForm;
+	hotkey = branchHotkey;
 }
 
 BranchButton2 : AjaxSubmitButton {

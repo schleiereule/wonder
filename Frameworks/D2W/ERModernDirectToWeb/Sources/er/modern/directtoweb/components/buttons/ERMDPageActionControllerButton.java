@@ -160,6 +160,15 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 		return (Boolean) branch().valueForKey(ERDBranchDelegate.BRANCH_REQUIRESFORMSUBMIT);
 	}
 
+    /**
+     * Implementation of the {@link ERDBranchDelegate ERDBranchDelegate}
+     * 
+     * @return a hotkey to bind to the branch action
+     */
+    public String branchHotkey() {
+        return (String) branch().valueForKey(ERDBranchDelegate.BRANCH_HOTKEY);
+    }
+
 	public Boolean dontSubmitForm() {
 		if (branchRequiresFormSubmit())
 			return false;
