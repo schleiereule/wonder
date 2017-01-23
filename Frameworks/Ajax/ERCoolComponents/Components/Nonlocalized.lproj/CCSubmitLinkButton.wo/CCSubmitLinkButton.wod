@@ -5,6 +5,7 @@ CCSubmitLink : CCSubmitLink {
   additionalFunction = ^additionalFunction;
   onclick = ^onclick;
   submitForm = ^submitForm;
+  hotkey = ^hotkey;
 }
 
 Value : ERXLocalizedString {

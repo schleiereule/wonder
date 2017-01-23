@@ -1,10 +1,13 @@
 package er.coolcomponents;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.webobjects.appserver.WOActionResults;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.appserver.WORequest;
 import com.webobjects.appserver.WOResponse;
 
+import er.ajax.AjaxUtils;
 import er.extensions.appserver.ERXResponseRewriter;
 import er.extensions.components.ERXNonSynchronizingComponent;
 import er.extensions.foundation.ERXStringUtilities;
@@ -69,6 +72,15 @@ public class CCSubmitLink extends ERXNonSynchronizingComponent {
 		// use the link and a hidden field to submit the form.
 		ERXResponseRewriter.addScriptResourceInHead(response, context, "ERCoolComponents", "ercoolcomponents.js");
 		_isInForm = context.isInForm();
+        if (StringUtils.isNotEmpty(hotkey())) {
+            AjaxUtils.addScriptResourceInHead(context, response, "prototype.js");
+            AjaxUtils.addScriptResourceInHead(context, response, "ERCoolComponents",
+                    "hotkeys/hotkeys-min.js");
+            String script = "<script type=\"text/javascript\">" + "Hotkeys.bind(\""
+                    + hotkey() + "\",function(){" + linkScript().substring(11)
+                    + "});</script>";
+            response.appendContentString(script);
+        }
 		super.appendToResponse(response, context);
 	}
 
@@ -110,6 +122,14 @@ public class CCSubmitLink extends ERXNonSynchronizingComponent {
 		String func = additionalFunction();
 		String addInFunction = (func.length() > 0) ? "', '" + func : ""; 
 		return ("javascript:CCSL.submit('" + fieldName() + addInFunction + "');");
+	}
+	
+	public String hotkey() {
+	    String hotkey = null;
+	    if (hasBinding("hotkey")) {
+            hotkey = stringValueForBinding("hotkey");
+        }
+	    return hotkey;
 	}
 	
 	public boolean dontSubmitForm() {

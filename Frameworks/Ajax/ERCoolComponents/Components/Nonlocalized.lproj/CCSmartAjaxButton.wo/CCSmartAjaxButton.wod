@@ -11,6 +11,7 @@ Button : CCSubmitLinkButton {
     dontSubmitForm = ^dontSubmitForm;
     value = ^value;
     alt = ^alt;
+    hotkey = ^hotkey;
 }
 ButtonLabel: ERXLocalizedString {
 	value = ^value;
