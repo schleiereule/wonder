@@ -29,7 +29,7 @@ public class CCNotifications extends ERXComponent {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String CC_NOTIFICATION = "CCNotification";
+    public static final String CC_NOTIFICATION = "CCNotification";
 
     public static enum TYPE {
         alert, error, success
@@ -67,11 +67,19 @@ public class CCNotifications extends ERXComponent {
      */
     public void publishNSNotification(NSNotification notification) {
         TYPE notificationType = TYPE.success;
-        if (notification.userInfo() != null
-                && notification.userInfo().containsKey("type")) {
-            notificationType = (TYPE) notification.userInfo().valueForKey("type");
+        boolean sessionMatches = true;
+        if (notification.userInfo() != null) {
+            if (notification.userInfo().containsKey("type")) {
+                notificationType = (TYPE) notification.userInfo().valueForKey("type");
+            }
+            if (notification.userInfo().containsKey("sessionID") && !session().sessionID()
+                    .equals(notification.userInfo().valueForKey("sessionID"))) {
+                sessionMatches = false;
+            }
         }
-        notify((String) notification.object(), notificationType);
+        if (sessionMatches) {
+            notify((String) notification.object(), notificationType);
+        }
     }
 
     public static void notify(String message, TYPE type) {
