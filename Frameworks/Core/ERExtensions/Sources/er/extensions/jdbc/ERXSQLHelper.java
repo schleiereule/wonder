@@ -88,6 +88,7 @@ public class ERXSQLHelper {
 	/** custom JDBC types */
 	public interface CustomTypes {
 		public static final int INET = 9001;
+		public static final int UUID = 9002;
 	}
 	
 	private static final Logger log = LoggerFactory.getLogger(ERXSQLHelper.class);
@@ -1012,6 +1013,9 @@ public class ERXSQLHelper {
 		int result = jdbcType;
 
 		if (jdbcType == CustomTypes.INET) {
+			result = Types.VARCHAR;
+		}
+		if (jdbcType == CustomTypes.UUID) {
 			result = Types.VARCHAR;
 		}
 		return result;
@@ -2372,6 +2376,9 @@ public class ERXSQLHelper {
 			}
 			else if (jdbcType == CustomTypes.INET) {
 				externalType = "inet";
+			}
+			else if (jdbcType == CustomTypes.UUID) {
+				externalType = "uuid";
 			}
 			else if (jdbcType == Types.DATE) {
 				externalType = "date";

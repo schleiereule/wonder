@@ -909,7 +909,7 @@ public class ERXMigrationTable {
 	}
 
 	/**
-	 * Returns a new UUID column.  See newColumn(..) for the full docs.
+	 * Returns a new binary UUID column.  See newColumn(..) for the full docs.
 	 * 
 	 * @param name the name of the column
 	 * @param allowsNull if true, the column will allow null values
@@ -918,6 +918,18 @@ public class ERXMigrationTable {
 	 */
 	public ERXMigrationColumn newUuidColumn(String name, boolean allowsNull) throws SQLException {
 		return newColumn(name, Types.BINARY, 16, 0, 0, allowsNull, null);
+	}
+	
+	/**
+	 * Returns a new native UUID column.  See newColumn(..) for the full docs.
+	 * 
+	 * @param name the name of the column
+	 * @param allowsNull if true, the column will allow null values
+	 * @return the new ERXMigrationColumn
+	 * @throws SQLException if the column cannot be created 
+	 */
+	public ERXMigrationColumn newNativeUuidColumn(String name, boolean allowsNull) throws SQLException {
+		return newColumn(name, CustomTypes.UUID, 0, 0, 0, allowsNull, null);
 	}
 
 	/**
