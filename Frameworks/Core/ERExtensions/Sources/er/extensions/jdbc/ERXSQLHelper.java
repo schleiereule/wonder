@@ -1858,6 +1858,8 @@ public class ERXSQLHelper {
 			String externalType;
 			if (jdbcType == Types.TIMESTAMP) {
 				externalType = "DATE";
+			} else if (jdbcType == CustomTypes.UUID) {
+				externalType = "VARCHAR2";
 			}
 			else {
 				externalType = super.externalTypeForJDBCType(adaptor, jdbcType);

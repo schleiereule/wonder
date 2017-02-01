@@ -929,7 +929,7 @@ public class ERXMigrationTable {
 	 * @throws SQLException if the column cannot be created 
 	 */
 	public ERXMigrationColumn newNativeUuidColumn(String name, boolean allowsNull) throws SQLException {
-		return newColumn(name, CustomTypes.UUID, 0, 0, 0, allowsNull, null);
+		return newColumn(name, CustomTypes.UUID, 36, 0, 0, allowsNull, null);
 	}
 
 	/**
