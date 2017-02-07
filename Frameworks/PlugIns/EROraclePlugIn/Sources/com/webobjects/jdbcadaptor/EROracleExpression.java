@@ -1,6 +1,7 @@
 package com.webobjects.jdbcadaptor;
 
 import java.sql.Timestamp;
+import java.util.zip.CRC32;
 
 import com.webobjects.eoaccess.EOAttribute;
 import com.webobjects.eoaccess.EOEntity;
@@ -201,7 +202,7 @@ public class EROracleExpression extends OracleExpression {
         constraintName = System.getProperty("er.extensions.ERXModelGroup." + entity.name() + "." + relationship.name() + ".foreignKey");
       }
       if (constraintName == null) {
-        constraintName = _NSStringUtilities.concat(tableName, "_", relationship.name(), "_FK");
+        constraintName = constraintName(tableName, relationship.name());
       }
       String sourceKeyList = sourceColumns.componentsJoinedByString(", ");
       String destinationKeyList = destinationColumns.componentsJoinedByString(", ");
@@ -214,6 +215,24 @@ public class EROracleExpression extends OracleExpression {
       else {
         setStatement("ALTER TABLE " + entity.externalName() + " ADD CONSTRAINT " + constraintName + " FOREIGN KEY (" + sourceKeyList + ") REFERENCES " + relationship.destinationEntity().externalName() + " (" + destinationKeyList + ") DEFERRABLE INITIALLY DEFERRED");
       }
+    }
+
+    /**
+     * @param tableName
+     * @param relationshipName
+     * @return a constraint name that will keep within Oracle's 30 characters limit
+     */
+    protected String constraintName(String tableName, String relationshipName) {
+        String constraintName = _NSStringUtilities.concat(tableName, "_", relationshipName, "_FK");
+        if (constraintName != null && constraintName.length() > 30) {
+            // use a short hash to preserve uniqueness
+            CRC32 crc = new CRC32();
+            crc.update(constraintName.getBytes());
+            String checksum = Long.toHexString(crc.getValue());
+            constraintName = constraintName.substring(0, constraintName.length() - ((constraintName.length() - 30) + checksum.length()));
+            constraintName = constraintName + checksum;
+        }
+        return constraintName;
     }
 
     /**

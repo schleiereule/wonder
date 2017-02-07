@@ -1,5 +1,6 @@
 package com.webobjects.jdbcadaptor;
 
+import com.webobjects.eoaccess.EOSynchronizationFactory;
 
 /** Overrides OraclePlugIn in order to provide the modified
  * EROracleExpression class to EOF.
@@ -20,10 +21,11 @@ public class EROraclePlugIn extends OraclePlugIn {
     return EROracleExpression.class;
   }
 
-//  /* (non-Javadoc)
-//   * @see com.webobjects.jdbcadaptor.JDBCPlugIn#createSynchronizationFactory()
-//   */
-//  public EOSynchronizationFactory createSynchronizationFactory() {
-//    return new EROracleSynchronizationFactory(adaptor());
-//  }
+  /* (non-Javadoc)
+   * @see com.webobjects.jdbcadaptor.JDBCPlugIn#createSynchronizationFactory()
+   */
+  @SuppressWarnings("deprecation")
+  public EOSynchronizationFactory createSynchronizationFactory() {
+      return new EROracleSynchronizationFactory(adaptor());
+  }
 }
