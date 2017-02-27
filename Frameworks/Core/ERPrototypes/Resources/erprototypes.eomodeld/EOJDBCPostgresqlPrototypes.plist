@@ -375,6 +375,12 @@
             factoryMethodArgumentType = EOFactoryMethodArgumentIsNSString; 
             name = stringType; 
             width = 50; 
+        }, 
+        {
+            columnName = ""; 
+            externalType = text; 
+            factoryMethodArgumentType = EOFactoryMethodArgumentIsNSString; 
+            name = customTextType; 
         }
     ); 
     className = EOGenericRecord; 
@@ -387,6 +393,7 @@
         charFlag, 
         cryptoString, 
         currencyAmount, 
+        customTextType, 
         date, 
         dateTime, 
         doubleNumber, 
@@ -429,6 +436,7 @@
             boolean, 
             charFlag, 
             cryptoString, 
+            customTextType, 
             date, 
             dateTime, 
             doubleNumber, 
