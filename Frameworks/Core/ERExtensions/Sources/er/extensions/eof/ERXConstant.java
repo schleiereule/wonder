@@ -22,6 +22,7 @@ import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.foundation.NSPropertyListSerialization;
 
 import er.extensions.foundation.ERXArrayUtilities;
+import er.extensions.localization.ERXLocalizer;
 
 /**
  * General purpose constant class, useful when you want reference object that are not
@@ -380,6 +381,10 @@ public abstract class ERXConstant {
 		
 		public String userPresentableDescription() {
 			return name() + " (" + value() +  ")";
+		}
+		
+		public String localizedValue() {
+			return ERXLocalizer.currentLocalizer().localizedStringForKeyWithDefault(value());
 		}
 		
 		@Override
