@@ -5,6 +5,7 @@ import java.util.UUID;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSDictionary;
+import com.webobjects.foundation.NSKeyValueCoding;
 import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.foundation.NSNotification;
 import com.webobjects.foundation.NSNotificationCenter;
@@ -16,6 +17,7 @@ import er.extensions.appserver.ERXSession;
 import er.extensions.appserver.ERXWOContext;
 import er.extensions.components.ERXComponent;
 import er.extensions.eof.ERXConstant;
+import er.extensions.localization.ERXLocalizer;
 
 /**
  * Displays one or more notifications. This is basically a thin wrapper around
@@ -84,13 +86,18 @@ public class CCNotifications extends ERXComponent {
 
     public static void notify(String message, TYPE type) {
         notify(message, type,
-                new NSTimestamp().timestampByAddingGregorianUnits(0, 0, 0, 0, 0, 5));
+                new NSTimestamp().timestampByAddingGregorianUnits(0, 0, 0, 0, 0, 5), null);
     }
 
-    public static void notify(String message, TYPE type, NSTimestamp expiry) {
+    public static void notify(String message, TYPE type, NSKeyValueCoding object) {
+        notify(message, type,
+                new NSTimestamp().timestampByAddingGregorianUnits(0, 0, 0, 0, 0, 5), object);
+    }
+
+    public static void notify(String message, TYPE type, NSTimestamp expiry, NSKeyValueCoding object) {
         NSDictionary<String, Object> guiNotification = new NSDictionary<String, Object>(
-                new Object[] { message, type, expiry, UUID.randomUUID() },
-                new String[] { "message", "type", "expiry", "guid" });
+                new Object[] { message, type, expiry, UUID.randomUUID(), object },
+                new String[] { "message", "type", "expiry", "guid", "object" });
         // for ajax requests, directly publish the notification
         if (AjaxUtils.isAjaxRequest(ERXWOContext.currentContext().request())) {
             AjaxUtils.javascriptResponse(alertifyNotification(guiNotification),
@@ -158,7 +165,16 @@ public class CCNotifications extends ERXComponent {
             alertifyNotification.append("success");
         }
         alertifyNotification.append("('");
-        alertifyNotification.append(notification.valueForKey("message"));
+        String rawMessage = (String) notification.valueForKey("message");
+        ERXLocalizer localizer = ERXLocalizer.currentLocalizer();
+        String localizedMessage = null;
+        if (notification.valueForKey("object") != null) {
+            NSKeyValueCoding object = (NSKeyValueCoding) notification.valueForKey("object");
+            localizedMessage = localizer.localizedTemplateStringForKeyWithObject(rawMessage, object);
+        } else {
+            localizedMessage = localizer.localizedStringForKeyWithDefault(rawMessage);
+        }
+        alertifyNotification.append(localizedMessage);
         alertifyNotification.append("');");
         return alertifyNotification.toString();
     }
