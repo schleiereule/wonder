@@ -23,7 +23,16 @@ import er.extensions.localization.ERXLocalizer;
  * Displays one or more notifications. This is basically a thin wrapper around
  * <a href="https://github.com/alertifyjs/alertify.js">alertify</a>.
  * Notifications that are to be displayed can be sent via NSNotification or by
- * calling one of the static methods provided.
+ * calling one of the static methods provided.<br>
+ * To influence the display style of the notification, choose among the three
+ * types "alert", "error" and "success". The "alert" type will stay visible until
+ * the user has clicked on it.<br>
+ * To limit the display of an NSNotification to the current session, set the
+ * sessionID key of the notification's userInfo dictionary to the session's
+ * ID.<br>
+ * An object implementing NSKeyValueCoding that is passed as the notification
+ * object of an NSNotification or via the static methods, can be accessed from
+ * localization templates.
  * 
  * @author fpeters
  */
@@ -48,29 +57,35 @@ public class CCNotifications extends ERXComponent {
         super.awake();
         NSNotificationCenter.defaultCenter()
                 .addObserver(this,
-                        new NSSelector<Void>("publishNSNotification",
+                        new NSSelector<Void>("displayNSNotification",
                                 ERXConstant.NotificationClassArray),
                         CC_NOTIFICATION, null);
     }
 
     @Override
     public void sleep() {
-        NSNotificationCenter.defaultCenter().removeObserver(this, CC_NOTIFICATION,
-                null);
+        NSNotificationCenter.defaultCenter().removeObserver(this, CC_NOTIFICATION, null);
         super.sleep();
     }
 
     /**
-     * Extracts a message from an NSNotification's object. The user info
-     * dictionary may contain a "type" key, set to one of the valid notification
-     * types.
+     * Displays an NSNotification by retrieving the "message" key of the
+     * notification's userInfo dictionary. The user info dictionary may also
+     * contain a "type" key, set to one of the valid notification types and a
+     * "sessionID" key that will limit display of the notification to that
+     * session. If the notification's object is not null and implementing
+     * NSKeyValueCoding, it is made available for access during localization.
      * 
      * @param notification
      */
-    public void publishNSNotification(NSNotification notification) {
+    public void displayNSNotification(NSNotification notification) {
+        String message = null;
         TYPE notificationType = TYPE.success;
         boolean sessionMatches = true;
         if (notification.userInfo() != null) {
+            if (notification.userInfo().containsKey("message")) {
+                notificationType = (TYPE) notification.userInfo().valueForKey("message");
+            }
             if (notification.userInfo().containsKey("type")) {
                 notificationType = (TYPE) notification.userInfo().valueForKey("type");
             }
@@ -80,24 +95,33 @@ public class CCNotifications extends ERXComponent {
             }
         }
         if (sessionMatches) {
-            notify((String) notification.object(), notificationType);
+            if (notification.object() != null
+                    && notification.object() instanceof NSKeyValueCoding) {
+                notify((NSKeyValueCoding) notification.object(), message,
+                        notificationType);
+            } else {
+                notify(message, notificationType);
+            }
         }
     }
 
     public static void notify(String message, TYPE type) {
-        notify(message, type,
-                new NSTimestamp().timestampByAddingGregorianUnits(0, 0, 0, 0, 0, 5), null);
+        notify(null, message, type,
+                new NSTimestamp().timestampByAddingGregorianUnits(0, 0, 0, 0, 0, 5));
     }
 
-    public static void notify(String message, TYPE type, NSKeyValueCoding object) {
-        notify(message, type,
-                new NSTimestamp().timestampByAddingGregorianUnits(0, 0, 0, 0, 0, 5), object);
+    public static void notify(NSKeyValueCoding object, String message, TYPE type) {
+        notify(object, message, type,
+                new NSTimestamp().timestampByAddingGregorianUnits(0, 0, 0, 0, 0, 5));
     }
 
-    public static void notify(String message, TYPE type, NSTimestamp expiry, NSKeyValueCoding object) {
+    public static void notify(NSKeyValueCoding object,
+                              String message,
+                              TYPE type,
+                              NSTimestamp expiry) {
         NSDictionary<String, Object> guiNotification = new NSDictionary<String, Object>(
-                new Object[] { message, type, expiry, UUID.randomUUID(), object },
-                new String[] { "message", "type", "expiry", "guid", "object" });
+                new Object[] { object, message, type, expiry, UUID.randomUUID() },
+                new String[] { "object", "message", "type", "expiry", "guid" });
         // for ajax requests, directly publish the notification
         if (AjaxUtils.isAjaxRequest(ERXWOContext.currentContext().request())) {
             AjaxUtils.javascriptResponse(alertifyNotification(guiNotification),
@@ -169,8 +193,10 @@ public class CCNotifications extends ERXComponent {
         ERXLocalizer localizer = ERXLocalizer.currentLocalizer();
         String localizedMessage = null;
         if (notification.valueForKey("object") != null) {
-            NSKeyValueCoding object = (NSKeyValueCoding) notification.valueForKey("object");
-            localizedMessage = localizer.localizedTemplateStringForKeyWithObject(rawMessage, object);
+            NSKeyValueCoding object = (NSKeyValueCoding) notification
+                    .valueForKey("object");
+            localizedMessage = localizer
+                    .localizedTemplateStringForKeyWithObject(rawMessage, object);
         } else {
             localizedMessage = localizer.localizedStringForKeyWithDefault(rawMessage);
         }
