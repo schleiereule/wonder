@@ -124,6 +124,10 @@ public class ERD2WSwitchComponent extends D2WSwitchComponent {
             _context.takeValueForKey(_context.task() + "CurrentObject", D2WComponent
                     .keyForGenerationReplacementForVariableNamed("currentObject"));
         }
+        // FP: make sure object is set ASAP to prevent erroneous rule evaluations
+        if (_context.valueForKey("object") == null && valueForBinding("object") != null) {
+            _context.takeValueForKey(valueForBinding("object"), "object");
+        }
         NSDictionary nsdictionary = settings();
         if (nsdictionary != null) {
             String s2;
