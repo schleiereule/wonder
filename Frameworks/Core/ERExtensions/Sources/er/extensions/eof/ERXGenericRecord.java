@@ -33,6 +33,7 @@ import com.webobjects.foundation.NSKeyValueCoding;
 import com.webobjects.foundation.NSMutableDictionary;
 import com.webobjects.foundation.NSValidation;
 
+import er.extensions.ERXExtensions;
 import er.extensions.crypting.ERXCrypto;
 import er.extensions.eof.ERXDatabaseContextDelegate.AutoBatchFaultingEnterpriseObject;
 import er.extensions.foundation.ERXArrayUtilities;
@@ -1594,4 +1595,10 @@ public class ERXGenericRecord extends EOGenericRecord implements ERXGuardedObjec
     public final Boolean isNonNull() {
     	return Boolean.TRUE;
     }
+    
+    @Override
+    public String userPresentableDescription() {
+    	return ERXExtensions.userPresentableDescriptionForObject(this);
+    }
+    
 }

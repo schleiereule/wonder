@@ -35,6 +35,7 @@ import com.webobjects.eoaccess.EOSQLExpression;
 import com.webobjects.eoaccess.EOUtilities;
 import com.webobjects.eoaccess.ERXEntityDependencyOrderingDelegate;
 import com.webobjects.eoaccess.ERXModel;
+import com.webobjects.eocontrol.EOClassDescription;
 import com.webobjects.eocontrol.EOEnterpriseObject;
 import com.webobjects.eocontrol.EOFetchSpecification;
 import com.webobjects.eocontrol.EOKeyValueQualifier;
@@ -49,6 +50,8 @@ import com.webobjects.foundation.NSLog;
 import com.webobjects.foundation.NSNotification;
 import com.webobjects.foundation.NSNotificationCenter;
 import com.webobjects.foundation.NSSelector;
+import com.webobjects.foundation._NSDelegate;
+import com.webobjects.foundation._NSUtilities;
 import com.webobjects.jdbcadaptor.JDBCAdaptorException;
 
 import er.extensions.appserver.ERXApplication;
@@ -66,6 +69,7 @@ import er.extensions.eof.ERXGenericRecord;
 import er.extensions.eof.ERXModelGroup;
 import er.extensions.eof.ERXObjectStoreCoordinatorPool;
 import er.extensions.eof.ERXSharedEOLoader;
+import er.extensions.eof.UserPresentableDescriptionDelegate;
 import er.extensions.eof.qualifiers.ERXFullTextQualifier;
 import er.extensions.eof.qualifiers.ERXFullTextQualifierSupport;
 import er.extensions.eof.qualifiers.ERXPrimaryKeyListQualifier;
@@ -1150,4 +1154,32 @@ public class ERXExtensions extends ERXFrameworkPrincipal {
     		_eofInitializeLock.unlock();
     	}
     }
+    
+    private static UserPresentableDescriptionDelegate _userpresentableDescriptionDelegate;
+    
+	public static String userPresentableDescriptionForObject(ERXGenericRecord eo) {
+		
+		if (_userpresentableDescriptionDelegate == null) {
+			String delegateClassName = ERXProperties.stringForKey("er.extensions.UserPresentableDescriptionDelegate");
+			if (ERXStringUtilities.isNotBlank(delegateClassName)) {
+				try {
+					Class<? extends UserPresentableDescriptionDelegate> delegateClass = _NSUtilities.classWithName(delegateClassName);
+					_userpresentableDescriptionDelegate = delegateClass.newInstance();
+				}
+				catch (InstantiationException | IllegalAccessException e) {
+					_log.error(e);
+				}
+			}
+		}
+		else {
+			return _userpresentableDescriptionDelegate.userPresentableDescriptionForObject(eo);
+		}
+		
+		EOClassDescription cd = eo.classDescription();
+		if (cd != null) {
+			return cd.userPresentableDescriptionForObject(eo);
+		}
+		return null;
+	}
+    
 }
