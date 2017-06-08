@@ -84,7 +84,7 @@ public class CCNotifications extends ERXComponent {
         boolean sessionMatches = true;
         if (notification.userInfo() != null) {
             if (notification.userInfo().containsKey("message")) {
-                notificationType = (TYPE) notification.userInfo().valueForKey("message");
+                message = (String) notification.userInfo().valueForKey("message");
             }
             if (notification.userInfo().containsKey("type")) {
                 notificationType = (TYPE) notification.userInfo().valueForKey("type");
