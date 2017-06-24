@@ -41,7 +41,7 @@ PrintButton: ERXSingleButton {
 
 PrinterFriendlyLink: ERXJSOpenWindowHyperlink {
 	action = printerFriendlyVersion;
-	scrollbars = ^scrollbars;
+	scrollbars = "scrollbars";
 	target = "PrinterFriendly";
 	height = ^height;
 	width = ^width;
