@@ -72,7 +72,11 @@ public class ERXJSOpenWindowHyperlink extends WOComponent {
         result.append("','width="+valueForBinding("width"));
         result.append(",height="+valueForBinding("height"));
         result.append(",location=no");
-        result.append(",scrollbars="+valueForBinding("scrollbars"));
+        if (canGetValueForBinding("scrollbars")) {
+            result.append("," + valueForBinding("scrollbars"));        	
+        } else {
+        	result.append(",scrollbars");
+        }
         result.append(",menubar="+valueForBinding("menubar"));
         result.append(",toolbar="+valueForBinding("toolbar"));
         result.append(",titlebar="+valueForBinding("titlebar"));
@@ -88,6 +92,7 @@ public class ERXJSOpenWindowHyperlink extends WOComponent {
         
         result.append("return false;");
         
+        System.out.println("ERXJSOpenWindowHyperlink.openWindow: " + result.toString());
         return result.toString();
     }
 
