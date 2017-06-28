@@ -92,7 +92,6 @@ public class ERXJSOpenWindowHyperlink extends WOComponent {
         
         result.append("return false;");
         
-        System.out.println("ERXJSOpenWindowHyperlink.openWindow: " + result.toString());
         return result.toString();
     }
 
