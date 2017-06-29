@@ -1237,7 +1237,7 @@ public abstract class ERD2WPage extends D2WPage implements ERXExceptionHolder, E
     public NSDictionary settings() {
         String pc = d2wContext().dynamicPage();
         if(pc != null) {
-            return new NSDictionary(pc, "parentPageConfiguration");
+            return new NSDictionary(new Object[] { pc, d2wContext().valueForKey("task") }, new Object[] { "parentPageConfiguration", "parentTask" });
         }
         return null;
     }

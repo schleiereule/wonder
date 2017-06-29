@@ -410,7 +410,7 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 			if (d2wContext().valueForKey("currentRelationship") != null) {
 				// set parentRelationship key to allow subcomponents to
 				// reference the correct ID (wonder-140)
-				return new NSDictionary(new Object[] { pc, d2wContext().valueForKey("currentRelationship") }, new Object[] { "parentPageConfiguration", "parentRelationship" });
+				return new NSDictionary(new Object[] { pc, d2wContext().valueForKey("currentRelationship"), d2wContext().valueForKey("task") }, new Object[] { "parentPageConfiguration", "parentRelationship", "parentTask" });
 			} else {
 				return new NSDictionary(pc, "parentPageConfiguration");
 			}
