@@ -135,14 +135,6 @@ public class CCTagEditor extends AjaxDynamicElement {
         response.appendContentString("cctags.on('remove', changed);");
         // cache the initial tag state
         response.appendContentString("var cachedState = cctags.value();");
-        // ERMD2W-specific self-destruct implementation, could be generalised by using bindings?
-        // self destruct
-//        response.appendContentString("function selfDestruct(e) {if (e != undefined) {cctags.destroy();ccsuggestions.destroy();console.log('carried out self destruction.');};}");
-//        response.appendContentString("var cancelButtons = document.getElementsByClassName('CancelEditPageButton');");
-//        response.appendContentString("for (var i = 0; i < cancelButtons.length; ++i) {");
-//        response.appendContentString("var aButton = cancelButtons[i];");
-//        response.appendContentString("aButton.addEventListener('click', selfDestruct, false);");
-//        response.appendContentString("};");
         // handle the change event
         response.appendContentString("function changed (data) {");
         // check whether the tags actually changed
