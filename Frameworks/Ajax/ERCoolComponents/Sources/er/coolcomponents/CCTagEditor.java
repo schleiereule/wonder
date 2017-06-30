@@ -6,6 +6,7 @@ import com.webobjects.appserver.WOContext;
 import com.webobjects.appserver.WOElement;
 import com.webobjects.appserver.WORequest;
 import com.webobjects.appserver.WOResponse;
+import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.foundation.NSMutableDictionary;
@@ -84,7 +85,6 @@ public class CCTagEditor extends AjaxDynamicElement {
         // add our input field, which will only get accessed client-side, via Insignia
         response.appendContentString("<input ");
         appendTagAttributeToResponse(response, "id", id + "_input");
-        appendTagAttributeToResponse(response, "style", "width: 2em;");
         appendTagAttributeToResponse(response, "value",
                 valueForBinding("value", context.component()));
         response.appendContentString("/>");
@@ -104,7 +104,7 @@ public class CCTagEditor extends AjaxDynamicElement {
         response.appendContentString(id);
         response.appendContentString("_input');");
         // initialise an insignia instance and keep track of it
-        response.appendContentString("var tags = insignia(");
+        response.appendContentString("var cctags = insignia(");
         response.appendContentString("input, ");
         AjaxOptions.appendToResponse(createOptions(context), response, context);
         response.appendContentString(");");
@@ -122,29 +122,38 @@ public class CCTagEditor extends AjaxDynamicElement {
         response.appendContentString("return true; };");
         // we use a custom filter that'll exclude already selected tags from the list of suggestions
         response.appendContentString("function customFilter (q, suggestion) { ");
-        response.appendContentString("if (tags.tags().indexOf(suggestion) != -1) { return false; } ");
+        response.appendContentString("if (cctags.value().indexOf(suggestion) != -1) { return false; } ");
         response.appendContentString("else { return fuzzysearch(q, suggestion); } };");
         // initialise horsey auto-completion
-        response.appendContentString("horsey(input, { suggestions: ");
+        response.appendContentString("var ccsuggestions = horsey(input, { source: ");
         // specify existing tags for auto-completion
         response.appendContentString(availableTags(context));
         response.appendContentString(", filter: customFilter");
         response.appendContentString("}); ");
         // add an event listener to the input
-        response.appendContentString("input.addEventListener('insignia-evaluated', changed);");
+        response.appendContentString("cctags.on('add', changed);");
+        response.appendContentString("cctags.on('remove', changed);");
         // cache the initial tag state
-        response.appendContentString("var cachedState = tags.value();");
+        response.appendContentString("var cachedState = cctags.value();");
+        // ERMD2W-specific self-destruct implementation, could be generalised by using bindings?
+        // self destruct
+//        response.appendContentString("function selfDestruct(e) {if (e != undefined) {cctags.destroy();ccsuggestions.destroy();console.log('carried out self destruction.');};}");
+//        response.appendContentString("var cancelButtons = document.getElementsByClassName('CancelEditPageButton');");
+//        response.appendContentString("for (var i = 0; i < cancelButtons.length; ++i) {");
+//        response.appendContentString("var aButton = cancelButtons[i];");
+//        response.appendContentString("aButton.addEventListener('click', selfDestruct, false);");
+//        response.appendContentString("};");
         // handle the change event
-        response.appendContentString("function changed () {");
+        response.appendContentString("function changed (data) {");
         // check whether the tags actually changed
         // (this is mostly to avoid creation of an additional Ajax call when
         // leaving the page, which would go w/o a response and hang around)
-        response.appendContentString("if (cachedState != tags.value()) {");
-        response.appendContentString("cachedState = tags.value();");
+        response.appendContentString("if (cachedState != cctags.value()) {");
+        response.appendContentString("cachedState = cctags.value();");
         response.appendContentString("var params = {};");
         response.appendContentString("params['");
         response.appendContentString(formValueName(context));
-        response.appendContentString("'] = tags.value();");
+        response.appendContentString("'] = cctags.value();");
         // send the current tags value to the server
         response.appendContentString("new Ajax.Request('");
         response.appendContentString(AjaxUtils.ajaxComponentActionUrl(context));
@@ -159,7 +168,7 @@ public class CCTagEditor extends AjaxDynamicElement {
         if (stringValueForBinding("availableTags", context.component()) != null) {
             availableTags = stringValueForBinding("availableTags", context.component());
         }
-        return availableTags;
+        return "[{ list: " + availableTags + "}]";
     }
     
     /**
@@ -213,9 +222,10 @@ public class CCTagEditor extends AjaxDynamicElement {
      * @param request the WORequest to get the form values from
      * @param context WOContext used to determine component used in
      */
+    @SuppressWarnings("rawtypes")
     protected void setValueFromFormValue(WORequest request, WOContext context) {
-        Object tags = request.formValueForKey(formValueName(context));
-        setValueForBinding(tags, "value", context.component());
+        Object tags = request.formValuesForKey(formValueName(context));
+        setValueForBinding(((NSArray) tags).componentsJoinedByString(" "), "value", context.component());
     }
 
     /**

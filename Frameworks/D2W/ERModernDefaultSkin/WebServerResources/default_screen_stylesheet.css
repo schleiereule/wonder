@@ -1763,19 +1763,27 @@ span span.Tooltip.HelpTooltip.PropertyHelpTooltip + a {
 /* ERD2WEditTags */
 
 .nsg-editor {
-	padding-left: 0;
+	padding-left: 0 !important;
 }
 
 .nsg-tag {
-	border-color: #aaa;
+	border-color: #aaa !important;
 }
 
 .sey-item:hover {
-	background-color:#e6e9ef;
-	color:#000;
+	background-color:#e6e9ef !important;
+	color:#000 !important;
 }
 
 .sey-selected {
-	background-color:#e6e9ef;
-	color:#000;
+	background-color:#e6e9ef !important;
+	color:#000 !important;
+}
+
+.sey-container {
+	z-index: 9999 !important;
+}
+
+.CCTags .nsg-input {
+	width: 40px;
 }
