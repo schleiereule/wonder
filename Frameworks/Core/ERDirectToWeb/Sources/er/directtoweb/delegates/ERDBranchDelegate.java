@@ -16,6 +16,7 @@ import java.lang.reflect.Modifier;
 import java.util.Enumeration;
 import java.util.Iterator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.webobjects.appserver.WOComponent;
@@ -248,6 +249,7 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 					label = ERXLocalizer.currentLocalizer().localizedStringForKeyWithDefault(label);
 				}
 				String group = ERXProperties.stringForKey("er.directtoweb.delegates.ERDBranchDelegate.defaultGroup");
+				String hotkey = null;
 				boolean requiresFormSubmit = true;
 				try {
 					Method m = getClass().getMethod(method, new Class[] { WOComponent.class });
@@ -255,6 +257,7 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 						D2WDelegate info = m.getAnnotation(D2WDelegate.class);
 						group = info.group();
 						requiresFormSubmit = info.requiresFormSubmit();
+						hotkey = info.hotkey();
 					}
 				} catch (NoSuchMethodException e) {
 					log.error("Caught no such method exception while calculating the branch choices for context: " + this + " exception: " + e.getMessage());
@@ -264,6 +267,9 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 				entry.setObjectForKey(group, BRANCH_GROUP);
 				entry.setObjectForKey(requiresFormSubmit, BRANCH_REQUIRESFORMSUBMIT);
 				entry.setObjectForKey(label, BRANCH_LABEL);
+				if (StringUtils.isNotBlank(hotkey)) {
+				    entry.setObjectForKey(hotkey, BRANCH_HOTKEY);
+				}
 				entry.setObjectForKey(method + "Action", BRANCH_BUTTON_ID);
 				translatedChoices.addObject(entry);
 			}
