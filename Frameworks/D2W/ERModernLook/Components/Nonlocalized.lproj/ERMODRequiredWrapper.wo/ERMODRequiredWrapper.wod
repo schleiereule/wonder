@@ -23,6 +23,7 @@ OptionalForm: ERXOptionalForm {
 	multipleSubmit = true;
 	name = formName;
 	fragmentIdentifier = session.objectStore.fragmentIdentifier; //VALID
+	class = "PageForm";
 }
 
 HeaderDiv : WOGenericContainer {
@@ -35,6 +36,10 @@ Header: WOSwitchComponent {
 	d2wContext = d2wContext;
 	object = ^object;
 	key = ^key;
+}
+
+TabIndexScript : ERXJavaScript {
+	scriptString = "autoTabIndex();";
 }
 
 ShowHeader : WOConditional {

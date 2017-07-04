@@ -1,7 +1,9 @@
 package er.modern.look.components;
 
 import com.webobjects.appserver.WOContext;
+import com.webobjects.appserver.WOResponse;
 
+import er.extensions.appserver.ERXResponseRewriter;
 import er.extensions.foundation.ERXStringUtilities;
 
 /**
@@ -113,5 +115,12 @@ public class ERMODRequiredWrapper extends ERMODComponent {
 		}
 		return _showHelp;
 	}
+
+    @Override
+    public void appendToResponse(WOResponse response, WOContext context) {
+        super.appendToResponse(response, context);
+        // add script for handling automatic tab index setting
+        ERXResponseRewriter.addScriptResourceInHead(response, context, "ERModernDirectToWeb", "autoTabIndex.js");
+    }
 
 }
