@@ -15,7 +15,7 @@ var autoTabIndex = function() {
         }
         )
     }
-    var embeddedBlocks = $$('.embeddedOverlay + div');
+    var embeddedBlocks = $$('.EmbeddedOverlay + div');
     if (embeddedBlocks.length > 0) {
         // embedded blocks are always nested, so it's sufficient to select the last
         var lastEmbeddedBlock = embeddedBlocks[embeddedBlocks.length - 1];
