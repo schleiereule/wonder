@@ -94,8 +94,8 @@
 	"ERDEditToManyRelationship.delete" = "Ausgew\U00e4hlte l\U00f6schen";
 	"ERDEditToManyRelationship.remove" = "Entfernen";
 	"ERDEmptyListMessage.createObjectStringTemplate" = "Neuen Eintrag anlegen";
-	"ERDEmptyListMessage.emptyEmbeddedListMessage" = "<b>Keine @@displayNameForDestinationEntity@@ gefunden.</b>";
-	"ERDEmptyListMessage.emptyListMessage" = "<b>Keine @@displayNameForEntity@@ gefunden.</b>";
+	"ERDEmptyListMessage.emptyEmbeddedListMessage" = "<b>Keine @@displayNamePluralizedForDestinationEntity@@ gefunden.</b>";
+	"ERDEmptyListMessage.emptyListMessage" = "<b>Keine @@displayNamePluralizedForEntity@@ gefunden.</b>";
 	"ERDInspect.clear" = "L\U00f6schen";
 	"ERDInspect.create" = "Anlegen";
 	"ERDInspect.objectUnsetMessage" = "Kein @@displayNameForDestinationEntity@@ gesetzt.";

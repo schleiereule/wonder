@@ -36,12 +36,14 @@ public class ERDDefaultDisplayNameAssignment extends ERDAssignment implements ER
     protected static final NSDictionary keys = ERXDictionaryUtilities.dictionaryWithObjectsAndKeys( new Object [] {
         new NSArray(new Object[] {"pageConfiguration", "task", "entity.name"}), "displayNameForPageConfiguration",
         new NSArray(new Object[] {"entity", "object.entityName"}), "displayNameForEntity",
+        new NSArray(new Object[] {"entity", "object.entityName"}), "displayNamePluralizedForEntity",
         new NSArray(new Object[] {"sectionKey"}), "displayNameForSectionKey",
         new NSArray(new Object[] {"tabKey"}), "displayNameForTabKey",
         new NSArray(new Object[] {"propertyKey"}), "displayNameForProperty",
         new NSArray(new Object[] {"propertyKey"}), "displayNameForPropertyKeyPath",
         //new NSArray(new Object[] {"destinationEntityName"}), "displayNameForDestinationEntity",
         new NSArray(new Object[] {"smartRelationship.destinationEntity", "destinationEntityName"}), "displayNameForDestinationEntity",
+        new NSArray(new Object[] {"smartRelationship.destinationEntity", "destinationEntityName"}), "displayNamePluralizedForDestinationEntity",
         new NSArray(new Object[] {"editConfigurationName"}), "displayNameForEditConfiguration",
         new NSArray(new Object[] {"inspectConfigurationName"}), "displayNameForInspectConfiguration",
         new NSArray(new Object[] {"createConfigurationName"}), "displayNameForCreateConfiguration",
@@ -130,6 +132,14 @@ public class ERDDefaultDisplayNameAssignment extends ERDAssignment implements ER
     public Object displayNameForEntity(D2WContext c) {
         return localizedValueForDisplayNameOfKeyPath("entity.name", c);
     }
+    
+	/**
+	 * @return a beautified, localized and pluralized display name for the current <code>entity.name</code>
+	 */
+	public Object displayNamePluralizedForEntity(D2WContext c) {
+		Object result = localizedValueForDisplayNameOfKeyPath("entity.name", c);
+		return ERXLocalizer.currentLocalizer().plurifiedString((String) result, 0);
+	}
 
     /** @return a beautified, localized display name for the current <code>destinationEntity</code> */
     public Object displayNameForDestinationEntity(D2WContext c) {
@@ -145,6 +155,12 @@ public class ERDDefaultDisplayNameAssignment extends ERDAssignment implements ER
         } 
         return result;
     }
+    
+    /** @return a beautified, localized and pluralized display name for the current <code>destinationEntity</code> */
+	public Object displayNamePluralizedForDestinationEntity(D2WContext c) {
+		Object result = displayNameForDestinationEntity(c);
+		return ERXLocalizer.currentLocalizer().plurifiedString((String) result, 0);
+	}
 
     /** @return a beautified, localized display name for the current <code>sectionKey</code> */
     public Object displayNameForSectionKey(D2WContext c) {
