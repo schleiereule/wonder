@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.webobjects.directtoweb.D2WContext;
+import com.webobjects.directtoweb.ERD2WUtilities;
 import com.webobjects.eoaccess.EOEntity;
 import com.webobjects.eocontrol.EOKeyValueUnarchiver;
 import com.webobjects.foundation.NSArray;
@@ -100,9 +101,97 @@ public class ERDDefaultDisplayNameAssignment extends ERDAssignment implements ER
         return result;
     }
 
-    /** @return a beautified, localized display name for the current <code>propertyKey</code>, showing only the last component */
+    /**
+     * Checks for:
+     * <ul>
+     * <li>PropertyKey.EntityName.key
+     * <li>PropertyKey.key
+     * <li>key<br>
+     * <br>
+     * <li>PropertyKey.EntityName.key.path
+     * <li>PropertyKey.key.path
+     * <li>key.path
+     * <li>PropertyKey.PathsEntityName.path
+     * <li>PropertyKey.path
+     * <li>path
+     * </ul>
+     * <p>
+     * Example: Person.participation.course.activity.name
+     * <ul>
+     * <li>PropertyKey.Person.participation.course.activity.name
+     * <li>PropertyKey.participation.course.activity.name
+     * <li>participation.course.activity.name
+     * <li>PropertyKey.Activity.name
+     * <li>PropertyKey.name
+     * <li>name
+     * 
+     * @return a beautified, localized display name for the current
+     *         <code>propertyKey</code>, showing only the last component
+     */
     public Object displayNameForProperty(D2WContext c) {
-        return localizedValueForDisplayNameOfKeyPath("propertyKey", c);
+        String result = null;
+        String keyPath = (String) c.valueForKey("propertyKey");
+        String localizerKey = "PropertyKey." + c.valueForKeyPath("entity.name") + "."
+                + keyPath;
+
+        result = ERXLocalizer.currentLocalizer().localizedStringForKey(localizerKey);
+        if (log.isDebugEnabled()) {
+            log.debug(
+                    c.valueForKey("propertyKey") + " | " + localizerKey + " | " + result);
+        }
+        if (result == null) {
+            localizerKey = "PropertyKey." + keyPath;
+            result = ERXLocalizer.currentLocalizer().localizedStringForKey(localizerKey);
+            if (log.isDebugEnabled()) {
+                log.debug(c.valueForKey("propertyKey") + " | " + localizerKey + " | "
+                        + result);
+            }
+        }
+        if (result == null) {
+            localizerKey = keyPath;
+            result = ERXLocalizer.currentLocalizer().localizedStringForKey(localizerKey);
+            if (log.isDebugEnabled()) {
+                log.debug(c.valueForKey("propertyKey") + " | " + localizerKey + " | "
+                        + result);
+            }
+        }
+        if (result == null && keyPath != null && keyPath.indexOf('.') != -1) {
+            EOEntity entity = ERD2WUtilities.entityForPropertyKeyPath(c);
+            if (entity != null) {
+                localizerKey = "PropertyKey." + entity.name() + "."
+                        + ERXStringUtilities.lastPropertyKeyInKeyPath(keyPath);
+                result = ERXLocalizer.currentLocalizer()
+                        .localizedStringForKey(localizerKey);
+                if (log.isDebugEnabled()) {
+                    log.debug(c.valueForKey("propertyKey") + " | " + localizerKey + " | "
+                            + result);
+                }
+            }
+            if (result == null) {
+                localizerKey = "PropertyKey."
+                        + ERXStringUtilities.lastPropertyKeyInKeyPath(keyPath);
+                result = ERXLocalizer.currentLocalizer()
+                        .localizedStringForKey(localizerKey);
+                if (log.isDebugEnabled()) {
+                    log.debug(c.valueForKey("propertyKey") + " | " + localizerKey + " | "
+                            + result);
+
+                }
+            }
+            if (result == null) {
+                localizerKey = ERXStringUtilities.lastPropertyKeyInKeyPath(keyPath);
+                result = ERXLocalizer.currentLocalizer()
+                        .localizedStringForKey(localizerKey);
+                if (log.isDebugEnabled()) {
+                    log.debug(c.valueForKey("propertyKey") + " | " + localizerKey + " | "
+                            + result);
+                }
+            }
+        }
+        if (result == null) {
+            return localizedValueForDisplayNameOfKeyPath("propertyKey", c);
+        }
+        return result;
     }
 
     /** @return a beautified, localized display name for the key path of the current <code>propertyKey</code> */
