@@ -39,6 +39,7 @@ SearchField: WOTextField {
 	value = searchValue;
 	type = "search";
 	title = localizedSearchKey;
+	placeholder = localizedSearchKey;
 }
 
 showRestrictedChoices : WOConditional {
