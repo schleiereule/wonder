@@ -1527,6 +1527,7 @@ div.RtActionCell li {
 
 .ListFilter .icon-search {
 	margin-right: 5px;
+	float: right;
 }
 
 .ListFilter .ListFilterSearch, .ListFilter .ListFilterChoices {
