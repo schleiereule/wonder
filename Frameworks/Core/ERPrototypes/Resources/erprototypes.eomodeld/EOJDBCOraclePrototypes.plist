@@ -56,7 +56,7 @@
         }, 
         {
             columnName = ""; 
-            externalType = DATE; 
+            externalType = TIMESTAMP; 
             name = dateTime; 
             valueClassName = NSCalendarDate; 
             valueType = T; 
