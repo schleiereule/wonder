@@ -101,5 +101,6 @@ public class ERCAuditTrail extends _ERCAuditTrail {
         if(type == ERCAuditTrailType.DELETED) {
             setIsDeleted(true);
         }
+        setLastEntry(entry);
     }
 }

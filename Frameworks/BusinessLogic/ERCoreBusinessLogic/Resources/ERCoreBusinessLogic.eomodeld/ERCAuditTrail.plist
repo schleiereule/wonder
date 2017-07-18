@@ -7,11 +7,17 @@
             columnName = "IS_DELETED"; 
             name = isDeleted; 
             prototypeName = intBoolean; 
+        }, 
+        {
+            allowsNull = Y; 
+            columnName = lastEntryID; 
+            name = lastEntryID; 
+            prototypeName = id; 
         }
     ); 
-    attributesUsedForLocking = (gid, id, isDeleted); 
+    attributesUsedForLocking = (gid, id, isDeleted, lastEntryID); 
     className = "er.corebusinesslogic.audittrail.ERCAuditTrail"; 
-    classProperties = (entries, gid, isDeleted); 
+    classProperties = (entries, gid, isDeleted, lastEntry); 
     externalName = ERCAuditTrail; 
     fetchSpecificationDictionary = {}; 
     name = ERCAuditTrail; 
@@ -23,6 +29,13 @@
             joinSemantic = EOInnerJoin; 
             joins = ({destinationAttribute = trailId; sourceAttribute = id; }); 
             name = entries; 
+        }, 
+        {
+            destination = ERCAuditTrailEntry; 
+            isToMany = N; 
+            joinSemantic = EOInnerJoin; 
+            joins = ({destinationAttribute = id; sourceAttribute = lastEntryID; }); 
+            name = lastEntry; 
         }
     ); 
 }

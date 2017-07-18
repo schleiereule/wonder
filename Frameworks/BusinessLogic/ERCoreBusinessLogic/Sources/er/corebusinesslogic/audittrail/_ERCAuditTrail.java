@@ -22,6 +22,7 @@ public abstract class _ERCAuditTrail extends ERXGenericRecord {
 
 	// Relationships
 	   public static final String ENTRIES = "entries";
+	   public static final String LAST_ENTRY = "lastEntry";
     }
 
     public static class _ERCAuditTrailClazz extends ERXGenericRecord.ERXGenericRecordClazz<ERCAuditTrail> {
@@ -40,6 +41,13 @@ public abstract class _ERCAuditTrail extends ERXGenericRecord {
   }
   public void setIsDeleted(Boolean value) {
     takeStoredValueForKey(value, Key.IS_DELETED);
+  }
+
+  public er.corebusinesslogic.audittrail.ERCAuditTrailEntry lastEntry() {
+    return (er.corebusinesslogic.audittrail.ERCAuditTrailEntry)storedValueForKey(Key.LAST_ENTRY);
+  }
+  public void setLastEntry(er.corebusinesslogic.audittrail.ERCAuditTrailEntry value) {
+    takeStoredValueForKey(value, Key.LAST_ENTRY);
   }
 
   public NSArray<er.corebusinesslogic.audittrail.ERCAuditTrailEntry> entries() {
