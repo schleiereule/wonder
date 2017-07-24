@@ -131,6 +131,13 @@ public class ERDDefaultDisplayNameAssignment extends ERDAssignment implements ER
     public Object displayNameForProperty(D2WContext c) {
         String result = null;
         String keyPath = (String) c.valueForKey("propertyKey");
+        /*
+         * Handle special case of attributes on partial entities of the form
+         * "@PartialEntity.propertyKey", by dropping the "@" from the keyPath.
+         */
+        if (keyPath != null && keyPath.startsWith("@")) {
+            keyPath = keyPath.substring(1);
+        }
         String localizerKey = "PropertyKey." + c.valueForKeyPath("entity.name") + "."
                 + keyPath;
 
