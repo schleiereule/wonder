@@ -1542,8 +1542,6 @@ public class ERXFileUtilities {
 	        if (separatorIndex != -1) {
 	        	fileName = path.substring(separatorIndex + 1);
 	        }
-	        // ... A tiny security check here ... Just in case.
-	        fileName = fileName.replaceAll("\\.\\.", "_");
     	}
         return fileName;
     }
