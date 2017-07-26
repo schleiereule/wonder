@@ -79,6 +79,10 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 			page.setCurrentTab(next);
 		}
 		NSMutableDictionary<String, Object> userInfo = new NSMutableDictionary<String, Object>();
+	    // if the parent page configuration ID is available, add it
+        if (d2wContext(sender).valueForKey("parentPageConfigurationID") != null) {
+            userInfo.put("parentPageConfigurationID", d2wContext(sender).valueForKey("parentPageConfigurationID"));
+        }
 		userInfo.put("pageConfiguration", d2wContext(sender).valueForKey("pageConfiguration"));
 		NSNotificationCenter.defaultCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_NEXT_STEP_ACTION, null, userInfo);
 	}
@@ -95,6 +99,10 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 			page.setCurrentTab(prev);
 		}
 		NSMutableDictionary<String, Object> userInfo = new NSMutableDictionary<String, Object>();
+	    // if the parent page configuration ID is available, add it
+        if (d2wContext(sender).valueForKey("parentPageConfigurationID") != null) {
+            userInfo.put("parentPageConfigurationID", d2wContext(sender).valueForKey("parentPageConfigurationID"));
+        }
 		userInfo.put("pageConfiguration", d2wContext(sender).valueForKey("pageConfiguration"));
 		NSNotificationCenter.defaultCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_PREVIOUS_STEP_ACTION, null, userInfo);
 	}
@@ -149,6 +157,10 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 				nextPage = _nextPageFromDelegate(page);
 			}
 			NSMutableDictionary<String, Object> userInfo = new NSMutableDictionary<String, Object>();
+		    // if the parent page configuration ID is available, add it
+	        if (c.valueForKey("parentPageConfigurationID") != null) {
+	            userInfo.put("parentPageConfigurationID", c.valueForKey("parentPageConfigurationID"));
+	        }
 			userInfo.put("pageConfiguration", c.valueForKey("pageConfiguration"));
 			userInfo.put("newObject", eo);
 			NSNotificationCenter.defaultCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_SAVE_ACTION, null, userInfo);
@@ -185,6 +197,10 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 			ec.revert();
 		}
 		NSMutableDictionary<String, Object> userInfo = new NSMutableDictionary<String, Object>();
+        // if the parent page configuration ID is available, add it
+        if (c.valueForKey("parentPageConfigurationID") != null) {
+            userInfo.put("parentPageConfigurationID", c.valueForKey("parentPageConfigurationID"));
+        }
 		userInfo.put("pageConfiguration", c.valueForKey("pageConfiguration"));
 		NSNotificationCenter.defaultCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_CANCEL_EDIT_ACTION, null, userInfo);
 		return page.nextPage(false);

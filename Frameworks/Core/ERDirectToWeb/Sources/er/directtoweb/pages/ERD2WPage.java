@@ -14,6 +14,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.log4j.Logger;
@@ -1237,7 +1238,8 @@ public abstract class ERD2WPage extends D2WPage implements ERXExceptionHolder, E
     public NSDictionary settings() {
         String pc = d2wContext().dynamicPage();
         if(pc != null) {
-            return new NSDictionary(new Object[] { pc, d2wContext().valueForKey("task") }, new Object[] { "parentPageConfiguration", "parentTask" });
+            String parentPageConfigurationID = (String) d2wContext().valueForKey("pageConfigurationID");
+            return new NSDictionary(new Object[] { pc, parentPageConfigurationID, d2wContext().valueForKey("task") }, new Object[] { "parentPageConfiguration", "parentPageConfigurationID", "parentTask" });
         }
         return null;
     }

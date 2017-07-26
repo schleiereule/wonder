@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import com.webobjects.appserver.WOApplication;
 import com.webobjects.appserver.WOSession;
@@ -102,6 +103,9 @@ public class ERD2WContext extends D2WContext implements Serializable {
         super.setDynamicPage(page);
         setTask(task());
         setEntity(entity());
+        if (valueForKey("pageConfigurationID") == null) {
+            takeValueForKey(UUID.randomUUID().toString(), "pageConfigurationID");
+        }
     }
     
     /**

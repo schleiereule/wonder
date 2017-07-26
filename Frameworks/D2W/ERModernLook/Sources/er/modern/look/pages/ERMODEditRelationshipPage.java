@@ -3,6 +3,7 @@ package er.modern.look.pages;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.UUID;
 
 import org.apache.commons.lang3.ObjectUtils;
 
@@ -407,12 +408,13 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 	public NSDictionary settings() {
 		String pc = d2wContext().dynamicPage();
 		if (pc != null) {
+		    String parentPageConfigurationID = (String) d2wContext().valueForKey("pageConfigurationID");
 			if (d2wContext().valueForKey("currentRelationship") != null) {
 				// set parentRelationship key to allow subcomponents to
 				// reference the correct ID (wonder-140)
-				return new NSDictionary(new Object[] { pc, d2wContext().valueForKey("currentRelationship"), d2wContext().valueForKey("task") }, new Object[] { "parentPageConfiguration", "parentRelationship", "parentTask" });
+				return new NSDictionary(new Object[] { pc, parentPageConfigurationID, d2wContext().valueForKey("currentRelationship"), d2wContext().valueForKey("task") }, new Object[] { "parentPageConfiguration", "parentPageConfigurationID", "parentRelationship", "parentTask" });
 			} else {
-				return new NSDictionary(pc, "parentPageConfiguration");
+				return new NSDictionary(new Object[] { pc, parentPageConfigurationID, d2wContext().valueForKey("task") }, new Object[] { "parentPageConfiguration", "parentPageConfigurationID", "parentTask" });
 			}
 		}
 		return null;
