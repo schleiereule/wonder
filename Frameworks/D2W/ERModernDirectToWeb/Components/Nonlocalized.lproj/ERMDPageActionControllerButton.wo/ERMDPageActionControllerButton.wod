@@ -44,3 +44,11 @@ ActionList : WOGenericContainer {
 	elementName = "ul";
 	class = actionListCssClass;
 }
+
+DebuggingEnabled: WOConditional {
+	condition = d2wDebuggingEnabled;
+}
+
+branchDelegateClass : WOString {
+	value = branchDelegate.getClass.name; // VALID
+}

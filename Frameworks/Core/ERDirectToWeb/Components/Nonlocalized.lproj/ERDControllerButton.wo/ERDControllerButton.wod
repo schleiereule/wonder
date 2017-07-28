@@ -67,3 +67,12 @@ ShowNoGroupSeparator: WOConditional {
 	condition = isLastGroupEntry;
 	negate = true;
 }
+
+DebuggingEnabled: WOConditional {
+	condition = d2wDebuggingEnabled;
+}
+
+branchDelegateClass : WOString {
+	value = branchDelegate.getClass.name; // VALID
+}
+
