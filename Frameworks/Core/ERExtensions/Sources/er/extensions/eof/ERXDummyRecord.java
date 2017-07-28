@@ -228,7 +228,7 @@ public class ERXDummyRecord extends EOCustomObject {
 			pojoModel = new EOModel();
 			pojoModel.setName("PojoModel");
 			//ak: fake name for possible NPE
-			pojoModel.setAdaptorName("JDBCAdaptor");
+			pojoModel.setAdaptorName("Pojo");
 			//ak: fake dict for possible NPE
 			pojoModel.setConnectionDictionary(new NSMutableDictionary());
 			EOModelGroup.defaultGroup().addModel(pojoModel);
