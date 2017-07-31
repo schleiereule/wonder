@@ -1,0 +1,19 @@
+hasIconPath : WOConditional {
+	condition = d2wContext.iconName;
+}
+
+controllerButton : ERDControllerButton {
+	d2wContext = d2wContext;
+}
+
+icon : WOImage {
+	filename = d2wContext.iconName;
+	framework = d2wContext.iconFrameworkName;
+	width=d2wContext.imageWidth; 
+    height=d2wContext.imageHeight;
+}
+
+hasNoIconPath : WOConditional {
+	condition = d2wContext.iconName;
+	negate = true;
+}
