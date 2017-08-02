@@ -22,12 +22,14 @@ AjaxButton : AjaxSubmitButton {
 	alt = ^alt;
 	updateContainerID = ^updateContainerID;
 	button = false;
+    hotkey = ^hotkey;
 }
 AjaxLink : AjaxUpdateLink {
     action = ^action;
     class = ^class;
     alt = ^alt;
     updateContainerID = ^updateContainerID;
+    hotkey = ^hotkey;
 }
 DontSubmitForm : WOConditional {
   condition = ^dontSubmitForm;

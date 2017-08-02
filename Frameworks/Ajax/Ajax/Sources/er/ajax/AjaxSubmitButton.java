@@ -1,5 +1,7 @@
 package er.ajax;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.webobjects.appserver.WOActionResults;
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
@@ -241,7 +243,7 @@ public class AjaxSubmitButton extends AjaxDynamicElement {
     if (onClickBefore != null) {
     	onClickBuffer.append('}');
     }
-
+    	onClickBuffer.append(';');
     
     if (functionName != null) {
       	AjaxUtils.appendScriptHeader(response);
@@ -279,6 +281,10 @@ public class AjaxSubmitButton extends AjaxDynamicElement {
 	    appendTagAttributeToResponse(response, "id", valueForBinding("id", component));
 	    appendTagAttributeToResponse(response, "tabindex", valueForBinding("tabindex", component));
 	    appendTagAttributeToResponse(response, "title", valueForBinding("title", component));
+	    String hotkey = stringValueForBinding("hotkey", component);
+        if (StringUtils.isNotEmpty(hotkey)) {
+        		appendTagAttributeToResponse(response, "data-er-hotkey", hotkey);    
+        }
     	if (functionName == null) {
     		appendTagAttributeToResponse(response, "onclick", onClickBuffer.toString());
     	}

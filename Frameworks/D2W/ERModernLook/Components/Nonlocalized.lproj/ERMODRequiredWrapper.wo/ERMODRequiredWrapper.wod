@@ -38,8 +38,8 @@ Header: WOSwitchComponent {
 	key = ^key;
 }
 
-TabIndexScript : ERXJavaScript {
-	scriptString = "autoTabIndex();";
+KeyboardNavScript : ERXJavaScript {
+	scriptString = "setupKeyboardNav();";
 }
 
 ShowHeader : WOConditional {

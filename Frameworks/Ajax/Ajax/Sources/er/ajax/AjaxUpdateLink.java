@@ -2,6 +2,8 @@ package er.ajax;
 
 import java.net.MalformedURLException;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.webobjects.appserver.WOActionResults;
 import com.webobjects.appserver.WOAssociation;
 import com.webobjects.appserver.WOComponent;
@@ -339,6 +341,10 @@ public class AjaxUpdateLink extends AjaxDynamicElement {
 				appendTagAttributeToResponse(response, "style", valueForBinding("style", component));
 				appendTagAttributeToResponse(response, "id", valueForBinding("id", component));
 				appendTagAttributeToResponse(response, "accesskey", valueForBinding("accesskey", component));
+			    String hotkey = stringValueForBinding("hotkey", component);
+		        if (StringUtils.isNotEmpty(hotkey)) {
+		        		appendTagAttributeToResponse(response, "data-er-hotkey", hotkey);    
+		        }
 				if (button) {
 					if (stringValue != null) {
 						appendTagAttributeToResponse(response, "value", stringValue);

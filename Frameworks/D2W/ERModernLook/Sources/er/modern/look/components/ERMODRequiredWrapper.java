@@ -119,8 +119,11 @@ public class ERMODRequiredWrapper extends ERMODComponent {
     @Override
     public void appendToResponse(WOResponse response, WOContext context) {
         super.appendToResponse(response, context);
-        // add script for handling automatic tab index setting
-        ERXResponseRewriter.addScriptResourceInHead(response, context, "ERModernDirectToWeb", "autoTabIndex.js");
+        // add scripts for application of hotkey bindings
+        ERXResponseRewriter.addScriptResourceInHead(response, context, "ERCoolComponents",
+                "hotkeys/hotkeys-min.js");
+        // add script for hotkey and tab index application
+        ERXResponseRewriter.addScriptResourceInHead(response, context, "ERModernDirectToWeb", "keyboard_nav.js");
     }
 
 }

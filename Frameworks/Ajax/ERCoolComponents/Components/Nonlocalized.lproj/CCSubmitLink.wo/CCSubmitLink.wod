@@ -24,6 +24,7 @@ HyperlinkForm: WOHyperlink {
 	string = ^string;
 	name = ^name;
 	title = ^title;
+	data-er-hotkey = ^hotkey;
 }
 
 HyperlinkNormal: WOHyperlink {
@@ -34,6 +35,7 @@ HyperlinkNormal: WOHyperlink {
 	string = ^string;
 	name = ^name;
 	title = ^title;
+	data-er-hotkey = ^hotkey;
 }
 
 LinkContent: WOComponentContent {
