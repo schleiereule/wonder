@@ -1,13 +1,13 @@
 {
-	"EOObjectNotAvailableException" = "This object was not found in the database. It was probably deleted by someone else.";
-	"ExceedsMaximumLengthException" = "The value entered for <b>@@displayNameForProperty@@</b> exceeds the length of <b>@@attribute.width@@</b>.";
-	"InvalidNumberException" = "Please check <b>@@displayNameForProperty@@</b> as @@escapedValue@@ is an invalid number.";
-	"MandatoryToManyRelationshipException" = "The <b>@@object.entityName@@</b> must has a mandatory relationship which is not being satisfied.";
-	"MandatoryToOneRelationshipException" = "A <b>@@displayNameForEntity@@</b> must have a <b>@@displayNameForProperty@@</b>.";
-	"NullPropertyException" = "Please provide a <b>@@displayNameForProperty@@</b>.";
-	"ObjectRemovalException" = "Cannot delete this <b>@@object.entityName@@</b>. You should first delete the item in its <b>@@propertyKey@@</b>.";
-	"ObjectsRemovalException" = "Cannot delete this <b>@@displayNameForEntity@@</b>. You should first delete the items in its <b>@@propertyKey@@</b>.";
+	"EOObjectNotAvailableException" = "Das Objekt ist in der Datenbank nicht vorhanden. Es wurde evtl. von einem anderen Benutzer gelöscht.";
+	"ExceedsMaximumLengthException" = "Der Wert für <b>@@displayNameForProperty@@</b> darf maximal <b>@@attribute.width@@</b> Zeichen haben.";
+	"InvalidNumberException" = "Bitte \U00fcberpr\U00fcfen Sie <b>@@displayNameForProperty@@</b>. @@escapedValue@@ ist kein g\U00fcltiger Wert.";
+	"MandatoryToManyRelationshipException" = "<b>@@object.entityName@@</b> muss eine Relationship haben, was nicht der Fall ist.";
+	"MandatoryToOneRelationshipException" = "<b>@@displayNameForEntity@@</b> erfordert die Angabe von <b>@@displayNameForProperty@@</b>.";
+	"NullPropertyException" = "Bitte machen Sie eine Angabe f\U00fcr <b>@@displayNameForProperty@@</b>.";
+	"ObjectRemovalException" = "<b>@@object.entityName@@</b> kann nicht gelöscht werden. Löschen Sie zuerst alle Elemente in <b>@@propertyKey@@</b>.";
+	"ObjectsRemovalException" = "<b>@@displayNameForEntity@@</b> kann nicht gelöscht werden. Löschen Sie zuerst alle Elemente in <b>@@propertyKey@@</b>.";
 	"Test validation message for unit test" = "Validierungsmeldung f\U00fcr unit test";
 	"Test validation message for unit test in ERX" = "SUCCESS - ERD comes before this";
-	"ValueConversionException" = "The value entered for <b>@@displayNameForProperty@@</b> is not a valid <b>@@attribute.valueClass@@</b>.";
+	"ValueConversionException" = "Der Wert f\U00fcr <b>@@displayNameForProperty@@</b> ist ung\U00fcltig <b>@@attribute.valueClass@@</b>.";
 }
