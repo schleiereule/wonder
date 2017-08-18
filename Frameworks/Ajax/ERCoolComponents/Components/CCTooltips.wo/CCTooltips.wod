@@ -8,6 +8,15 @@ opentipCss : ERXStyleSheet {
 	framework = "ERCoolComponents";
 }
 
+isPolyfillRequired : WOConditional {
+	condition = isPolyfillRequired;
+}
+
+mutationObserverPolyfill : ERXJavaScript {
+	filename = "opentip/mutationobserver.min.js";
+	framework = "ERCoolComponents";
+}
+
 TargetClass : WOString {
 	value = ^targetClass;
 }

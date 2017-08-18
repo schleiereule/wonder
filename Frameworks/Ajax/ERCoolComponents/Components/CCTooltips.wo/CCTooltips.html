@@ -1,5 +1,6 @@
 <webobject name = "opentipCss" />
 <webobject name = "opentipJs" />
+<webobject name = "isPolyfillRequired"><webobject name = "mutationObserverPolyfill"/></webobject>
 <script type = "text/javascript">
   Opentip.styles.wonder = {
     escapeContent: true,
@@ -33,12 +34,8 @@
   	var observer = new MutationObserver(function(mutations) {
       	addOpentips();
   	});
-  	var mainContentDiv = document.getElementById('MainContent');
-  	observer.observe(document.body, {
-    		attributeFilter: ['span'],
-    		childList: true,
-    		subtree: true
-  	});
+	var mainContentDiv = document.getElementById('MainContent');
+	observer.observe(mainContentDiv, {childList: true, subtree: true});
   };
 
   document.addEventListener("DOMContentLoaded", addOpentips, false);

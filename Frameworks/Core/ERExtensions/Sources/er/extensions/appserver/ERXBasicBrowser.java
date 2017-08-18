@@ -147,6 +147,8 @@ public class ERXBasicBrowser extends ERXBrowser {
     private final boolean         _isMozillaVersion45;
     private final boolean         _isMozillaVersion40;
 
+    private final boolean         _isVersion11;
+    private final boolean         _isVersion10;
     private final boolean         _isVersion9;
     private final boolean         _isVersion8;
     private final boolean         _isVersion7;
@@ -205,6 +207,8 @@ public class ERXBasicBrowser extends ERXBrowser {
 
         
         String normalizedVersion = ERXStringUtilities.removeExtraDotsFromVersionString(_version);
+        _isVersion11 = normalizedVersion.startsWith("11.");
+        _isVersion10 = normalizedVersion.startsWith("10.");
         _isVersion9 = normalizedVersion.startsWith("9.");
         _isVersion8 = normalizedVersion.startsWith("8.");
         _isVersion7 = normalizedVersion.startsWith("7.");
@@ -371,6 +375,16 @@ public class ERXBasicBrowser extends ERXBrowser {
     public boolean isMozilla40Compatible() {
         return _isMozillaVersion40 || _isMozillaVersion45;
     }
+
+	@Override
+	public boolean isVersion11() {
+		return _isVersion11;
+	}
+
+	@Override
+	public boolean isVersion10() {
+		return _isVersion10;
+	}
 
     @Override
     public boolean isVersion9() {
