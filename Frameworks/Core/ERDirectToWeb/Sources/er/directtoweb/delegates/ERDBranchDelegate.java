@@ -84,11 +84,11 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 		 * grouping/sorting."
 		 */
 		public String group() default "";
-		
-        /**
-         * Returns a hotkey to be bound to the given action.
-         */
-        public String hotkey() default "";
+
+		/**
+		 * Returns a hotkey to be bound to the given action.
+		 */
+		public String hotkey() default "";
 
 		/**
 		 * Returns true if the method requires a form submit.
@@ -113,6 +113,7 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 	public static final String BRANCH_PREFIX = "Button";
 	public static final String BRANCH_GROUP = "branchGroup";
 	public static final String BRANCH_REQUIRESFORMSUBMIT = "branchRequiresFormSubmit";
+	public static final String BRANCH_USER_INFO = "userInfo";
 
 	/**
 	 * Implementation of the {@link NextPageDelegate NextPageDelegate}
@@ -132,8 +133,14 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 				if (log.isDebugEnabled())
 					log.debug("Branching to branch: " + branchName);
 				try {
-					Method m = getClass().getMethod(branchName, WOComponentClassArray);
-					nextPage = (WOComponent) m.invoke(this, new Object[] { sender });
+					NSDictionary userInfo = (NSDictionary) ((ERDBranchInterface) sender).branch().valueForKey(BRANCH_USER_INFO);
+					if (userInfo != null) {
+						Method m = getClass().getMethod(branchName, new Class[] { WOComponent.class, NSDictionary.class });
+						nextPage = (WOComponent) m.invoke(this, new Object[] { sender, userInfo });
+					} else {
+						Method m = getClass().getMethod(branchName, WOComponentClassArray);
+						nextPage = (WOComponent) m.invoke(this, new Object[] { sender });
+					}
 				} catch (InvocationTargetException ite) {
 					log.error("Invocation exception occurred in ERBranchDelegate: " + ite.getTargetException() + " for branch name: " + branchName, ite.getTargetException());
 					throw new NSForwardException(ite.getTargetException());
@@ -200,8 +207,8 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 		if (ERXStringUtilities.isBlank(group)) {
 			group = ERXProperties.stringForKey("er.directtoweb.delegates.ERDBranchDelegate.defaultGroup");
 		}
-		return ERXDictionaryUtilities.dictionaryWithObjectsAndKeys(
-				new Object[] { method, BRANCH_NAME, label, BRANCH_LABEL, method + "Action", BRANCH_BUTTON_ID, group, BRANCH_GROUP, hotkey, BRANCH_HOTKEY, requiresFormSubmit, BRANCH_REQUIRESFORMSUBMIT });
+		return ERXDictionaryUtilities
+				.dictionaryWithObjectsAndKeys(new Object[] { method, BRANCH_NAME, label, BRANCH_LABEL, method + "Action", BRANCH_BUTTON_ID, group, BRANCH_GROUP, hotkey, BRANCH_HOTKEY, requiresFormSubmit, BRANCH_REQUIRESFORMSUBMIT });
 	}
 
 	/**
@@ -268,7 +275,7 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 				entry.setObjectForKey(requiresFormSubmit, BRANCH_REQUIRESFORMSUBMIT);
 				entry.setObjectForKey(label, BRANCH_LABEL);
 				if (StringUtils.isNotBlank(hotkey)) {
-				    entry.setObjectForKey(hotkey, BRANCH_HOTKEY);
+					entry.setObjectForKey(hotkey, BRANCH_HOTKEY);
 				}
 				entry.setObjectForKey(method + "Action", BRANCH_BUTTON_ID);
 				translatedChoices.addObject(entry);
@@ -404,7 +411,7 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Utility to add entries based on an array of keys
 	 * 
@@ -417,6 +424,23 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 			NSDictionary branch = branchChoiceDictionary((String) key, null);
 			result.addObject(branch);
 		}
+		return result;
+	}
+
+	/***
+	 * Utility to add a branch to the branch array
+	 * 
+	 * @param branch
+	 * @param choices
+	 * @return branch array
+	 * 
+	 */
+	protected NSArray choiceByAddingBranch(NSDictionary branch, NSArray choices) {
+		if (branch == null) {
+			return choices;
+		}
+		NSMutableArray result = choices.mutableClone();
+		result.addObject(branch);
 		return result;
 	}
 

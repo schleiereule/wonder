@@ -6,6 +6,8 @@
  * included with this distribution in the LICENSE.NPL file.  */
 package er.directtoweb.delegates;
 
+import com.webobjects.foundation.NSDictionary;
+
 /**
  * Used in conjunction with ERDBranchDelegateInterface.
  * Templates that want to be able to use branch delegates
@@ -20,4 +22,11 @@ public interface ERDBranchInterface {
      * @return choosen branch name.
      */
     public String branchName();
+    
+    /***
+     * Branch choosen by the user.
+     * @return choosen branch
+     */
+    public NSDictionary branch();
+    
 }
