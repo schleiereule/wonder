@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <wodefinitions>
-        <wo wocomponentcontent="false" class="CCSmartAjaxButton.java">
+        <wo class="CCSmartAjaxButton.java" wocomponentcontent="false">
 		<binding name="useAjax"/>
         <binding name="action"/>
         <validation message="'action' is a required binding.">
@@ -14,5 +14,6 @@
         </validation>
         <binding name="alt"/>
         <binding name="updateContainerID"/>
-        </wo>
+        <binding name="localizeValue"/>
+    </wo>
 </wodefinitions>

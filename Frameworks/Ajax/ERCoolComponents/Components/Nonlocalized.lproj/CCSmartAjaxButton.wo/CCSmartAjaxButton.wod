@@ -13,7 +13,17 @@ Button : CCSubmitLinkButton {
     alt = ^alt;
     hotkey = ^hotkey;
 }
-ButtonLabel: ERXLocalizedString {
+LocalizeValue : WOConditional {
+  condition = localizeValue;
+}
+DontLocalizeValue : WOConditional {
+  condition = localizeValue;
+  negate = true;
+}
+ButtonLabel: WOString {
+	value = ^value;
+}
+LocalizedButtonLabel: ERXLocalizedString {
 	value = ^value;
 }
 AjaxButton : AjaxSubmitButton {
@@ -34,7 +44,6 @@ AjaxLink : AjaxUpdateLink {
 DontSubmitForm : WOConditional {
   condition = ^dontSubmitForm;
 }
-
 SubmitForm : WOConditional {
   condition = ^dontSubmitForm;
   negate = true;

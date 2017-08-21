@@ -1,9 +1,19 @@
 <webobject name = "NotUseAjax"><webobject name = "Button" /></webobject>
 <webobject name = "UseAjax">
   <webobject name = "DontSubmitForm">
-    <webobject name = "AjaxLink"><span><webobject name = "ButtonLabel" /></span></webobject>
+    <webobject name = "AjaxLink">
+      <span>
+        <webobject name = "LocalizeValue"><webobject name = "LocalizedButtonLabel" /></webobject>
+        <webobject name = "DontLocalizeValue"><webobject name = "ButtonLabel" /></webobject>
+      </span>
+    </webobject>
   </webobject>
   <webobject name = "SubmitForm">
-    <webobject name = "AjaxButton"><span><webobject name = "ButtonLabel" /></span></webobject>
+    <webobject name = "AjaxButton">
+      <span>
+        <webobject name = "LocalizeValue"><webobject name = "LocalizedButtonLabel" /></webobject>
+        <webobject name = "DontLocalizeValue"><webobject name = "ButtonLabel" /></webobject>
+      </span>
+    </webobject>
   </webobject>
 </webobject>
