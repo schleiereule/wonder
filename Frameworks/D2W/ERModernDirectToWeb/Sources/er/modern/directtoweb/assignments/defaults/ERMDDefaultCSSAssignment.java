@@ -48,7 +48,7 @@ public class ERMDDefaultCSSAssignment extends ERDAssignment {
 			new NSArray(new Object[] {"task", "parentPageConfiguration", "pageConfiguration"}), "classForEmbeddedEditBlock",
 			new NSArray(new Object[] {"task", "parentPageConfiguration", "pageConfiguration"}), "classForEmbeddedInspectBlock",
 			new NSArray(new Object[] {"task", "parentPageConfiguration", "pageConfiguration"}), "classForEmbeddedCreateBlock",
-			new NSArray(new Object[] {"propertyKey"}), "classForAttributeColumn",
+			new NSArray(new Object[] {"propertyKey", "auxiliaryCssClass"}), "classForAttributeColumn",
 			new NSArray(new Object[] {"task", "pageConfiguration"}), "pageType",
 			new NSArray(new Object[] {"task", "entity.name", "pageConfiguration"}), "idForRepetitionContainer",
 			new NSArray(new Object[] {"task", "entity.name", "pageConfiguration", "currentRelationship"}), "idForMainContainer",
@@ -233,7 +233,12 @@ public class ERMDDefaultCSSAssignment extends ERDAssignment {
     
 	public String classForAttributeColumn(D2WContext c) {
 		String base = (String)c.valueForKey("baseClassForAttributeColumn");
-		return base + " " + cssClassForPropertyKey(c.propertyKey()) + base;	
+        String auxiliaryCssClass = (String) c.valueForKey("auxiliaryCssClass");
+        base = base + " " + cssClassForPropertyKey(c.propertyKey()) + base;
+        if (auxiliaryCssClass != null) {
+            base = base + " " + auxiliaryCssClass;
+        }
+		return base;	
 	}
 	
 	// EMBEDDED 
