@@ -10,4 +10,7 @@
 	"Test validation message for unit test" = "Validierungsmeldung f\U00fcr unit test";
 	"Test validation message for unit test in ERX" = "SUCCESS - ERD comes before this";
 	"ValueConversionException" = "Der Wert f\U00fcr <b>@@displayNameForProperty@@</b> ist ung\U00fcltig <b>@@attribute.valueClass@@</b>.";
+	"UniquenessViolationNewObject" = "<b>@@displayNameForEntity@@</b> mit <b>@@displayNameForProperty@@</b> ist bereits vorhanden.";
+	"UniquenessViolationExistingObject" = "<b>@@displayNameForEntity@@</b> mit <b>@@displayNameForProperty@@</b> ist bereits vorhanden.";
+	"UniquenessViolationDatabaseInconsistent" = "<b>@@displayNameForEntity@@</b> mit <b>@@displayNameForProperty@@</b> ist bereits vorhanden.";
 }
