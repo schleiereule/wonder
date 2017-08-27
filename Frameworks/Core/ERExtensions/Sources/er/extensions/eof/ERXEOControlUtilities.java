@@ -2487,6 +2487,39 @@ public class ERXEOControlUtilities {
 		validateUniquenessOf(entityName, eo, null, keys);
 	}
 	
+	public static void validateUniquenessOf(String entityName, EOEnterpriseObject eo, EOQualifier restrictingQualifier, NSDictionary<String, Object> keyValueDictionary) {
+		if (restrictingQualifier != null && !restrictingQualifier.evaluateWithObject(eo)) {
+			return;
+		}
+		if (entityName == null) {
+			entityName = eo.entityName();
+		}
+		EOQualifier qualifier = EOKeyValueQualifier.qualifierToMatchAllValues(keyValueDictionary);
+		if (restrictingQualifier != null) {
+			qualifier = ERXEOControlUtilities.andQualifier(qualifier, restrictingQualifier);
+		}
+		// take into account unsaved objects and skip deleted objects. The
+		NSArray<EOEnterpriseObject> objects = ERXEOControlUtilities.objectsWithQualifier(eo.editingContext(), entityName, qualifier, null, true, false, true, true);
+		// should we throw if the supplied eo is not included in the results?
+		objects = ERXArrayUtilities.arrayMinusObject(objects, eo);
+		int count = objects.count();
+		if (count == 0) {
+			// everything OK
+		}
+		else {
+			String keyPathsString = keyValueDictionary.allKeys().componentsJoinedByString(",");
+			if (count == 1) {
+				// if we get here, we found an object matching the values
+				if (ERXEOControlUtilities.isNewObject(eo)) {
+					throw ERXValidationFactory.defaultFactory().createException(eo, keyPathsString, keyValueDictionary, "UniquenessViolationNewObject");
+				}
+				throw ERXValidationFactory.defaultFactory().createException(eo, keyPathsString, keyValueDictionary, "UniquenessViolationExistingObject");
+			}
+			// DB is already inconsitent!
+			throw ERXValidationFactory.defaultFactory().createException(eo, keyPathsString, keyValueDictionary, "UniquenessViolationDatabaseInconsistent");
+		}
+	}
+	
 	/**
 	 * Returns an NSArray of distinct values available for the given entity and key path. 
 	 * The result can be narrowed by an optional qualifier and optionally sorted with sort orderings
