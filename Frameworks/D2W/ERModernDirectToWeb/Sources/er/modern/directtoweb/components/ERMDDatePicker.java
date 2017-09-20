@@ -7,6 +7,7 @@ import com.webobjects.foundation.NSValidation;
 
 import er.coolcomponents.CCDatePicker;
 import er.directtoweb.components.ERDCustomEditComponent;
+import er.directtoweb.components.ERDCustomComponent.Keys;
 import er.extensions.formatters.ERXTimestampFormatter;
 import er.extensions.foundation.ERXValueUtilities;
 
@@ -191,6 +192,11 @@ public class ERMDDatePicker extends ERDCustomEditComponent {
 	 */
 	public Boolean hideControl() {
 		return ERXValueUtilities.BooleanValueWithDefault(valueForBinding("datePickerHideControl"), null);
+	}
+	
+	@Override
+	public String key() {
+		return (String)d2wContext().valueForKey(er.directtoweb.components.ERDCustomComponent.Keys.propertyKey);
 	}
 	
 	@Override
