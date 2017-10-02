@@ -365,7 +365,7 @@
             externalType = varchar; 
             factoryMethodArgumentType = EOFactoryMethodArgumentIsNSString; 
             name = stringType; 
-            width = 50; 
+            width = 1024; 
         }
     ); 
     attributesUsedForLocking = (boolean, id, jodaDateTime); 

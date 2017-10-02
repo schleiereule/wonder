@@ -369,7 +369,7 @@
             externalType = VARCHAR; 
             factoryMethodArgumentType = EOFactoryMethodArgumentIsNSString; 
             name = stringType; 
-            width = 50; 
+            width = 1024; 
         }
     ); 
     className = EOGenericRecord; 
