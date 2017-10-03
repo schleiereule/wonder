@@ -1,6 +1,7 @@
 package er.modern.directtoweb.components;
 
 import com.webobjects.appserver.WOContext;
+import com.webobjects.foundation.NSArray;
 
 import er.directtoweb.components.ERD2WPropertyName;
 import er.extensions.foundation.ERXStringUtilities;
@@ -37,12 +38,30 @@ public class ERMD2WPropertyName extends ERD2WPropertyName {
 	}
 	
 	public String fieldLabelClass() {
-		String capKey = ERXStringUtilities.capitalize(propertyKey());
+	    String key = propertyKey();
+        if (key != null) {
+            String temp = "";
+            // remove . chars from key path and capitalize parts
+            if (key.indexOf(".") != -1) {
+                NSArray<String> components = NSArray.componentsSeparatedByString(key, ".");
+                for (String string : components) {
+                    string = ERXStringUtilities.capitalize(string);
+                    temp = temp + string;
+                }
+            } else {
+                temp = ERXStringUtilities.capitalize(key);
+            }
+            key = temp;
+            // remove @ char introduced by partial key path
+            if (key.startsWith("@")) {
+                key = key.substring(1);
+            }
+        }
 		String result = hasNoErrors() ? "" : " ErrorLabel";
 		if (isEditing()) {
-			result = capKey + "Label" + result;
+			result = key + "Label" + result;
 		} else {
-			result = "Label " + capKey + "Label" + result;
+			result = "Label " + key + "Label" + result;
 		}
 		return result;
 	}

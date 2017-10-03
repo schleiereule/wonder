@@ -406,6 +406,7 @@ public class ERMDDefaultCSSAssignment extends ERDAssignment {
 	public String cssClassForPropertyKey(String key) {
 		if (key != null) {
 			String temp = "";
+            // remove . chars from key path and capitalize parts
 			if (key.indexOf(".") != -1) {
 				NSArray<String> components = NSArray.componentsSeparatedByString(key, ".");
 				for (String string : components) {
@@ -416,6 +417,10 @@ public class ERMDDefaultCSSAssignment extends ERDAssignment {
 				temp = ERXStringUtilities.capitalize(key);
 			}
 			key = temp;
+            // remove @ char introduced by partial key path
+			if (key.startsWith("@")) {
+			    key = key.substring(1);
+			}
 		}
 		return key;
 	}
