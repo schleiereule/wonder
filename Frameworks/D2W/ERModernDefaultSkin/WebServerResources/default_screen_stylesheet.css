@@ -1689,14 +1689,16 @@ span span.Tooltip.HelpTooltip.PropertyHelpTooltip + a {
 	   display: none;
 }
 
-.ListObjTableHd span.Tooltip {
-	   display: none;
-}
-
 .ERCPropertyHelpTextIcon {
     fill: #aaa;
     height: 16px;
     width: 16px;
+}
+
+/* make table header play nice with help text link */
+.TableHeader a, .TableHeader span {
+	float: left;
+	display: inline;
 }
 
 /* DEBUG FLAGS */

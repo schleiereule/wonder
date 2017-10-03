@@ -3,6 +3,16 @@ PropertyName: ERXSwitchComponent {
 	localContext = d2wContext;
 }
 
+DisplayPropertyHelpText : WOConditional {
+	// only display if a component name is set
+	condition = d2wContext.propertyHelpTextComponentName;
+}
+
+HelpText : WOSwitchComponent {
+    d2wContext = d2wContext;
+    WOComponentName = d2wContext.propertyHelpTextComponentName;
+}
+
 IsPropertySortable: WOConditional {
 	_unroll = true;
 	condition = d2wContext.propertyIsSortable;

@@ -62,6 +62,16 @@ PropertyName: WOSwitchComponent {
 	localContext = d2wContext;
 }
 
+DisplayPropertyHelpText : WOConditional {
+	// only display if a component name is set
+	condition = d2wContext.propertyHelpTextComponentName;
+}
+
+HelpText : WOSwitchComponent {
+    d2wContext = d2wContext;
+    WOComponentName = d2wContext.propertyHelpTextComponentName;
+}
+
 SafeWrapper : D2WEmptyWrapper {
 	
 }
