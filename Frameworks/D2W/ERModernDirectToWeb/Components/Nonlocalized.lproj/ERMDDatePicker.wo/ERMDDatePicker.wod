@@ -17,4 +17,5 @@ DatePicker : CCDatePicker {
   rangeHigh = rangeHigh;
   hideInput = hideInput;
   hideControl = hideControl;
+  placeholder = placeholder;
 }
