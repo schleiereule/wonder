@@ -387,7 +387,10 @@ public class ERXLocalizer implements NSKeyValueCoding, NSKeyValueCodingAdditions
 		if (key != null && value != null) {
 			createdKeys.takeValueForKey(value, key);
 			if (key.indexOf(" ") > 0) {
-				log.info("Value added: {}->{} in {}", key, value, NSPropertyListSerialization.stringFromPropertyList(ERXWOContext.componentPath(ERXWOContext.currentContext())));
+				if (ERXThreadStorage.wasInheritedFromParentThread())
+					log.info("Value added: {}->{}", key, value);
+				else
+					log.info("Value added: {}->{} in {}", key, value, NSPropertyListSerialization.stringFromPropertyList(ERXWOContext.componentPath(ERXWOContext.currentContext())));
 			}
 		}
 	}
