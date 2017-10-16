@@ -117,11 +117,12 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 		boolean isPendingDeletion = ERXEOControlUtilities.eoEquals(eo, (EOEnterpriseObject) c.valueForKey(Keys.objectPendingDeletion));
 		boolean isEntityWritable = !ERXValueUtilities.booleanValue(c.valueForKey("readOnly"));
 		boolean isConcrete = !e.isAbstractEntity();
+		boolean isEntityQueryable = ERXValueUtilities.booleanValueWithDefault(c.valueForKey("shouldShowQueryRelatedButton"), true);
 
 		if (!c.frame()) {
 			choices.add("_returnRelated");
 		}
-		if (rel.inverseRelationship() == null || isEntityWritable) {
+		if ((rel.inverseRelationship() == null || isEntityWritable) && isEntityQueryable) {
 			choices.add("_queryRelated");
 		}
 		if (isEntityInspectable && !isPendingDeletion && (isNonNull || (!nullInterface))) {
