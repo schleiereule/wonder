@@ -11,6 +11,7 @@ import com.webobjects.directtoweb.ERD2WUtilities;
 import com.webobjects.directtoweb.EditPageInterface;
 import com.webobjects.directtoweb.EditRelationshipPageInterface;
 import com.webobjects.directtoweb.InspectPageInterface;
+import com.webobjects.directtoweb.ListPageInterface;
 import com.webobjects.directtoweb.NextPageDelegate;
 import com.webobjects.eoaccess.EODatabaseDataSource;
 import com.webobjects.eoaccess.EOGeneralAdaptorException;
@@ -24,12 +25,13 @@ import com.webobjects.foundation.NSMutableDictionary;
 import com.webobjects.foundation.NSNotificationCenter;
 import com.webobjects.foundation.NSValidation;
 
-import er.ajax.AjaxUpdateContainer;
 import er.directtoweb.ERD2WContainer;
 import er.directtoweb.delegates.ERDBranchDelegate;
 import er.directtoweb.delegates.ERDBranchInterface;
+import er.directtoweb.delegates.ERDQueryValidationDelegate;
 import er.directtoweb.pages.ERD2WInspectPage;
 import er.directtoweb.pages.ERD2WPage;
+import er.directtoweb.pages.ERD2WQueryPage;
 import er.directtoweb.pages.ERD2WWizardCreationPage;
 import er.directtoweb.pages.templates.ERD2WWizardCreationPageTemplate;
 import er.extensions.eof.ERXEC;
@@ -42,10 +44,9 @@ import er.modern.directtoweb.ERMDNotificationNameRegistry;
 public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 
 	/**
-	 * Do I need to update serialVersionUID? See section 5.6 <cite>Type Changes
-	 * Affecting Serialization</cite> on page 51 of the
-	 * <a href="http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf">Java Object
-	 * Serialization Spec</a>
+	 * Do I need to update serialVersionUID? See section 5.6 <cite>Type Changes Affecting
+	 * Serialization</cite> on page 51 of the
+	 * <a href="http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf">Java Object Serialization Spec</a>
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -66,7 +67,7 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 	public boolean shouldRevertUponSaveFailure(D2WContext c) {
 		return ERXValueUtilities.booleanValueWithDefault(c.valueForKey("shouldRevertUponSaveFailure"), false);
 	}
-	
+
 	@D2WDelegate(requiresFormSubmit = true)
 	public void _nextStep(WOComponent sender) {
 		NSNotificationCenter.defaultCenter().postNotification(ERD2WWizardCreationPage.WILL_GOTO_NEXT_PAGE, null);
@@ -74,35 +75,35 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 		NSArray<ERD2WContainer> tabs = page.tabSectionsContents();
 		ERD2WContainer tab = page.currentTab();
 		int index = tabs.indexOf(tab);
-		if(page.errorMessages().isEmpty() && index + 1 < tabs.count()) {
+		if (page.errorMessages().isEmpty() && index + 1 < tabs.count()) {
 			ERD2WContainer next = tabs.objectAtIndex(index + 1);
 			page.setCurrentTab(next);
 		}
 		NSMutableDictionary<String, Object> userInfo = new NSMutableDictionary<String, Object>();
-	    // if the parent page configuration ID is available, add it
-        if (d2wContext(sender).valueForKey("parentPageConfigurationID") != null) {
-            userInfo.put("parentPageConfigurationID", d2wContext(sender).valueForKey("parentPageConfigurationID"));
-        }
+		// if the parent page configuration ID is available, add it
+		if (d2wContext(sender).valueForKey("parentPageConfigurationID") != null) {
+			userInfo.put("parentPageConfigurationID", d2wContext(sender).valueForKey("parentPageConfigurationID"));
+		}
 		userInfo.put("pageConfiguration", d2wContext(sender).valueForKey("pageConfiguration"));
 		NSNotificationCenter.defaultCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_NEXT_STEP_ACTION, null, userInfo);
 	}
-	
+
 	@D2WDelegate(requiresFormSubmit = true)
 	public void _prevStep(WOComponent sender) {
 		ERD2WWizardCreationPageTemplate page = ERD2WUtilities.enclosingComponentOfClass(sender, ERD2WWizardCreationPageTemplate.class);
 		NSArray<ERD2WContainer> tabs = page.tabSectionsContents();
 		ERD2WContainer tab = page.currentTab();
 		int index = tabs.indexOf(tab);
-		if(index != 0) {
+		if (index != 0) {
 			page.clearValidationFailed();
 			ERD2WContainer prev = tabs.objectAtIndex(index - 1);
 			page.setCurrentTab(prev);
 		}
 		NSMutableDictionary<String, Object> userInfo = new NSMutableDictionary<String, Object>();
-	    // if the parent page configuration ID is available, add it
-        if (d2wContext(sender).valueForKey("parentPageConfigurationID") != null) {
-            userInfo.put("parentPageConfigurationID", d2wContext(sender).valueForKey("parentPageConfigurationID"));
-        }
+		// if the parent page configuration ID is available, add it
+		if (d2wContext(sender).valueForKey("parentPageConfigurationID") != null) {
+			userInfo.put("parentPageConfigurationID", d2wContext(sender).valueForKey("parentPageConfigurationID"));
+		}
 		userInfo.put("pageConfiguration", d2wContext(sender).valueForKey("pageConfiguration"));
 		NSNotificationCenter.defaultCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_PREVIOUS_STEP_ACTION, null, userInfo);
 	}
@@ -157,10 +158,10 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 				nextPage = _nextPageFromDelegate(page);
 			}
 			NSMutableDictionary<String, Object> userInfo = new NSMutableDictionary<String, Object>();
-		    // if the parent page configuration ID is available, add it
-	        if (c.valueForKey("parentPageConfigurationID") != null) {
-	            userInfo.put("parentPageConfigurationID", c.valueForKey("parentPageConfigurationID"));
-	        }
+			// if the parent page configuration ID is available, add it
+			if (c.valueForKey("parentPageConfigurationID") != null) {
+				userInfo.put("parentPageConfigurationID", c.valueForKey("parentPageConfigurationID"));
+			}
 			userInfo.put("pageConfiguration", c.valueForKey("pageConfiguration"));
 			userInfo.put("newObject", eo);
 			NSNotificationCenter.defaultCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_SAVE_ACTION, null, userInfo);
@@ -197,10 +198,10 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 			ec.revert();
 		}
 		NSMutableDictionary<String, Object> userInfo = new NSMutableDictionary<String, Object>();
-        // if the parent page configuration ID is available, add it
-        if (c.valueForKey("parentPageConfigurationID") != null) {
-            userInfo.put("parentPageConfigurationID", c.valueForKey("parentPageConfigurationID"));
-        }
+		// if the parent page configuration ID is available, add it
+		if (c.valueForKey("parentPageConfigurationID") != null) {
+			userInfo.put("parentPageConfigurationID", c.valueForKey("parentPageConfigurationID"));
+		}
 		userInfo.put("pageConfiguration", c.valueForKey("pageConfiguration"));
 		NSNotificationCenter.defaultCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_CANCEL_EDIT_ACTION, null, userInfo);
 		return page.nextPage(false);
@@ -272,6 +273,50 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 		return nextPage;
 	}
 
+	public WOComponent _query(WOComponent sender) {
+		ERD2WQueryPage page = ERD2WUtilities.enclosingComponentOfClass(sender, ERD2WQueryPage.class);
+		WOComponent nextPage = null;
+
+		// If we have a validation delegate, validate the query values before actually performing
+		// the query.
+		ERDQueryValidationDelegate queryValidationDelegate = page.queryValidationDelegate();
+		if (queryValidationDelegate != null) {
+			// page.clearValidationFailed();
+			// page.setErrorMessage(null);
+			try {
+				queryValidationDelegate.validateQuery(page);
+			} catch (NSValidation.ValidationException ex) {
+				page.setErrorMessage(ERXLocalizer.currentLocalizer().localizedTemplateStringForKeyWithObject("CouldNotQuery", ex));
+				page.validationFailedWithException(ex, null, "queryExceptionKey");
+			}
+		}
+
+		if (page.hasErrors()) {
+			return sender.context().page();
+		}
+
+		D2WContext c = d2wContext(sender);
+		if (ERXValueUtilities.booleanValue(c.valueForKey("showListInSamePage"))) {
+			page.setShowResults(true);
+		} else {
+			nextPage = _nextPageFromDelegate(page);
+			boolean allowInlineEditing = ERXValueUtilities.booleanValue(c.valueForKey("allowInlineEditing"));
+			if (nextPage == null && !allowInlineEditing) {
+				String listConfigurationName = (String) c.valueForKey("listConfigurationName");
+				ListPageInterface listpageinterface;
+				if (listConfigurationName != null) {
+					listpageinterface = (ListPageInterface) D2W.factory().pageForConfigurationNamed(listConfigurationName, sender.session());
+				} else {
+					listpageinterface = D2W.factory().listPageForEntityNamed(c.entity().name(), sender.session());
+				}
+				listpageinterface.setDataSource(page.queryDataSource());
+				listpageinterface.setNextPage(sender.context().page());
+				nextPage = (WOComponent) listpageinterface;
+			}
+		}
+		return nextPage;
+	}
+
 	public WOComponent _return(WOComponent sender) {
 		D2WPage page = ERD2WUtilities.enclosingComponentOfClass(sender, D2WPage.class);
 		WOComponent nextPage = _nextPageFromDelegate(page);
@@ -281,16 +326,23 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 		return nextPage;
 	}
 
+	public WOComponent _clear(WOComponent sender) {
+		D2WPage page = ERD2WUtilities.enclosingComponentOfClass(sender, D2WPage.class);
+		if (page instanceof ERD2WQueryPage) {
+			((ERD2WQueryPage) page).clearAction();
+		}
+		return sender.context().page();
+	}
+
 	protected WOComponent _nextPageFromDelegate(D2WPage page) {
 		WOComponent nextPage = null;
 		NextPageDelegate delegate = page.nextPageDelegate();
 		if (delegate != null) {
 			if (!((delegate instanceof ERDBranchDelegate) && (((ERDBranchInterface) page).branchName() == null))) {
 				/*
-				 * we assume here, because nextPage() in ERDBranchDelegate is
-				 * final, we can't do something reasonable when none of the
-				 * branch buttons was selected. This allows us to throw a branch
-				 * delegate at any page, even when no branch was taken
+				 * we assume here, because nextPage() in ERDBranchDelegate is final, we can't do
+				 * something reasonable when none of the branch buttons was selected. This allows us
+				 * to throw a branch delegate at any page, even when no branch was taken
 				 */
 				nextPage = delegate.nextPage(page);
 			}

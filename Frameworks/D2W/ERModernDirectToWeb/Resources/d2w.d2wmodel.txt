@@ -1,6 +1,7 @@
 (
     0 : *true* => useAjaxControlsWhenEmbedded = "false" [com.webobjects.directtoweb.BooleanAssignment],
     0 : (task = 'editRelationship' and parentRelationship.isToMany = (java.lang.Number)'1') => belowControllerChoices = "toManyControllerChoices" [ERDDelayedKeyValueAssignment],
+    0 : task = 'query' => queryControllerChoices = (null) [er.modern.directtoweb.assignments.defaults.ERMDDefaultBranchChoicesAssignment],
     0 : *true* => pageActionController = "er.modern.directtoweb.delegates.defaults.ERMDDefaultPageActionDelegate" [er.directtoweb.ERDDelayedObjectCreationAssignment],
     0 : *true* => belowControllerPropertyKeys = ("belowControllerAction") [com.webobjects.directtoweb.Assignment],
     0 : *true* => typeAheadMinimumCharacterCount = "3" [com.webobjects.directtoweb.Assignment],
@@ -14,6 +15,7 @@
     0 : *true* => displayKeyForEntity = "entity.name" [com.webobjects.directtoweb.Assignment],
     0 : (task = 'editRelationship' and parentRelationship.isToMany = (java.lang.Number)'1') => toManyControllerChoices = (null) [er.modern.directtoweb.assignments.defaults.ERMDDefaultBranchChoicesAssignment],
     0 : task = 'edit' => belowControllerChoices = "editControllerChoices" [ERDDelayedKeyValueAssignment],
+    0 : task = 'query' => belowControllerChoices = "queryControllerChoices" [ERDDelayedKeyValueAssignment],
     5 : propertyKey = 'belowControllerAction' => branchChoices = "belowControllerChoices" [ERDDelayedKeyValueAssignment],
     5 : propertyKey = 'belowControllerAction' => componentName = "ERMDPageActionControllerButton" [com.webobjects.directtoweb.Assignment],
     10 : *true* => addExistingButtonLabel = "ERMD.addExistingButtonLabel" [er.directtoweb.ERDDelayedLocalizedAssignment],
@@ -50,6 +52,7 @@
     10 : *true* => confirmRemoveRelatedMessage = "ERMD.confirmRemoveRelatedMessage" [er.directtoweb.ERDDelayedLocalizedAssignment],
     15 : (task = 'list' and parentPageConfiguration != null) => allowInlineEditing = "false" [com.webobjects.directtoweb.BooleanAssignment],
     20 : (task != 'edit' and RuleIsDisabled isEqual: 'YES') => hasForm = "false" [com.webobjects.directtoweb.BooleanAssignment],
+    20 : task = 'query' => pageActionConfiguration = {"_query" = {"updateContainerKey" = "idForParentMainContainer"; }; } [ERDDelayedAssignment],
     20 : *true* => datePickerHideControl = "true" [com.webobjects.directtoweb.BooleanAssignment],
     100 : *true* => alternativeText = "<ERMDDefaultUIStringAssignment>" [er.modern.directtoweb.assignments.defaults.ERMDDefaultUIStringAssignment],
     100 : *true* => isEntityRemoveable = "true" [com.webobjects.directtoweb.BooleanAssignment]

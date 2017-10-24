@@ -16,10 +16,9 @@ import er.extensions.foundation.ERXStringUtilities;
 public class ERMDPageActionControllerButton extends ERMDActionButton implements ERDBranchInterface {
 
 	/**
-	 * Do I need to update serialVersionUID? See section 5.6 <cite>Type Changes
-	 * Affecting Serialization</cite> on page 51 of the
-	 * <a href="http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf">Java Object
-	 * Serialization Spec</a>
+	 * Do I need to update serialVersionUID? See section 5.6 <cite>Type Changes Affecting
+	 * Serialization</cite> on page 51 of the
+	 * <a href="http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf">Java Object Serialization Spec</a>
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -28,6 +27,13 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 
 	public ERMDPageActionControllerButton(WOContext context) {
 		super(context);
+	}
+
+	public static interface Keys {
+		public static final String pageActionController = "pageActionController";
+		public static final String pageActionConfiguration = "pageActionConfiguration";
+		public static final String updateContainerKey = "updateContainerKey";
+		public static final String hotkey = "hotkey";
 	}
 
 	// ---------------- CSS Support --------------------//
@@ -56,7 +62,7 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 			WOComponent current = parent();
 			while (current != null) {
 				if (current instanceof D2WPage) {
-					Object pageActionsDelegateClass = d2wContext().valueForKey("pageActionController");
+					Object pageActionsDelegateClass = d2wContext().valueForKey(Keys.pageActionController);
 					branchDelegate = (ERDBranchDelegateInterface) pageActionsDelegateClass;
 					return branchDelegate;
 				}
@@ -83,6 +89,57 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 		branch = null;
 		branchChoices = null;
 		branchDelegate = null;
+		branchConfiguration = null;
+	}
+
+	protected NSDictionary<String, NSDictionary<String, Object>> branchConfiguration;
+
+	public NSDictionary<String, NSDictionary<String, Object>> branchConfiguration() {
+		if (branchConfiguration == null) {
+			WOComponent current = parent();
+			while (current != null) {
+				if (current instanceof D2WPage) {
+					branchConfiguration = (NSDictionary) d2wContext().valueForKey(Keys.pageActionConfiguration);
+					return branchConfiguration;
+				}
+				current = current.parent();
+			}
+		}
+		return branchConfiguration;
+	}
+
+	/***
+	 * gets the update container id
+	 * 
+	 * @return the update container id
+	 */
+	public String updateContainerID() {
+		if (branchConfiguration() != null) {
+			NSDictionary c = (NSDictionary) branchConfiguration().objectForKey(branchName());
+			if (c != null) {
+				String updateContainerKey = (String) d2wContext().valueForKey((String) c.objectForKey(Keys.updateContainerKey));
+				if (ERXStringUtilities.isNotBlank(updateContainerKey))
+					return updateContainerKey;
+			}
+		}
+		return (String) d2wContext().valueForKey("idForMainContainer");
+	}
+
+	/***
+	 * gets the button hotkey
+	 * 
+	 * @return the hotkey
+	 */
+	public String hotkey() {
+		if (branchConfiguration() != null) {
+			NSDictionary c = (NSDictionary) branchConfiguration().objectForKey(branchName());
+			if (c != null) {
+				String hotKey = (String) d2wContext().valueForKey((String) c.objectForKey(Keys.hotkey));
+				if (ERXStringUtilities.isNotBlank(hotKey))
+					return hotKey;
+			}
+		}
+		return branchHotkey();
 	}
 
 	// ---------------- Branch Delegate Support --------------------//
@@ -112,8 +169,8 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 	}
 
 	/**
-	 * Implementation of the {@link ERDBranchDelegate ERDBranchDelegate}. Gets
-	 * the user selected branch name.
+	 * Implementation of the {@link ERDBranchDelegate ERDBranchDelegate}. Gets the user selected
+	 * branch name.
 	 * 
 	 * @return user selected branch name.
 	 */
@@ -122,8 +179,8 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 	}
 
 	/**
-	 * Implementation of the {@link ERDBranchDelegate ERDBranchDelegate}. Gets
-	 * the user selected branch prefix.
+	 * Implementation of the {@link ERDBranchDelegate ERDBranchDelegate}. Gets the user selected
+	 * branch prefix.
 	 * 
 	 * @return user selected branch prefix.
 	 */
@@ -132,8 +189,8 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 	}
 
 	/**
-	 * Implementation of the {@link ERDBranchDelegate ERDBranchDelegate}. Gets
-	 * the user selected branch label.
+	 * Implementation of the {@link ERDBranchDelegate ERDBranchDelegate}. Gets the user selected
+	 * branch label.
 	 * 
 	 * @return user selected branch label.
 	 */
@@ -142,8 +199,8 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 	}
 
 	/**
-	 * Implementation of the {@link ERDBranchDelegate ERDBranchDelegate}. Gets
-	 * the user selected branch button id.
+	 * Implementation of the {@link ERDBranchDelegate ERDBranchDelegate}. Gets the user selected
+	 * branch button id.
 	 * 
 	 * @return user selected branch button id.
 	 */
@@ -160,14 +217,14 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 		return (Boolean) branch().valueForKey(ERDBranchDelegate.BRANCH_REQUIRESFORMSUBMIT);
 	}
 
-    /**
-     * Implementation of the {@link ERDBranchDelegate ERDBranchDelegate}
-     * 
-     * @return a hotkey to bind to the branch action
-     */
-    public String branchHotkey() {
-        return (String) branch().valueForKey(ERDBranchDelegate.BRANCH_HOTKEY);
-    }
+	/**
+	 * Implementation of the {@link ERDBranchDelegate ERDBranchDelegate}
+	 * 
+	 * @return a hotkey to bind to the branch action
+	 */
+	public String branchHotkey() {
+		return (String) branch().valueForKey(ERDBranchDelegate.BRANCH_HOTKEY);
+	}
 
 	public Boolean dontSubmitForm() {
 		if (branchRequiresFormSubmit())
@@ -186,9 +243,9 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 	}
 
 	/**
-	 * Calculates the branch choices for the current page. This method is just a
-	 * cover for calling the method <code>branchChoicesForContext</code> on the
-	 * current {@link ERDBranchDelegate ERDBranchDelegate}.
+	 * Calculates the branch choices for the current page. This method is just a cover for calling
+	 * the method <code>branchChoicesForContext</code> on the current {@link ERDBranchDelegate
+	 * ERDBranchDelegate}.
 	 * 
 	 * @return array of branch choices
 	 */

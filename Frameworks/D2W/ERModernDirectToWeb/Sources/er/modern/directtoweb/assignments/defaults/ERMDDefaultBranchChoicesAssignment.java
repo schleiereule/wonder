@@ -21,18 +21,17 @@ import er.modern.directtoweb.components.buttons.ERMDDeleteButton.Keys;
 public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 
 	/**
-	 * Do I need to update serialVersionUID? See section 5.6 <cite>Type Changes
-	 * Affecting Serialization</cite> on page 51 of the
-	 * <a href="http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf">Java Object
-	 * Serialization Spec</a>
+	 * Do I need to update serialVersionUID? See section 5.6 <cite>Type Changes Affecting
+	 * Serialization</cite> on page 51 of the
+	 * <a href="http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf">Java Object Serialization Spec</a>
 	 */
 	private static final long serialVersionUID = 1L;
 
 	public static final NSArray<String> editControllerDependentKeys = new NSArray<String>("task", "subTask", "tabCount", "tabIndex");
-	public static final NSArray<String> toManyRelationshipDependentKeys = new NSArray<String>("task", "entity", "parentRelationship", "frame", "isEntityEditable", "readOnly",
-			"shouldShowQueryRelatedButton");
-	public static final NSArray<String> toOneRelationshipDependentKeys = new NSArray<String>("task", "entity", "parentRelationship", "frame", "isEntityDeletable", "isEntityEditable",
-			"isEntityInspectable", "readOnly", "object.canDelete", "object.canUpdate", "object.isNonNull");
+	public static final NSArray<String> toManyRelationshipDependentKeys = new NSArray<String>("task", "entity", "parentRelationship", "frame", "isEntityEditable", "readOnly", "shouldShowQueryRelatedButton");
+	public static final NSArray<String> toOneRelationshipDependentKeys = new NSArray<String>("task", "entity", "parentRelationship", "frame", "isEntityDeletable", "isEntityEditable", "isEntityInspectable", "readOnly", "object.canDelete",
+			"object.canUpdate", "object.isNonNull");
+	public static final NSArray<String> queryControllerDependentKeys = new NSArray<String>("task", "frame");
 
 	public static final NSDictionary<String, NSArray<String>> dependentKeys;
 
@@ -41,6 +40,7 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 		keys.setObjectForKey(editControllerDependentKeys, "editControllerChoices");
 		keys.setObjectForKey(toManyRelationshipDependentKeys, "toManyControllerChoices");
 		keys.setObjectForKey(toOneRelationshipDependentKeys, "toOneControllerChoices");
+		keys.setObjectForKey(queryControllerDependentKeys, "queryControllerChoices");
 		dependentKeys = keys.immutableClone();
 	}
 
@@ -148,6 +148,13 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 		EOEnterpriseObject eo = (EOEnterpriseObject) c.valueForKey("object");
 		choices.add("_editListRelated");
 		return choices;
+	}
+
+	public Object queryControllerChoices(D2WContext c) {
+		if (c.frame()) {
+			return new NSArray<String>("_clear", "_query");
+		}
+		return new NSArray<String>("_clear", "_query");
 	}
 
 	private Class<?> classForEntity(EOEntity entity) {

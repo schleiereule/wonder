@@ -34,37 +34,6 @@ QueryPageRepetition: WOSwitchComponent {
 	displayGroup = displayGroup;
 }
 
-ClearButton: CCSmartAjaxButton {
-	alt = "Clear Form";
-	value = d2wContext.clearButtonLabel;
-	action = clearAction;
-	class = "Button PageButton ClearPageButton";
-	useAjax = d2wContext.useAjaxControlsWhenEmbedded;
-    updateContainerID = d2wContext.idForParentMainContainer;
-}
-
-QueryButton: CCSmartAjaxButton {
-	action = queryAction;
-	alt = "Find objects matching the query";
-	value = d2wContext.findButtonLabel;
-	class = "Button PageButton QueryPageButton";
-	useAjax = d2wContext.useAjaxControlsWhenEmbedded;
-    updateContainerID = d2wContext.idForParentMainContainer;
-}
-
-ReturnButton: CCSmartAjaxButton {
-	action = returnAction;
-	alt = "Returns to the previous page";
-	value = d2wContext.returnButtonLabel;
-	class = "Button PageButton ReturnPageButton";
-	useAjax = d2wContext.useAjaxControlsWhenEmbedded;
-	updateContainerID = d2wContext.idForParentMainContainer;
-}
-
-ShowCancel: WOConditional {
-	condition = showCancel;
-}
-
 TopActionBlock : WOGenericContainer {
 	elementName = "div";
 	class = d2wContext.classForTopActionBlock;
@@ -75,14 +44,9 @@ BottomActionBlock : WOGenericContainer {
 	class = d2wContext.classForBottomActionBlock;
 }
 
-ActionBar: WOSwitchComponent {
-	WOComponentName = d2wContext.actionBarComponentName;
-	d2wContext = d2wContext;
-}
-
-Controller: WOSwitchComponent {
-	WOComponentName = d2wContext.controllerButtonComponentName;
-	d2wContext = d2wContext;
+Actions: ERD2WExtraDisplayPropertyKeysComponent {
+	localContext = d2wContext;
+	extraPropertiesKey = "belowControllerPropertyKeys";
 }
 
 ShowBottomActionBlock : WOConditional {
@@ -98,6 +62,3 @@ InnerWrapper : WOGenericContainer {
 	class = d2wContext.classForInnerWrapper;
 }
 
-ShouldShowDefaultPageButtons : WOConditional {
-	condition = d2wContext.shouldShowDefaultPageButtons;
-}

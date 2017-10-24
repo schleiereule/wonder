@@ -19,9 +19,9 @@ BranchButton : CCSmartAjaxButton {
 	class = buttonCssClass;
 	value = branchButtonLabel;
 	useAjax = d2wContext.useAjaxControlsWhenEmbedded;
-	updateContainerID = d2wContext.idForMainContainer;
+	updateContainerID = updateContainerID;
 	dontSubmitForm = dontSubmitForm;
-	hotkey = branchHotkey;
+	hotkey = hotkey;
 }
 
 BranchButton2 : AjaxSubmitButton {
@@ -29,7 +29,7 @@ BranchButton2 : AjaxSubmitButton {
 	button = false;
 	action = performAction;
 	class = buttonCssClass;
-	updateContainerID = d2wContext.idForMainContainer;
+	updateContainerID = updateContainerID;
 }
 
 BranchButton2Label : WOString {
