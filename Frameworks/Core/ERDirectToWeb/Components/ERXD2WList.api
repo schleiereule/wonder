@@ -9,7 +9,7 @@
 		<binding name="pageConfiguration"/>
 		<binding name="displayKeys"/>
 
-		<validation message="'entityName' or 'pageConfiguratio' must be bound">
+		<validation message="'entityName' or 'pageConfiguration' must be bound">
 			<and>
 				<unbound name="entityName"/>
 				<unbound name="pageConfiguration"/>
