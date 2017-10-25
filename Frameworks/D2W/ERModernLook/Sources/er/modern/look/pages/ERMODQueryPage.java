@@ -1,8 +1,10 @@
 package er.modern.look.pages;
 
 import com.webobjects.appserver.WOContext;
+import com.webobjects.appserver.WOResponse;
 
 import er.directtoweb.pages.templates.ERD2WQueryPageTemplate;
+import er.extensions.appserver.ERXResponseRewriter;
 
 /**
  * Modernized query page.
@@ -37,4 +39,14 @@ public class ERMODQueryPage extends ERD2WQueryPageTemplate {
 		super(wocontext);
 	}
 	
+    @Override
+    public void appendToResponse(WOResponse response, WOContext context) {
+        super.appendToResponse(response, context);
+        // add scripts for application of hotkey bindings
+        ERXResponseRewriter.addScriptResourceInHead(response, context, "ERCoolComponents",
+                "hotkeys/hotkeys-min.js");
+        // add script for hotkey and tab index application
+        ERXResponseRewriter.addScriptResourceInHead(response, context, "ERModernDirectToWeb", "keyboard_nav.js");
+    }
+
 }
