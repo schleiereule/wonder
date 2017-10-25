@@ -134,7 +134,7 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 		if (branchConfiguration() != null) {
 			NSDictionary c = (NSDictionary) branchConfiguration().objectForKey(branchName());
 			if (c != null) {
-				String hotKey = (String) d2wContext().valueForKey((String) c.objectForKey(Keys.hotkey));
+				String hotKey = (String) c.objectForKey(Keys.hotkey);
 				if (ERXStringUtilities.isNotBlank(hotKey))
 					return hotKey;
 			}
