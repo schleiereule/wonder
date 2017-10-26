@@ -7,6 +7,7 @@ import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSDictionary;
 
 import er.directtoweb.assignments.ERDAssignment;
+import er.extensions.appserver.ERXApplication;
 import er.extensions.foundation.ERXDictionaryUtilities;
 import er.extensions.foundation.ERXStringUtilities;
 
@@ -212,6 +213,9 @@ public class ERMDDefaultCSSAssignment extends ERDAssignment {
 		String customClass = (String)c.valueForKey("wrapperCssClass");
 		if (customClass != null) {
 			result += " " + customClass; 
+		}
+		if (ERXApplication.isDevelopmentModeSafe()) {
+		    result += " DevModeWrapper";
 		}
 		return result;
 	}
