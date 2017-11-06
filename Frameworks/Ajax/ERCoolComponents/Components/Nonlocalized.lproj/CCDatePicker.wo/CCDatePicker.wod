@@ -6,6 +6,19 @@ DateField : WOTextField {
   id = elementID;
   tabindex = ^tabindex;
   placeholder = ^placeholder;
+  readonly = disableInput;
+}
+
+isDisableInput : WOConditional {
+  condition = disableInput;
+}
+
+HiddenDateField : WOTextField {
+  value = value;
+  dateformat = dateformat;
+  tabindex = -1;
+  type = "hidden";
+  name = sharedInputName;
 }
 
 DatePickerCreateScript : WOString {

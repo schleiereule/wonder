@@ -49,6 +49,7 @@ import org.slf4j.LoggerFactory;
  * @binding dragDisabled boolean - disable dragging of calendar
  * @binding fillGrid boolean - fill all dates, not just those in current month
  * @binding constrainSelection boolean - if fillGrid is yes, constrain selection to current month (defaults to true)
+ * @binding disableInput boolean - disable the input field by making it read-only
  * @binding hideInput boolean - hide the input field (don't use if hideControl is specified)
  * @binding hideControl boolean - hide the calendar button (don't use if hideInput is specified)
  * 
@@ -233,8 +234,8 @@ public class CCDatePicker extends ERXStatelessComponent {
 		}
 		
 		boolean hideControl = booleanValueForBinding("hideControl", false);
-		if (hideControl)
-			opts += ",hideControl:true";
+//		if (hideControl)
+			opts += ",hideControl:false";
 		
 		opts += "}";
 		return opts;
@@ -278,6 +279,25 @@ public class CCDatePicker extends ERXStatelessComponent {
 		return formatter.format(ts);
 	}
 
+	public boolean disableInput() {
+	    return booleanValueForBinding("disableInput", false);
+	}
+	   
+    public void setDisableInput(Boolean value) {
+        setValueForBinding(value, "disableInput");
+    }
+
+    /**
+     * @return the first input's name
+     */
+    public String sharedInputName() {
+        String sharedInputName = context().elementID().toString();
+        // this would be the element ID of the current input, but we need the read-only input's
+        sharedInputName = sharedInputName.substring(0, sharedInputName.length() - 3);
+        sharedInputName = sharedInputName + "0";
+        return sharedInputName;
+    }
+    
     /**
      * Overridden so that parent will handle in the same manner as if this were a dynamic element.
      * @param t the exception thrown during validation

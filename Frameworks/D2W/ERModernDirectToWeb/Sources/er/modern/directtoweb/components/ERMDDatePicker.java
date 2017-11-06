@@ -179,6 +179,13 @@ public class ERMDDatePicker extends ERDCustomEditComponent {
 		return (String)valueForBinding("datePickerRangeHigh");
 	}
 	
+   /**
+     * {@link CCDatePicker} option: disable the input text field by making it read-only
+     */
+    public Boolean disableInput() {
+        return ERXValueUtilities.BooleanValueWithDefault(valueForBinding("datePickerDisableInput"), false);
+    }
+
 	/**
 	 * {@link CCDatePicker} option: hide the input text field
 	 */

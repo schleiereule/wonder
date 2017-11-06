@@ -15,6 +15,7 @@ DatePicker : CCDatePicker {
   noTodayButton = noTodayButton;
   rangeLow = rangeLow;
   rangeHigh = rangeHigh;
+  disableInput = disableInput;
   hideInput = hideInput;
   hideControl = hideControl;
   placeholder = placeholder;
