@@ -89,6 +89,7 @@ public abstract class ERXBrowser implements NSKeyValueCoding {
 
     public static final String ROBOT 	= "robot";
     public static final String ICAB 	= "iCab";
+    public static final String EDGE		= "Edge";
     public static final String IE		= "IE";
     public static final String NETSCAPE = "Netscape";
     public static final String OMNIWEB 	= "OmniWeb";
@@ -240,6 +241,20 @@ public abstract class ERXBrowser implements NSKeyValueCoding {
      *         <div class="ja">iCab の場合には true が戻ります</div>
      */
     public abstract boolean isICab();
+    
+    /**
+     * <div class="en">
+     * Browser is Microsoft Edge?
+     * </div>
+     
+     * <div class="ja">
+     * ブラウザは Microsoft Edge ですか？
+     * </div>
+     * 
+     * @return <div class="en">true if browser is Edge.</div>
+     *         <div class="ja">Edge の場合には true が戻ります</div>
+     */
+    public abstract boolean isEdge();
 
     /**
      * <div class="en">
@@ -357,8 +372,6 @@ public abstract class ERXBrowser implements NSKeyValueCoding {
     public abstract boolean isMozilla45Compatible();
     public abstract boolean isMozilla40Compatible();
 
-    public abstract boolean isVersion11();
-    public abstract boolean isVersion10();
     public abstract boolean isVersion9();
     public abstract boolean isVersion8();
     public abstract boolean isVersion7();
