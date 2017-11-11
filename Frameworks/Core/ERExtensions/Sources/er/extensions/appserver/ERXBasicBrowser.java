@@ -386,6 +386,26 @@ public class ERXBasicBrowser extends ERXBrowser {
     public boolean isMozilla40Compatible() {
         return _isMozillaVersion40 || _isMozillaVersion45;
     }
+    
+    @Override
+    public boolean isVersion13() {
+        return _isVersion13;
+    }
+
+    @Override
+    public boolean isVersion12() {
+        return _isVersion12;
+    }
+
+    @Override
+    public boolean isVersion11() {
+        return _isVersion11;
+    }
+
+    @Override
+    public boolean isVersion10() {
+        return _isVersion10;
+    }
 
     @Override
     public boolean isVersion9() {
