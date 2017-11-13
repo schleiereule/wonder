@@ -7,6 +7,7 @@ import com.webobjects.eocontrol.EOEnterpriseObject;
 import com.webobjects.eocontrol.EOFetchSpecification;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSData;
+import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.foundation.NSTimestamp;
 import com.webobjects.foundation.NSValidation;
 
@@ -15,7 +16,9 @@ import er.extensions.eof.ERXEOControlUtilities;
 import er.extensions.eof.ERXFetchSpecificationBatchIterator;
 import er.extensions.foundation.ERXCompressionUtilities;
 import er.extensions.foundation.ERXProperties;
+import er.extensions.foundation.ERXStringUtilities;
 import er.extensions.foundation.ERXValueUtilities;
+import er.extensions.validation.ERXValidationException;
 import er.extensions.validation.ERXValidationFactory;
 
 /**
@@ -24,25 +27,25 @@ import er.extensions.validation.ERXValidationFactory;
  * @property er.corebusinesslogic.ERCMailMessage.ShouldGzipContent
  */
 public class ERCMailMessage extends _ERCMailMessage {
-	/**
+    /**
 	 * Do I need to update serialVersionUID?
 	 * See section 5.6 <cite>Type Changes Affecting Serialization</cite> on page 51 of the 
 	 * <a href="http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf">Java Object Serialization Spec</a>
-	 */
-	private static final long serialVersionUID = 1L;
+     */
+    private static final long serialVersionUID = 1L;
 
 
-    //	===========================================================================
-    //	Class Constant(s)
-    //	---------------------------------------------------------------------------
+    // ===========================================================================
+    // Class Constant(s)
+    // ---------------------------------------------------------------------------
 
     /** holds the address separator */
     public static final String AddressSeparator = ",";
 
-    //	===========================================================================
-    //	Clazz Object(s)
-    //	---------------------------------------------------------------------------    
-    
+    // ===========================================================================
+    // Clazz Object(s)
+    // ---------------------------------------------------------------------------
+
     /**
      * Clazz object used to hold all clazz related methods.
      */
@@ -59,9 +62,9 @@ public class ERCMailMessage extends _ERCMailMessage {
         }
     }
 
-    //	===========================================================================
-    //	Class Method(s)
-    //	---------------------------------------------------------------------------
+    // ===========================================================================
+    // Class Method(s)
+    // ---------------------------------------------------------------------------
 
     /**
      * Gets the singleton clazz object for this Class.
@@ -71,10 +74,10 @@ public class ERCMailMessage extends _ERCMailMessage {
         return (ERCMailMessageClazz)EOEnterpriseObjectClazz.clazzForEntityNamed("ERCMailMessage");
     }
 
-    //	===========================================================================
-    //	Instance Constructor(s)
-    //	---------------------------------------------------------------------------
-    
+    // ===========================================================================
+    // Instance Constructor(s)
+    // ---------------------------------------------------------------------------
+
     /**
      * Public constructor.
      */
@@ -82,10 +85,10 @@ public class ERCMailMessage extends _ERCMailMessage {
         super();
     }
 
-    //	===========================================================================
-    //	Instance Method(s)
-    //	---------------------------------------------------------------------------    
-    
+    // ===========================================================================
+    // Instance Method(s)
+    // ---------------------------------------------------------------------------
+
     /**
      * Default state of the mail message is
      * 'Ready To Be Sent'.
@@ -95,36 +98,36 @@ public class ERCMailMessage extends _ERCMailMessage {
     public void init(EOEditingContext anEditingContext) {
         super.init(anEditingContext);
         setState(ERCMailState.READY_TO_BE_SENT_STATE);
-        
+
         boolean shouldArchive = ERXProperties.booleanForKeyWithDefault("er.corebusinesslogic.ERCMailMessage.ShouldArchive", false);
         setShouldArchiveSentMail(shouldArchive);
-        
+
         boolean shouldZip = ERXProperties.booleanForKeyWithDefault("er.corebusinesslogic.ERCMailMessage.ShouldGzipContent", true);
-        setContentGzipped(shouldZip);       
-        
+        setContentGzipped(shouldZip);
+
         setIsRead(false);
     }
-        
+
     // State Methods
     public boolean isReadyToSendState() {
-		return state() == ERCMailState.READY_TO_BE_SENT_STATE;
-	}
+        return state() == ERCMailState.READY_TO_BE_SENT_STATE;
+    }
 
-	public boolean isSentState() {
-		return state() == ERCMailState.SENT_STATE;
-	}
+    public boolean isSentState() {
+        return state() == ERCMailState.SENT_STATE;
+    }
 
-	public boolean isExceptionState() {
-		return state() == ERCMailState.EXCEPTION_STATE;
-	}
+    public boolean isExceptionState() {
+        return state() == ERCMailState.EXCEPTION_STATE;
+    }
 
-	public boolean isReceivedState() {
-		return state() == ERCMailState.RECEIVED_STATE;
-	}
+    public boolean isReceivedState() {
+        return state() == ERCMailState.RECEIVED_STATE;
+    }
 
     // IMPLEMENTME: MarkReadInterface
     public void markReadBy(EOEnterpriseObject by) {
-    	setIsRead(true);
+        setIsRead(true);
     }
 
     public NSArray toAddressesAsArray() {
@@ -160,7 +163,7 @@ public class ERCMailMessage extends _ERCMailMessage {
     public boolean shouldArchiveSentMailAsBoolean() {
         return ERXValueUtilities.booleanValue(shouldArchiveSentMail());
     }
-    
+
     /**
      * Long description of the mail message.
      * @return very verbose description of the mail message.
@@ -206,13 +209,13 @@ public class ERCMailMessage extends _ERCMailMessage {
     public String toLongString() {
         return toString();
     }
-    
+
     public ERCMailMessage archive() {
         return (ERCMailMessage)ERXEOControlUtilities.createAndInsertObject(editingContext(),
                                                                            "ERCMailMessageArchive",
                                                                            snapshot());
     }
-    
+
     /**
      * Appends test to the currently stored text.
      * Useful for nested mime messages or multi-part messages.
@@ -224,13 +227,13 @@ public class ERCMailMessage extends _ERCMailMessage {
     }
 
     public Object validateEmptyStringForKey(Object value, String field) {
-        if(value == null || "".equals(value) || ((String)value).length() == 0) {
+        if (value == null || "".equals(value) || ((String) value).length() == 0) {
             NSValidation.ValidationException e = ERXValidationFactory.defaultFactory().createCustomException(this, field, value, "empty" + field);
             throw e;
         }
         return value;
     }
-    
+
     /**
      * Simple test if an attachment has any attachments.
      * @return if the the message has any attachments
@@ -245,7 +248,7 @@ public class ERCMailMessage extends _ERCMailMessage {
     public Object validateTitle(String newValue) {
         return validateEmptyStringForKey(newValue, "title");
     }
-    
+
     public Object validateToAddresses(String newValue) {
         return validateEmptyStringForKey(newValue, "toAddresses");
     }
@@ -254,28 +257,83 @@ public class ERCMailMessage extends _ERCMailMessage {
     public void validateForSave() throws NSValidation.ValidationException {
         final String text = text();
         final String plainText = plainText();
-        
-        super.validateForSave();
-        
-        if ( (text == null || text.length() == 0) && (plainText == null || plainText.length() == 0) )
-            throw ERXValidationFactory.defaultFactory().createException(this, "plainText,text", text, "eitherPlainTextOrText");
+
+        NSMutableArray<ValidationException> exceptions = new NSMutableArray<ValidationException>();
+        try {
+            super.validateForSave();
+        } catch (ERXValidationException exception) {
+            exceptions.addObject(exception);
+        }
+        if ((text == null || text.length() == 0)
+                && (plainText == null || plainText.length() == 0)) {
+            exceptions.addObject(ERXValidationFactory.defaultFactory().createException(
+                    this, "plainText,text", text, "eitherPlainTextOrText"));
+        }
+        try {
+            validateAddresses(toAddresses(), "toAddresses");
+        } catch (ERXValidationException exception) {
+            exceptions.addObject(exception);
+        }
+        try {
+            validateAddresses(ccAddresses(), "ccAddresses");
+        } catch (ERXValidationException exception) {
+            exceptions.addObject(exception);
+        }
+        try {
+            validateAddresses(bccAddresses(), "bccAddresses");
+        } catch (ERXValidationException exception) {
+            exceptions.addObject(exception);
+        }
+        if (exceptions.count() > 0) {
+            ERXValidationException finalException = (ERXValidationException) exceptions
+                    .objectAtIndex(0);
+            exceptions.removeObjectAtIndex(0);
+            if (exceptions.count() > 0) {
+                finalException.setAdditionalExceptions(exceptions);
+            }
+            throw finalException;
+        }
+
+    }
+
+    /** cursory validation to prevent blatant syntax errors */
+    private void validateAddresses(String addresses, String property) {
+        if (!ERXStringUtilities.stringIsNullOrEmpty(addresses)) {
+            int lessThanCount = addresses.length()
+                    - addresses.replace("<", "").length();
+            int moreThanCount = addresses.length()
+                    - addresses.replace(">", "").length();
+            int atCount = addresses.length() - addresses.replace("@", "").length();
+            int commaCount = addresses.length()
+                    - addresses.replace(",", "").length();
+            // make sure '<' and '>' are present in equal number
+            if (lessThanCount != moreThanCount) {
+                throw ERXValidationFactory.defaultFactory().createCustomException(this,
+                        property, null, "UnequalDelimitersCount");
+            }
+            // make sure addresses are separated by ','
+            if (atCount > 1 && commaCount <  (atCount - 1)) {
+                throw ERXValidationFactory.defaultFactory().createCustomException(this,
+                        property, null, "InsufficientSeparatorCount");
+            }
+        }
     }
 
     public void attachFileWithMimeType(String filePath, String mimeType) {
         ERCMessageAttachment attachment = (ERCMessageAttachment)ERXEOControlUtilities.createAndInsertObject(editingContext(),
                                                                                                             "ERCMessageAttachment");
         attachment.setFilePath(filePath);
-        if(mimeType != null)
+        if (mimeType != null)
             attachment.setMimeType(mimeType);
         addToBothSidesOfAttachments(attachment);
-    }    
-    
-    public void addToBothSidesOfAttachments(ERCMessageAttachment attachement) {
-    	addObjectToBothSidesOfRelationshipWithKey(attachement, Key.ATTACHMENTS);
     }
-    
+
+    public void addToBothSidesOfAttachments(ERCMessageAttachment attachement) {
+        addObjectToBothSidesOfRelationshipWithKey(attachement, Key.ATTACHMENTS);
+    }
+
     public String storedGzippedValueForKey(String key) {
-        NSData data = (NSData)storedValueForKey(key);
+        NSData data = (NSData) storedValueForKey(key);
         String value = null;
         if (data != null && data.bytes().length > 0) {
             value = ERXCompressionUtilities.gunzipByteArrayAsString(data.bytes());
@@ -285,49 +343,49 @@ public class ERCMailMessage extends _ERCMailMessage {
 
     public void takeStoredGzippedValueForKey(String aValue, String key) {
         NSData valueToSet = null;
-        
-        if ( aValue != null ) {
+
+        if (aValue != null) {
             byte bytes[] = ERXCompressionUtilities.gzipStringAsByteArray(aValue);
-            
+
             if (bytes.length > 0) {
                 valueToSet = new NSData(bytes);
             }
         }
-        
+
         takeStoredValueForKey(valueToSet, key);
     }
 
     @Override
     public String text() {
-    	String value = null;
-    	if (contentGzipped()) {
-    		value = storedGzippedValueForKey("textCompressed");
-    	} else {
-    		value = (String)storedValueForKey(Key.TEXT);
-    	}
-    	return value;
+        String value = null;
+        if (contentGzipped()) {
+            value = storedGzippedValueForKey("textCompressed");
+        } else {
+            value = (String) storedValueForKey(Key.TEXT);
+        }
+        return value;
     }
-    
+
     @Override
     public void setText(String aValue) {
-    	if (contentGzipped()) {
-    		takeStoredGzippedValueForKey(aValue, "textCompressed");
-    	} else {
-    		takeStoredValueForKey(aValue, Key.TEXT);            
-    	}
+        if (contentGzipped()) {
+            takeStoredGzippedValueForKey(aValue, "textCompressed");
+        } else {
+            takeStoredValueForKey(aValue, Key.TEXT);
+        }
     }
-    
+
     @Override
     public void willInsert() {
-    	super.willInsert();
-    	NSTimestamp now = new NSTimestamp();
-    	setCreated(now);
-    	setLastModified(now);
+        super.willInsert();
+        NSTimestamp now = new NSTimestamp();
+        setCreated(now);
+        setLastModified(now);
     }
-    
+
     @Override
     public void willUpdate() {
-    	super.willUpdate();
-    	setLastModified(new NSTimestamp());
+        super.willUpdate();
+        setLastModified(new NSTimestamp());
     }
 }
