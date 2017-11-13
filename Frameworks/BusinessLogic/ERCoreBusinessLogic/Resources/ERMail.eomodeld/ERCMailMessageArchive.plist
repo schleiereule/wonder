@@ -4,13 +4,13 @@
             allowsNull = Y; 
             columnName = "BCC_ADDR"; 
             name = bccAddresses; 
-            prototypeName = varchar1000; 
+            prototypeName = varcharLarge; 
         }, 
         {
             allowsNull = Y; 
             columnName = "CC_ADDR"; 
             name = ccAddresses; 
-            prototypeName = varchar1000; 
+            prototypeName = varcharLarge; 
         }, 
         {
             columnName = "CONTENT_GZIPPED"; 
@@ -25,6 +25,7 @@
             prototypeName = dateTime; 
         }, 
         {
+            allowsNull = Y; 
             columnName = "EXCEPTION_REASON"; 
             name = exceptionReason; 
             prototypeName = varchar1000; 
@@ -59,11 +60,18 @@
         {
             adaptorValueConversionMethodName = value; 
             columnName = "MAIL_STATE_ID"; 
+            factoryMethodArgumentType = EOFactoryMethodArgumentIsNSString; 
             name = state; 
             prototypeName = osType; 
+            valueClassName = "er.corebusinesslogic.ERCMailState"; 
             valueFactoryMethodName = mailState; 
         }, 
-        {columnName = "TEXT_"; name = text; prototypeName = varcharLarge; }, 
+        {
+            allowsNull = Y; 
+            columnName = "TEXT_"; 
+            name = text; 
+            prototypeName = varcharLarge; 
+        }, 
         {
             allowsNull = Y; 
             columnName = "TEXT_COMPRESSED"; 
@@ -71,7 +79,12 @@
             prototypeName = blob; 
         }, 
         {columnName = TITLE; name = title; prototypeName = varchar255; }, 
-        {columnName = "TO_ADDR"; name = toAddresses; prototypeName = varchar1000; }, 
+        {
+            allowsNull = N; 
+            columnName = "TO_ADDR"; 
+            name = toAddresses; 
+            prototypeName = varcharLarge; 
+        }, 
         {
             allowsNull = Y; 
             columnName = "X_MAILER"; 
@@ -81,12 +94,11 @@
     ); 
     attributesUsedForLocking = (
         bccAddresses, 
+        ccAddresses, 
         contentGzipped, 
-        exceptionReason, 
         fromAddress, 
         id, 
         isRead, 
-        replyToAddress, 
         shouldArchiveSentMail, 
         state, 
         title, 
@@ -124,12 +136,12 @@
     primaryKeyAttributes = (id); 
     relationships = (
         {
+            deleteRule = EODeleteRuleCascade; 
             destination = ERCMessageAttachment; 
             isToMany = Y; 
             joinSemantic = EOInnerJoin; 
             joins = ({destinationAttribute = mailMessageId; sourceAttribute = id; }); 
             name = attachments; 
-            ownsDestination = Y; 
             userInfo = {modificationDate = "2002-06-04 14:00:54 +0200"; }; 
         }
     ); 
