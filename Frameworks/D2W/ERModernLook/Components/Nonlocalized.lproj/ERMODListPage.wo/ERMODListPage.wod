@@ -131,7 +131,8 @@ InnerWrapper : WOGenericContainer {
 	class = d2wContext.classForInnerWrapper;
 }
 
-BatchSizeControl : ERMDBatchSizeControl {
+BatchSizeControl : WOSwitchComponent {
+  WOComponentName = d2wContext.batchNavigationSizeComponentName;
   displayGroup = displayGroup;
   updateContainerID = idForRepetitionContainer;
   d2wContext = d2wContext;

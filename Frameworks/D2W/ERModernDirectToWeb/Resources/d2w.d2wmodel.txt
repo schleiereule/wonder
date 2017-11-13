@@ -48,6 +48,7 @@
     10 : propertyDependencies != null => aboveDisplayPropertyKeys = ("ajaxNotificationCenter") [com.webobjects.directtoweb.Assignment],
     10 : inlineTask = 'create' => inlinePageConfiguration = "createEmbeddedConfigurationName" [ERDDelayedKeyValueAssignment],
     10 : *true* => id = "idForPropertyContainer" [er.directtoweb.ERDDelayedKeyValueAssignment],
+    10 : *true* => batchNavigationSizeComponentName = "ERMDBatchSizeControl" [com.webobjects.directtoweb.Assignment],
     10 : inlineTask = 'query' => inlinePageConfiguration = "queryEmbeddedConfigurationName" [ERDDelayedKeyValueAssignment],
     10 : *true* => confirmRemoveRelatedMessage = "ERMD.confirmRemoveRelatedMessage" [er.directtoweb.ERDDelayedLocalizedAssignment],
     15 : (task = 'list' and parentPageConfiguration != null) => allowInlineEditing = "false" [com.webobjects.directtoweb.BooleanAssignment],
