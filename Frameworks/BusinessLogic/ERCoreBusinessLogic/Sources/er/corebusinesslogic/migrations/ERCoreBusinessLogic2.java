@@ -6,6 +6,7 @@ import com.webobjects.eocontrol.EOEditingContext;
 import com.webobjects.foundation.NSArray;
 
 import er.extensions.foundation.ERXProperties;
+import er.extensions.jdbc.ERXJDBCUtilities;
 import er.extensions.migration.ERXMigrationDatabase;
 import er.extensions.migration.ERXMigrationTable;
 import er.extensions.migration.ERXModelVersion;
@@ -32,15 +33,18 @@ public class ERCoreBusinessLogic2 extends ERXMigrationDatabase.Migration {
 
     @Override
     public void upgrade(EOEditingContext editingContext, ERXMigrationDatabase database) throws Throwable {
-        ERXMigrationTable ercMailMessageTable = database.existingTableNamed("ERCMAIL_MESSAG");
-        ercMailMessageTable.existingColumnNamed("BCC_ADDR").setWidthType(Types.VARCHAR, 10000000, null);
-        ercMailMessageTable.existingColumnNamed("CC_ADDR").setWidthType(Types.VARCHAR, 10000000, null);
-        ercMailMessageTable.existingColumnNamed("TO_ADDR").setWidthType(Types.VARCHAR, 10000000, null);
-
-        ERXMigrationTable ercMailMessageArchiveTable = database.existingTableNamed("ERCMAIL_MESSAG_ARCHIVE");
-        ercMailMessageArchiveTable.existingColumnNamed("BCC_ADDR").setWidthType(Types.VARCHAR, 10000000, null);
-        ercMailMessageArchiveTable.existingColumnNamed("CC_ADDR").setWidthType(Types.VARCHAR, 10000000, null);
-        ercMailMessageArchiveTable.existingColumnNamed("TO_ADDR").setWidthType(Types.VARCHAR, 10000000, null);
+        // LAME HACK: Oracle does not allow large varchar2 columns
+        if (!"Oracle".equals(ERXJDBCUtilities.databaseProductName(database.adaptorChannel()))) {
+            ERXMigrationTable ercMailMessageTable = database.existingTableNamed("ERCMAIL_MESSAG");
+            ercMailMessageTable.existingColumnNamed("BCC_ADDR").setWidthType(Types.VARCHAR, 10000000, null);
+            ercMailMessageTable.existingColumnNamed("CC_ADDR").setWidthType(Types.VARCHAR, 10000000, null);
+            ercMailMessageTable.existingColumnNamed("TO_ADDR").setWidthType(Types.VARCHAR, 10000000, null);
+            
+            ERXMigrationTable ercMailMessageArchiveTable = database.existingTableNamed("ERCMAIL_MESSAG_ARCHIVE");
+            ercMailMessageArchiveTable.existingColumnNamed("BCC_ADDR").setWidthType(Types.VARCHAR, 10000000, null);
+            ercMailMessageArchiveTable.existingColumnNamed("CC_ADDR").setWidthType(Types.VARCHAR, 10000000, null);
+            ercMailMessageArchiveTable.existingColumnNamed("TO_ADDR").setWidthType(Types.VARCHAR, 10000000, null);
+        }
     }
 
 }
