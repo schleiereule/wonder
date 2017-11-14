@@ -17,7 +17,7 @@ BranchButton : CCSmartAjaxButton {
 	alt = d2wContext.alternativeText;
 	action = performAction;
 	class = buttonCssClass;
-	value = branchButtonLabel;
+	value = buttonLabel;
 	useAjax = d2wContext.useAjaxControlsWhenEmbedded;
 	updateContainerID = updateContainerID;
 	dontSubmitForm = dontSubmitForm;

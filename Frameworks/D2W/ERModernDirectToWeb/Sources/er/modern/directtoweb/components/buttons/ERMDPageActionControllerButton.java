@@ -34,6 +34,8 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 		public static final String pageActionConfiguration = "pageActionConfiguration";
 		public static final String updateContainerKey = "updateContainerKey";
 		public static final String hotkey = "hotkey";
+		public static final String buttonLabel = "buttonLabel";
+		public static final String auxiliaryCssClass = "auxiliaryCssClass";
 	}
 
 	// ---------------- CSS Support --------------------//
@@ -43,7 +45,7 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 		if (branchName != null) {
 			if (branchName.startsWith("_"))
 				branchName = branchName.substring(1);
-			cssClass = cssClass + " " + ERXStringUtilities.capitalize(branchName) + "PageButton";
+			cssClass = cssClass + " " + ERXStringUtilities.capitalize(branchName) + "PageButton" + auxiliaryCssClass();
 		}
 		return cssClass;
 	}
@@ -115,7 +117,7 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 	 */
 	public String updateContainerID() {
 		if (branchConfiguration() != null) {
-			NSDictionary c = (NSDictionary) branchConfiguration().objectForKey(branchName());
+            NSDictionary<String, Object> c = (NSDictionary<String, Object>) branchConfiguration().objectForKey(branchName());
 			if (c != null) {
 				String updateContainerKey = (String) d2wContext().valueForKey((String) c.objectForKey(Keys.updateContainerKey));
 				if (ERXStringUtilities.isNotBlank(updateContainerKey))
@@ -125,14 +127,14 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 		return (String) d2wContext().valueForKey("idForMainContainer");
 	}
 
-	/***
+	/**
 	 * gets the button hotkey
 	 * 
 	 * @return the hotkey
 	 */
 	public String hotkey() {
 		if (branchConfiguration() != null) {
-			NSDictionary c = (NSDictionary) branchConfiguration().objectForKey(branchName());
+            NSDictionary<String, Object> c = (NSDictionary<String, Object>) branchConfiguration().objectForKey(branchName());
 			if (c != null) {
 				String hotKey = (String) c.objectForKey(Keys.hotkey);
 				if (ERXStringUtilities.isNotBlank(hotKey))
@@ -141,6 +143,43 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 		}
 		return branchHotkey();
 	}
+	
+	/**
+     * gets the button label
+     * 
+     * @return the button label
+     */
+    public String buttonLabel() {
+        String label = branchButtonLabel();
+        if (branchConfiguration() != null) {
+            NSDictionary<String, Object> c = (NSDictionary<String, Object>) branchConfiguration().objectForKey(branchName());
+            if (c != null) {
+                String buttonLabel = (String) c.objectForKey(Keys.buttonLabel);
+                if (ERXStringUtilities.isNotBlank(buttonLabel))
+                   label = buttonLabel;
+            }
+        }
+        return label;
+    }
+
+    /**
+     * gets the button's auxiliary CSS class
+     * 
+     * @return the auxiliary CSS class
+     */
+    public String auxiliaryCssClass() {
+        if (branchConfiguration() != null) {
+            NSDictionary<String, Object> c = (NSDictionary<String, Object>) branchConfiguration().objectForKey(branchName());
+            if (c != null) {
+                String auxiliaryCssClass = (String) c.objectForKey(Keys.auxiliaryCssClass);
+                if (ERXStringUtilities.isNotBlank(auxiliaryCssClass))
+                    return " " + auxiliaryCssClass;
+            }
+        }
+        return "";
+    }
+
+
 
 	// ---------------- Branch Delegate Support --------------------//
 	/** holds the chosen branch */
