@@ -103,6 +103,8 @@ public class ERD2WEditableListPage extends ERD2WListPage implements ERXException
     private boolean _objectWasSaved;
     public boolean objectWasSaved() { return _objectWasSaved; }
 
+    public void setObjectWasSaved(boolean objectWasSaved) { _objectWasSaved = objectWasSaved; }
+
     private NSMutableDictionary _errorMessagesDictionaries;
 
     protected NSMutableDictionary errorMessagesDictionaries(){

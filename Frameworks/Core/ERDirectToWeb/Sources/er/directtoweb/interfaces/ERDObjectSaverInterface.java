@@ -12,4 +12,5 @@ package er.directtoweb.interfaces;
 
 public interface ERDObjectSaverInterface {
     public boolean objectWasSaved();
+    public void setObjectWasSaved(boolean objectWasSaved);
 }

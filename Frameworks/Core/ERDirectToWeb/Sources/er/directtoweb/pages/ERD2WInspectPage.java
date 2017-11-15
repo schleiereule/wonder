@@ -94,6 +94,8 @@ public class ERD2WInspectPage extends ERD2WPage implements InspectPageInterface,
 
     public boolean objectWasSaved() { return _objectWasSaved; }
 
+    public void setObjectWasSaved(boolean objectWasSaved) { _objectWasSaved = objectWasSaved; }
+
     private WOComponent _previousPage;
 
     public WOComponent previousPage() { return _previousPage;}

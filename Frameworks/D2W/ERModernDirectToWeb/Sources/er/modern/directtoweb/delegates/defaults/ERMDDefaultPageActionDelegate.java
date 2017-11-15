@@ -29,6 +29,7 @@ import er.directtoweb.ERD2WContainer;
 import er.directtoweb.delegates.ERDBranchDelegate;
 import er.directtoweb.delegates.ERDBranchInterface;
 import er.directtoweb.delegates.ERDQueryValidationDelegate;
+import er.directtoweb.interfaces.ERDObjectSaverInterface;
 import er.directtoweb.pages.ERD2WInspectPage;
 import er.directtoweb.pages.ERD2WPage;
 import er.directtoweb.pages.ERD2WQueryPage;
@@ -145,6 +146,14 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 			if (shouldSaveChanges(c) && hasChanges) {
 				try {
 					ec.saveChanges();
+                    // play nice with the ERDObjectSaverInterface by informing
+                    // it that the object was saved
+                    ERDObjectSaverInterface osi = (ERDObjectSaverInterface) ERD2WUtilities
+                            .enclosingComponentOfClass(sender,
+                                    ERDObjectSaverInterface.class);
+					if (osi != null) {
+					    osi.setObjectWasSaved(true);
+					}
 					nextPage = _nextPageFromDelegate(page);
 					// Refresh object to update derived attributes
 					ec.refreshObject(eo);
