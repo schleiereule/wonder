@@ -197,8 +197,6 @@ public class AjaxUpdateLink extends AjaxDynamicElement {
 			}
 
 			if (function != null) {
-         		// disable link to prevent multiple submissions
-				onClickBuffer.append("this.onclick = function(event) {event.preventDefault(); return true;};");
 				onClickBuffer.append("return " + function + "(" + actionUrl + ")");
 			}
 			else {
@@ -239,7 +237,8 @@ public class AjaxUpdateLink extends AjaxDynamicElement {
 				onClickBuffer.append('}');
 			}
 		}
-
+		// disable link to prevent multiple submissions
+		onClickBuffer.append("this.onclick = function(event) {event.preventDefault(); return true;};");
 		return onClickBuffer.toString();
 	}
 

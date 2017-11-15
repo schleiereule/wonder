@@ -200,8 +200,6 @@ public class AjaxSubmitButton extends AjaxDynamicElement {
     String replaceID = (String)valueForBinding("replaceID", component);
 	String id = (updateContainerID == null) ? replaceID : updateContainerID; 
 	if (id != null) {
-		// disable link to prevent multiple submissions
-		onClickBuffer.append("this.onclick = function(event) {event.preventDefault()};");
 		onClickBuffer.append("ASB.update('" + id + "',");
 	}
 	else {
@@ -289,6 +287,8 @@ public class AjaxSubmitButton extends AjaxDynamicElement {
         		appendTagAttributeToResponse(response, "data-er-hotkey", hotkey);    
         }
     	if (functionName == null) {
+    		// disable link to prevent multiple submissions
+    		onClickBuffer.append("this.onclick = function(event) {event.preventDefault()};");
     		appendTagAttributeToResponse(response, "onclick", onClickBuffer.toString());
     	}
     	else {
