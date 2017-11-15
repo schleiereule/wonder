@@ -118,7 +118,7 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 	public String updateContainerID() {
 		if (branchConfiguration() != null) {
             NSDictionary<String, Object> c = (NSDictionary<String, Object>) branchConfiguration().objectForKey(branchName());
-			if (c != null) {
+			if (c != null && c.containsKey(Keys.updateContainerKey)) {
 				String updateContainerKey = (String) d2wContext().valueForKey((String) c.objectForKey(Keys.updateContainerKey));
 				if (ERXStringUtilities.isNotBlank(updateContainerKey))
 					return updateContainerKey;
