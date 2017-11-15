@@ -108,7 +108,7 @@ public class ERMODTabInspectPage extends ERD2WTabInspectPageTemplate {
 		if (notification.userInfo() != null) {
 			Object no = notification.userInfo().valueForKey("pageConfiguration");
 			if ((no != null) && (no instanceof String)) {
-				if (((String) d2wContext().valueForKey("pageConfiguration")).equalsIgnoreCase((String) no)) {
+				if (((String) no).equalsIgnoreCase((String) d2wContext().valueForKey("pageConfiguration"))) {
 					return true;
 				}
 			}
