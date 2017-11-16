@@ -238,7 +238,7 @@ public class AjaxUpdateLink extends AjaxDynamicElement {
 			}
 		}
 		// disable link to prevent multiple submissions
-		onClickBuffer.append("this.onclick = function(event) {event.preventDefault(); return true;};");
+		onClickBuffer.append(";this.onclick = function(event) {event.preventDefault(); return true;};");
 		return onClickBuffer.toString();
 	}
 
