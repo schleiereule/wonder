@@ -30,6 +30,7 @@ BranchButton2 : AjaxSubmitButton {
 	action = performAction;
 	class = buttonCssClass;
 	updateContainerID = updateContainerID;
+	hotkey = hotkey;
 }
 
 BranchButton2Label : WOString {
