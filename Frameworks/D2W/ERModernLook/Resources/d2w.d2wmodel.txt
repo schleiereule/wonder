@@ -96,6 +96,7 @@
     10 : (look = 'ERModernLook' and (task = 'list' or task = 'select' or task = 'editRelationship')) => displayPropertyKeys = "defaultPropertyKeysFromEntityWithoutRelationships" [com.webobjects.directtoweb.DefaultAssignment],
     15 : (look = 'ERModernLook' and (task = 'edit' or task = 'inspect' or task = 'select')) => shouldShowCancelButton = "true" [com.webobjects.directtoweb.BooleanAssignment],
     20 : look = 'ERModernLook' => sectionElementName = "h2" [com.webobjects.directtoweb.Assignment],
+    20 : look = 'ERModernLook' => showConfirmPageOnCancel = "true" [com.webobjects.directtoweb.BooleanAssignment],
     20 : look = 'ERModernLook' => sortOrderComponentName = "ERMSortOrder" [com.webobjects.directtoweb.Assignment],
     20 : look = 'ERModernLook' => sectionComponentName = "ERMDSectionText" [com.webobjects.directtoweb.Assignment],
     20 : look = 'ERModernLook' => templateNameForListPage = "ERMODListPage" [com.webobjects.directtoweb.Assignment],

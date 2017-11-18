@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.webobjects.appserver.WOComponent;
+import com.webobjects.directtoweb.ConfirmPageInterface;
 import com.webobjects.directtoweb.D2W;
 import com.webobjects.directtoweb.D2WContext;
 import com.webobjects.directtoweb.D2WPage;
@@ -28,6 +29,7 @@ import com.webobjects.foundation.NSValidation;
 import er.directtoweb.ERD2WContainer;
 import er.directtoweb.delegates.ERDBranchDelegate;
 import er.directtoweb.delegates.ERDBranchInterface;
+import er.directtoweb.delegates.ERDPageDelegate;
 import er.directtoweb.delegates.ERDQueryValidationDelegate;
 import er.directtoweb.interfaces.ERDObjectSaverInterface;
 import er.directtoweb.pages.ERD2WInspectPage;
@@ -37,10 +39,12 @@ import er.directtoweb.pages.ERD2WWizardCreationPage;
 import er.directtoweb.pages.templates.ERD2WWizardCreationPageTemplate;
 import er.extensions.eof.ERXEC;
 import er.extensions.eof.ERXEOAccessUtilities;
+import er.extensions.eof.ERXEOControlUtilities;
 import er.extensions.eof.ERXGenericRecord;
 import er.extensions.foundation.ERXValueUtilities;
 import er.extensions.localization.ERXLocalizer;
 import er.modern.directtoweb.ERMDNotificationNameRegistry;
+import er.modern.directtoweb.delegates.ERMD2WConfirmCancellationDelegate;
 
 public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 
@@ -79,6 +83,7 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 		if (page.errorMessages().isEmpty() && index + 1 < tabs.count()) {
 			ERD2WContainer next = tabs.objectAtIndex(index + 1);
 			page.setCurrentTab(next);
+			page.nextStep();
 		}
 		NSMutableDictionary<String, Object> userInfo = new NSMutableDictionary<String, Object>();
 		// if the parent page configuration ID is available, add it
@@ -99,6 +104,7 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 			page.clearValidationFailed();
 			ERD2WContainer prev = tabs.objectAtIndex(index - 1);
 			page.setCurrentTab(prev);
+			page.previousStep();
 		}
 		NSMutableDictionary<String, Object> userInfo = new NSMutableDictionary<String, Object>();
 		// if the parent page configuration ID is available, add it
@@ -201,6 +207,29 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 	public WOComponent _cancelEdit(WOComponent sender) {
 		D2WContext c = d2wContext(sender);
 		EOEnterpriseObject eo = object(sender);
+        if (ERXValueUtilities.booleanValueWithDefault(
+                c.valueForKey("showConfirmPageOnCancel"), false)) {
+            // implement confirm page for cancellation
+            ERD2WWizardCreationPage wizardPage = ERD2WUtilities
+                    .enclosingComponentOfClass(sender, ERD2WWizardCreationPage.class);
+            if (wizardPage != null) {
+                // only show this if we've been through more than one page
+                if (wizardPage.currentStep() > 0
+                        && ERXEOControlUtilities.isNewObject(wizardPage.object())) {
+                    ConfirmPageInterface cpi = (ConfirmPageInterface) D2W.factory()
+                            .pageForConfigurationNamed(
+                                    "ConfirmCancelCreationOf" + wizardPage.entityName(),
+                                    sender.session());
+                    cpi.setCancelDelegate(new ERDPageDelegate(sender.context().page()));
+                    cpi.setConfirmDelegate(new ERMD2WConfirmCancellationDelegate(sender));
+                    cpi.setMessage((String) c.valueForKey("cancelMessage"));
+                    if (cpi instanceof InspectPageInterface) {
+                        ((InspectPageInterface) cpi).setObject(wizardPage.object());
+                    }
+                    return (WOComponent) cpi;
+                }
+            }
+		}
 		ERD2WInspectPage page = ERD2WUtilities.enclosingComponentOfClass(sender, ERD2WInspectPage.class);
 		EOEditingContext ec = eo != null ? eo.editingContext() : null;
 		if (ec != null && page.shouldRevertChanges()) {
