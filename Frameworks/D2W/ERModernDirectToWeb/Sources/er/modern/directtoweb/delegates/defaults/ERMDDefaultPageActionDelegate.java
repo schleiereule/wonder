@@ -214,7 +214,7 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
                     .enclosingComponentOfClass(sender, ERD2WWizardCreationPage.class);
             if (wizardPage != null) {
                 // only show this if we've been through more than one page
-                if (wizardPage.currentStep() > 0
+                if (wizardPage.currentStep() > 1
                         && ERXEOControlUtilities.isNewObject(wizardPage.object())) {
                     ConfirmPageInterface cpi = (ConfirmPageInterface) D2W.factory()
                             .pageForConfigurationNamed(
