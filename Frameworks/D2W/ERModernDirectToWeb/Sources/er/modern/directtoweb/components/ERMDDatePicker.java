@@ -1,5 +1,12 @@
 package er.modern.directtoweb.components;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.webobjects.appserver.WOContext;
 import com.webobjects.appserver.WORequest;
 import com.webobjects.directtoweb.D2WUtils;
@@ -9,6 +16,9 @@ import er.coolcomponents.CCDatePicker;
 import er.directtoweb.components.ERDCustomEditComponent;
 import er.extensions.formatters.ERXTimestampFormatter;
 import er.extensions.foundation.ERXValueUtilities;
+import er.extensions.localization.ERXLocalizer;
+import er.extensions.validation.ERXValidationException;
+import er.extensions.validation.ERXValidationFactory;
 
 /**
  * D2WEditComponent based on CCDatePicker. To use localized date formats, define the 
@@ -46,6 +56,8 @@ public class ERMDDatePicker extends ERDCustomEditComponent {
 
     private String _formatter;
     private String _dateReadableDescription;
+
+    private String _rawValue;
     
 	public ERMDDatePicker(WOContext context) {
         super(context);
@@ -207,14 +219,45 @@ public class ERMDDatePicker extends ERDCustomEditComponent {
         return (String)valueForBinding("placeholder");
     }
     
+    /**
+     * {@link CCDatePicker} option: enable strict date validation, causing validation exceptions when the date string cannot be parsed w/o adjustments
+     */
+    public boolean enableStrictDateValidation() {
+        return ERXValueUtilities.BooleanValueWithDefault(valueForBinding("enableStrictDateValidation"), false);
+    }
+    
 	@Override
 	public String key() {
 		return (String)d2wContext().valueForKey(er.directtoweb.components.ERDCustomComponent.Keys.propertyKey);
 	}
 	
+	public void setRawValue(String value) {
+	    _rawValue = value;
+	}
+	
+	public String rawValue() {
+	    return _rawValue;
+	}
+	
 	@Override
 	public void takeValuesFromRequest(WORequest request, WOContext context) {
 		super.takeValuesFromRequest(request, context);
+        if (enableStrictDateValidation() && StringUtils.isNotBlank(rawValue())) {
+            // TODO replace hardcoded formatter!
+            DateTimeFormatter formatter = DateTimeFormatter
+                    .ofPattern("dd.MM.uuuu", ERXLocalizer.currentLocalizer().locale())
+                    .withResolverStyle(ResolverStyle.STRICT);
+            try {
+                LocalDate.parse(rawValue(), formatter);
+            } catch (DateTimeParseException e) {
+                // don't keep the liberally parsed date value
+                setObjectPropertyValue(null);
+                ERXValidationException ve = ERXValidationFactory.defaultFactory()
+                        .createException(object(), key(), rawValue(),
+                                "InvalidDateException");
+                parent().validationFailedWithException(ve, rawValue(), key());
+            }
+        }
 		try {
 			object().validateTakeValueForKeyPath(objectPropertyValue(), key());
 		}catch (NSValidation.ValidationException v) {

@@ -19,4 +19,6 @@ DatePicker : CCDatePicker {
   hideInput = hideInput;
   hideControl = hideControl;
   placeholder = placeholder;
+  enableStrictDateValidation = enableStrictDateValidation;
+  rawValue = rawValue;
 }

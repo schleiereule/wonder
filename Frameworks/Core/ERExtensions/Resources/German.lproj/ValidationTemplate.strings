@@ -3,6 +3,7 @@
 	"ExceedsMaximumLengthException" = "Der Wert für <b>@@displayNameForProperty@@</b> darf maximal <b>@@attribute.width@@</b> Zeichen haben.";
 	"InvalidNumberException" = "Bitte \U00fcberpr\U00fcfen Sie <b>@@displayNameForProperty@@</b>. @@escapedValue@@ ist kein g\U00fcltiger Wert.";
 	"InvalidValueException" = "Der Wert '@@escapedValue@@' ist für das Attribut <b>'@@displayNameForProperty@@'</b> ung\U00fcltig.";
+	"InvalidDateException" = "Der Wert '@@escapedValue@@' für das Attribut <b>'@@displayNameForProperty@@'</b> ist kein gültiges Datum.";
 	"MandatoryToManyRelationshipException" = "<b>@@object.entityName@@</b> muss eine Relationship haben, was nicht der Fall ist.";
 	"MandatoryToOneRelationshipException" = "<b>@@displayNameForEntity@@</b> erfordert die Angabe von <b>@@displayNameForProperty@@</b>.";
 	"NullPropertyException" = "Bitte machen Sie eine Angabe f\U00fcr <b>@@displayNameForProperty@@</b>.";

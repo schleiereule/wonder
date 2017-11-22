@@ -3,6 +3,7 @@
 	"ExceedsMaximumLengthException" = "The value entered for <b>@@displayNameForProperty@@</b> exceeds the length of <b>@@attribute.width@@</b>.";
 	"InvalidNumberException" = "The value entered for <b>@@displayNameForProperty@@</b> is an invalid number.";
 	"InvalidValueException" = "The value entered for <b>@@displayNameForProperty@@</b> is not valid.";
+	"InvalidDateException" = "The value @@escapedValue@@ entered for <b>@@displayNameForProperty@@</b> is not a valid date.";
 	"MandatoryToManyRelationshipException" = "A <b>@@displayNameForEntity@@</b> must have a least one <b>@@displayNameForProperty@@</b>.";
 	"MandatoryToOneRelationshipException" = "A <b>@@displayNameForEntity@@</b> must have a <b>@@displayNameForProperty@@</b>.";
 	"NullPropertyException" = "Please provide a <b>@@displayNameForProperty@@</b>.";

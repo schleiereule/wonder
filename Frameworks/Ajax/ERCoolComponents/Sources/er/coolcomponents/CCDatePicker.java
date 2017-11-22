@@ -2,8 +2,13 @@ package er.coolcomponents;
 
 import java.text.SimpleDateFormat;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.webobjects.appserver.WOAssociation;
 import com.webobjects.appserver.WOContext;
+import com.webobjects.appserver.WORequest;
 import com.webobjects.appserver.WOResponse;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSTimestamp;
@@ -14,10 +19,6 @@ import er.extensions.components.ERXStatelessComponent;
 import er.extensions.formatters.ERXTimestampFormatter;
 import er.extensions.foundation.ERXStringUtilities;
 import er.extensions.localization.ERXLocalizer;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Wrapper around http://www.frequency-decoder.com/2009/09/09/unobtrusive-date-picker-widget-v5/
@@ -95,6 +96,17 @@ public class CCDatePicker extends ERXStatelessComponent {
 		setValueForBinding(newDateIn, "value");
 	}
 
+    public String rawValue()
+    {
+        return stringValueForBinding("rawValue");
+    }
+    
+    public void setRawValue(String rawValue)
+    {
+        setValueForBinding(rawValue, "rawValue");
+    }
+
+
     /**
      * Adds date-picker.js to the header or includes it in an Ajax friendly manner.
      *
@@ -123,6 +135,14 @@ public class CCDatePicker extends ERXStatelessComponent {
 		}
 		return format;
 	}
+
+    public boolean enableStrictDateValidation() {
+        return booleanValueForBinding("enableStrictDateValidation");
+    }
+    
+    public void setEnableStrictDateValidation(boolean value) {
+        setValueForBinding(value, "enableStrictDateValidation");
+    }
 
 	@Override
 	public String name() {
@@ -315,6 +335,18 @@ public class CCDatePicker extends ERXStatelessComponent {
     		t = new ValidationException(e.getMessage(), e.object(), keyPath);
     	}
     	parent().validationFailedWithException(t, value, keyPath);
+    }
+	
+    @Override
+    public void takeValuesFromRequest(WORequest request, WOContext context) {
+        super.takeValuesFromRequest(request, context);
+        if (enableStrictDateValidation()) {
+            // HACK don't even think about what we're doing here
+            String inputName = sharedInputName().substring(0,
+                    sharedInputName().length() - 2) + ".6.0.0";
+            String rawValue = request.stringFormValueForKey(inputName);
+            setRawValue(rawValue);
+        }
     }
 
 }
