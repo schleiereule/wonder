@@ -9,6 +9,13 @@ DateField : WOTextField {
   readonly = disableInput;
 }
 
+RawValueField : WOTextField {
+  value = rawValue;
+  tabindex = -1;
+  type = "hidden";
+  name = sharedInputName;
+}
+
 isDisableInput : WOConditional {
   condition = disableInput;
 }

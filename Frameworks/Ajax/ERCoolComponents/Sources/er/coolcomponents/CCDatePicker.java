@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import com.webobjects.appserver.WOAssociation;
 import com.webobjects.appserver.WOContext;
-import com.webobjects.appserver.WORequest;
 import com.webobjects.appserver.WOResponse;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSTimestamp;
@@ -73,6 +72,7 @@ public class CCDatePicker extends ERXStatelessComponent {
 	private String _elementID;
 	private String _openScript;
 	private String _createScript;
+    private String _sharedInputName;
 	
     public CCDatePicker(WOContext context) {
         super(context);
@@ -84,6 +84,7 @@ public class CCDatePicker extends ERXStatelessComponent {
     	_elementID = null;
     	_openScript = null;
     	_createScript = null;
+    	_sharedInputName = null;
     }
 
 	public NSTimestamp value()
@@ -96,11 +97,18 @@ public class CCDatePicker extends ERXStatelessComponent {
 		setValueForBinding(newDateIn, "value");
 	}
 
+    /**
+     * @return the raw string value that the user entered
+     */
     public String rawValue()
     {
         return stringValueForBinding("rawValue");
     }
     
+    /**
+     * This is set via a second, hidden input field that has the same name as the first one but no formatter.
+     * @param rawValue
+     */
     public void setRawValue(String rawValue)
     {
         setValueForBinding(rawValue, "rawValue");
@@ -311,17 +319,20 @@ public class CCDatePicker extends ERXStatelessComponent {
      * @return the first input's name
      */
     public String sharedInputName() {
-        String sharedInputName = context().elementID().toString();
-        // this would be the element ID of the current input, but we need the read-only input's
-        sharedInputName = sharedInputName.substring(0, sharedInputName.length() - 3);
-        sharedInputName = sharedInputName + "0";
-        return sharedInputName;
+        if (_sharedInputName == null) {
+            _sharedInputName = context().elementID().toString();
+            // this would be the element ID of the (first) hidden input, but we need the read-only input's
+            _sharedInputName = _sharedInputName.substring(0,
+                    _sharedInputName.length() - 3);
+            _sharedInputName = _sharedInputName + "0.0";
+        }
+        return _sharedInputName;
     }
     
     /**
      * Overridden so that parent will handle in the same manner as if this were a dynamic element.
      * @param t the exception thrown during validation
-     * @param value the given value to be validated
+     * @param value the given value o be validated
      * @param keyPath the key path associated with this value, identifies the property of an object
      */
 	@Override
@@ -337,16 +348,4 @@ public class CCDatePicker extends ERXStatelessComponent {
     	parent().validationFailedWithException(t, value, keyPath);
     }
 	
-    @Override
-    public void takeValuesFromRequest(WORequest request, WOContext context) {
-        super.takeValuesFromRequest(request, context);
-        if (enableStrictDateValidation()) {
-            // HACK don't even think about what we're doing here
-            String inputName = sharedInputName().substring(0,
-                    sharedInputName().length() - 2) + ".6.0.0";
-            String rawValue = request.stringFormValueForKey(inputName);
-            setRawValue(rawValue);
-        }
-    }
-
 }
