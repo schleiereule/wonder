@@ -243,27 +243,41 @@ public class ERMDDatePicker extends ERDCustomEditComponent {
 	public void takeValuesFromRequest(WORequest request, WOContext context) {
 		super.takeValuesFromRequest(request, context);
         if (enableStrictDateValidation() && StringUtils.isNotBlank(rawValue())) {
-            // TODO replace hardcoded formatter!
-            DateTimeFormatter formatter = DateTimeFormatter
-                    .ofPattern("dd.MM.uuuu", ERXLocalizer.currentLocalizer().locale())
-                    .withResolverStyle(ResolverStyle.STRICT);
-            try {
-                LocalDate.parse(rawValue(), formatter);
-            } catch (DateTimeParseException e) {
-                // don't keep the liberally parsed date value
-                setObjectPropertyValue(null);
-                ERXValidationException ve = ERXValidationFactory.defaultFactory()
-                        .createException(object(), key(), rawValue(),
-                                "InvalidDateException");
-                parent().validationFailedWithException(ve, rawValue(), key());
-            }
+            validateDate();
+        } else {
+            validateTakeValueForKeyPath();
         }
-		try {
+	}
+
+    /**
+     * Makes sure no invalid dates (e.g. '31 February 20017') was entered.
+     */
+    private void validateDate() {
+        // TODO replace hardcoded formatter!
+        DateTimeFormatter formatter = DateTimeFormatter
+                .ofPattern("dd.MM.uuuu", ERXLocalizer.currentLocalizer().locale())
+                .withResolverStyle(ResolverStyle.STRICT);
+        try {
+            LocalDate.parse(rawValue(), formatter);
+            // when the value was parsed successfully, carry on with business logic validations
+            validateTakeValueForKeyPath();
+        } catch (DateTimeParseException e) {
+            // don't keep the liberally parsed date value
+            setObjectPropertyValue(null);
+            ERXValidationException ve = ERXValidationFactory.defaultFactory()
+                    .createException(object(), key(), rawValue(),
+                            "InvalidDateException");
+            parent().validationFailedWithException(ve, rawValue(), key());
+        }
+    }
+
+    private void validateTakeValueForKeyPath() {
+        try {
 			object().validateTakeValueForKeyPath(objectPropertyValue(), key());
 		}catch (NSValidation.ValidationException v) {
             parent().validationFailedWithException(v,objectPropertyValue(),key());
         } catch(Exception e) {
             parent().validationFailedWithException(e,objectPropertyValue(),key());           
         }
-	}
+    }
 }
