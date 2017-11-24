@@ -1,5 +1,7 @@
 package er.modern.directtoweb.components.query;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.webobjects.appserver.WOActionResults;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.appserver.WOResponse;
@@ -14,6 +16,7 @@ import com.webobjects.foundation.NSMutableDictionary;
 
 import er.ajax.AjaxUtils;
 import er.directtoweb.components.ERDCustomQueryComponent;
+import er.extensions.appserver.ERXApplication;
 import er.extensions.eof.ERXQ;
 import er.extensions.foundation.ERXArrayUtilities;
 import er.extensions.foundation.ERXStringUtilities;
@@ -200,9 +203,14 @@ public class ERMD2WListFilter extends ERDCustomQueryComponent implements
     
     public String localizedSearchKey() {
         String searchKeyList = searchKey().componentsJoinedByString(",");
-        return ERXLocalizer.currentLocalizer()
-                .localizedStringForKeyWithDefault("ERMD2WListFilter.searchKey."
+        String localizedSearchKey = ERXLocalizer.currentLocalizer()
+                .localizedStringForKey("ERMD2WListFilter.searchKey."
                         + searchKeyList);
+        if (localizedSearchKey == null && ERXApplication.isDevelopmentModeSafe()) {
+            return searchKeyList;
+        } else {
+            return localizedSearchKey;
+        }
     }
     
     /**
