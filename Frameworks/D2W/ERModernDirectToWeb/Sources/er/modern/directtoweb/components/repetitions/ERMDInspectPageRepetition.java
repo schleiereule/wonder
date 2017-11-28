@@ -6,6 +6,7 @@ import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSNotificationCenter;
 
 import er.ajax.AjaxUpdateContainer;
+import er.directtoweb.ERD2WKeys;
 import er.directtoweb.components.repetitions.ERDInspectPageRepetition;
 import er.extensions.foundation.ERXStringUtilities;
 import er.extensions.foundation.ERXValueUtilities;
@@ -55,7 +56,7 @@ public class ERMDInspectPageRepetition extends ERDInspectPageRepetition {
      * @return String css class derived from rules and position
      */
 	public String lineDivClass() {
-		String lineBase = (String)d2wContext().valueForKey("baseClassForLine");
+		String lineBase = (String)d2wContext().valueForKey(ERD2WKeys.BASE_CLASS_FOR_LINE);
 		String evenessAndPosition = "Even" + lineBase;
 		int lastIndex = currentSectionKeys().count() - 1;
 		if (index %2 == 0) {
@@ -67,7 +68,7 @@ public class ERMDInspectPageRepetition extends ERDInspectPageRepetition {
 			evenessAndPosition += " Last" + lineBase;
 		}
 		String error = hasNoErrors() ? "" : " Error" + lineBase;
-		return lineBase + " " + evenessAndPosition + " " + d2wContext().valueForKey("pageType") + lineBase + " " + ERXStringUtilities.capitalize(propertyKey()) + lineBase + error;
+		return lineBase + " " + evenessAndPosition + " " + d2wContext().valueForKey(ERD2WKeys.PAGE_TYPE) + lineBase + " " + ERXStringUtilities.capitalize(propertyKey()) + lineBase + error;
 	}
 
 	
@@ -82,7 +83,7 @@ public class ERMDInspectPageRepetition extends ERDInspectPageRepetition {
     }
     
     public String displayNameForProperty() {
-    	return (String)d2wContext().valueForKey("displayNameForProperty");
+    	return (String)d2wContext().valueForKey(ERD2WKeys.DISPLAY_NAME_FOR_PROPERTY);
     }
     
     public boolean validationExceptionOccurredForPropertyKey() {
@@ -97,7 +98,7 @@ public class ERMDInspectPageRepetition extends ERDInspectPageRepetition {
     
 	@SuppressWarnings({ "unchecked", "rawtypes" })
     public NSArray<String> keyPathsWithValidationExceptions() {
-        NSArray exceptions = (NSArray)d2wContext().valueForKey("keyPathsWithValidationExceptions");
+        NSArray exceptions = (NSArray)d2wContext().valueForKey(ERD2WKeys.KEY_PATHS_WITH_VALIDATION_EXCEPTIONS);
         return exceptions != null ? exceptions : NSArray.EmptyArray;
     }
     
@@ -105,12 +106,12 @@ public class ERMDInspectPageRepetition extends ERDInspectPageRepetition {
 	
 	public boolean isDependent() {
 	    return ERXValueUtilities.booleanValueWithDefault(
-	            d2wContext().valueForKey("isDependent"), false);
+	            d2wContext().valueForKey(ERD2WKeys.IS_DEPENDENT), false);
 	}
 	
 	public boolean shouldObserve() {
 	    return ERXValueUtilities.booleanValueWithDefault(
-	            d2wContext().valueForKey("shouldObserve"), false);
+	            d2wContext().valueForKey(ERD2WKeys.SHOULD_OBSERVE), false);
 	}
 
 	public String lineDivId() {
@@ -118,7 +119,7 @@ public class ERMDInspectPageRepetition extends ERDInspectPageRepetition {
 	    // only needed if this is a dependent property
 	    if (isDependent()) {
 	        String pageConfiguration = (String) d2wContext().valueForKey(
-	                "pageConfiguration");
+	                ERD2WKeys.PAGE_CONFIGURATION);
 	        lineDivId = pageConfiguration
 	                + ERXStringUtilities.capitalize(propertyKey()).replaceAll("\\.", "_")
 	                + "LineUC";
