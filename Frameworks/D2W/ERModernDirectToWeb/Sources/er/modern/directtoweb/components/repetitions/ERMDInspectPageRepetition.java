@@ -2,14 +2,19 @@ package er.modern.directtoweb.components.repetitions;
 
 import com.webobjects.appserver.WOContext;
 import com.webobjects.appserver._private.WOGenericContainer;
+import com.webobjects.directtoweb.ERD2WContext;
 import com.webobjects.foundation.NSArray;
+import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.foundation.NSNotificationCenter;
 
 import er.ajax.AjaxUpdateContainer;
 import er.directtoweb.ERD2WKeys;
 import er.directtoweb.components.repetitions.ERDInspectPageRepetition;
+import er.extensions.eof.ERXGenericRecord;
 import er.extensions.foundation.ERXStringUtilities;
 import er.extensions.foundation.ERXValueUtilities;
+import er.extensions.validation.ERXValidationException;
+import er.extensions.validation.ERXValidationFactory;
 import er.modern.directtoweb.components.ERMDAjaxNotificationCenter;
 
 /**
@@ -35,6 +40,8 @@ public class ERMDInspectPageRepetition extends ERDInspectPageRepetition {
 
     public int index;
 	
+    public ERXValidationException aValidationException;
+    
     public ERMDInspectPageRepetition(WOContext context) {
         super(context);
     }
@@ -75,10 +82,6 @@ public class ERMDInspectPageRepetition extends ERDInspectPageRepetition {
 	// ERRORS //
 	
     public boolean hasNoErrors() {
-      //    if(false) {
-      //        String keyPath = "errorMessages." + displayNameForProperty();
-      //        return d2wContext().valueForKeyPath(keyPath) == null;
-      //    }
         return !validationExceptionOccurredForPropertyKey();
     }
     
@@ -87,13 +90,46 @@ public class ERMDInspectPageRepetition extends ERDInspectPageRepetition {
     }
     
     public boolean validationExceptionOccurredForPropertyKey() {
-        if (d2wContext().propertyKey() == null) {
+        if (propertyKey() == null) {
             return false;
         } else {
-            String propertyKey = d2wContext().propertyKey();
-            boolean contains = keyPathsWithValidationExceptions().containsObject(propertyKey);
+            boolean contains = ((ERD2WContext) d2wContext()).hasValidationExceptionForPropertyKey(propertyKey());
             return contains;
         }
+    }
+    
+    public NSArray<ERXValidationException> validationExceptions() {
+        NSArray<ERXValidationException> errorMessages = NSArray.emptyArray();
+        if (validationExceptionOccurredForPropertyKey()) {
+            ERXValidationException primaryException = ((ERD2WContext) d2wContext()).validationExceptionForPropertyKey(propertyKey());
+            if (primaryException != null && primaryException.additionalExceptions().count() > 0) {
+                // collect additional exceptions
+                NSMutableArray<ERXValidationException> exceptions = new NSMutableArray<>();
+                exceptions.addObject(primaryException);
+                // TODO this assumes that nested exceptions target the same property key
+                exceptions = collectAdditionalExceptions(primaryException, exceptions);
+                errorMessages = exceptions.immutableClone();
+            } else {
+                errorMessages = new NSArray<>(primaryException);
+            }
+        }
+        return errorMessages;
+    }
+
+    private NSMutableArray<ERXValidationException> collectAdditionalExceptions(ERXValidationException primaryException,
+                                             NSMutableArray<ERXValidationException> exceptions) {
+        for (ValidationException anException : primaryException.additionalExceptions()) {
+            if (!(anException instanceof ERXValidationException)) {
+                anException = ERXValidationFactory.defaultFactory()
+                        .convertException(anException);
+            }
+            exceptions.addObject((ERXValidationException) anException);
+            if (anException.additionalExceptions().count() > 0) {
+                collectAdditionalExceptions((ERXValidationException) anException,
+                        exceptions);
+            }
+        }
+        return exceptions;
     }
     
 	@SuppressWarnings({ "unchecked", "rawtypes" })

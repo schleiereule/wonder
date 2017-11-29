@@ -14,7 +14,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
-import java.util.UUID;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.log4j.Logger;
@@ -29,6 +28,7 @@ import com.webobjects.appserver.WOResponse;
 import com.webobjects.directtoweb.D2WContext;
 import com.webobjects.directtoweb.D2WModel;
 import com.webobjects.directtoweb.D2WPage;
+import com.webobjects.directtoweb.ERD2WContext;
 import com.webobjects.directtoweb.InspectPageInterface;
 import com.webobjects.directtoweb.NextPageDelegate;
 import com.webobjects.eocontrol.EODataSource;
@@ -45,6 +45,7 @@ import com.webobjects.foundation.NSTimestamp;
 import com.webobjects.foundation._NSUtilities;
 
 import er.directtoweb.ERD2WContainer;
+import er.directtoweb.ERD2WKeys;
 import er.directtoweb.ERDirectToWeb;
 import er.directtoweb.delegates.ERDBranchDelegate;
 import er.directtoweb.delegates.ERDBranchDelegateInterface;
@@ -54,6 +55,7 @@ import er.extensions.ERXExtensions;
 import er.extensions.appserver.ERXComponentActionRedirector;
 import er.extensions.components.ERXClickToOpenSupport;
 import er.extensions.components.ERXComponentUtilities;
+import er.extensions.eof.ERXGenericRecord;
 import er.extensions.eof.ERXGuardedObjectInterface;
 import er.extensions.foundation.ERXStringUtilities;
 import er.extensions.foundation.ERXValueUtilities;
@@ -115,7 +117,8 @@ import er.extensions.validation.ERXValidationException;
  * @d2wKey inlineStyle
  */
 public abstract class ERD2WPage extends D2WPage implements ERXExceptionHolder, ERDUserInfoInterface, ERXComponentActionRedirector.Restorable, ERDBranchInterface {
-	/**
+
+    /**
 	 * Do I need to update serialVersionUID?
 	 * See section 5.6 <cite>Type Changes Affecting Serialization</cite> on page 51 of the 
 	 * <a href="http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf">Java Object Serialization Spec</a>
@@ -124,33 +127,33 @@ public abstract class ERD2WPage extends D2WPage implements ERXExceptionHolder, E
 
     /** interface for all the keys used in this pages code */
     public static interface Keys {
-        public static final String object = "object";
+        public static final String object = ERD2WKeys.OBJECT;
 
         public static final String localContext = "localContext";
 
         public static final String d2wContext = "d2wContext";
 
-        public static final String keyPathsWithValidationExceptions = "keyPathsWithValidationExceptions";
+        public static final String keyPathsWithValidationExceptions = ERD2WKeys.KEY_PATHS_WITH_VALIDATION_EXCEPTIONS;
 
-        public static final String shouldPropagateExceptions = "shouldPropagateExceptions";
+        public static final String shouldPropagateExceptions = ERD2WKeys.SHOULD_PROPAGATE_EXCEPTIONS;
 
-        public static final String shouldCollectValidationExceptions = "shouldCollectValidationExceptions";
+        public static final String shouldCollectValidationExceptions = ERD2WKeys.SHOULD_COLLECT_VALIDATION_EXCEPTIONS;
 
-        public static final String shouldSetFailedValidationValue = "shouldSetFailedValidationValue";
+        public static final String shouldSetFailedValidationValue = ERD2WKeys.SHOULD_SET_FAILED_VALIDATION_VALUE;
 
-        public static final String errorMessages = "errorMessages";
+        public static final String errorMessages = ERD2WKeys.ERROR_MESSAGES;
 
-        public static final String componentName = "componentName";
+        public static final String componentName = ERD2WKeys.COMPONENT_NAME;
 
-        public static final String customComponentName = "customComponentName";
+        public static final String customComponentName = ERD2WKeys.CUSTOM_COMPONENT_NAME;
 
-        public static final String pageConfiguration = "pageConfiguration";
+        public static final String pageConfiguration = ERD2WKeys.PAGE_CONFIGURATION;
 
-        public static final String propertyKey = "propertyKey";
+        public static final String propertyKey = ERD2WKeys.PROPERTY_KEY;
 
-        public static final String sectionKey = "sectionKey";
+        public static final String sectionKey = ERD2WKeys.SECTION_KEY;
 
-        public static final String sectionsContents = "sectionsContents";
+        public static final String sectionsContents = ERD2WKeys.SECTION_CONTENTS;
 
         public static final String tabKey = "tabKey";
 
@@ -158,20 +161,19 @@ public abstract class ERD2WPage extends D2WPage implements ERXExceptionHolder, E
         
         public static final String tabCount = "tabCount";
 
-        public static final String displayNameForTabKey = "displayNameForTabKey";
+        public static final String displayNameForTabKey = ERD2WKeys.DISPLAY_NAME_FOR_TAB_KEY;
 
-        public static final String displayPropertyKeys = "displayPropertyKeys";
+        public static final String displayPropertyKeys = ERD2WKeys.DISPLAY_PROPERTY_KEYS;
 
-        public static final String tabSectionsContents = "tabSectionsContents";
+        public static final String tabSectionsContents = ERD2WKeys.TAB_SECTION_CONTENTS;
 
         public static final String alternateKeyInfo = "alternateKeyInfo";
         
-        public static final String displayVariant = "displayVariant";
+        public static final String displayVariant = ERD2WKeys.DISPLAY_VARIANT;
         
         public static final String clickToOpenEnabled = "clickToOpenEnabled";
 
-		// The propertyKey whose form widget gets the focus upon loading an edit page.
-		public static final String firstResponderKey = "firstResponderKey";
+		public static final String firstResponderKey = ERD2WKeys.FIRST_RESPONDER_KEY;
         
     }
 
@@ -222,7 +224,7 @@ public abstract class ERD2WPage extends D2WPage implements ERXExceptionHolder, E
      */
     protected Object userPreferencesValueForKey(String key) {
         Object result = null;
-        NSKeyValueCoding userPreferences = (NSKeyValueCoding) d2wContext().valueForKey("userPreferences");
+        NSKeyValueCoding userPreferences = (NSKeyValueCoding) d2wContext().valueForKey(ERD2WKeys.USER_PREFERENCES);
         if (userPreferences != null) {
             result = userPreferences.valueForKey(key);
         }
@@ -251,7 +253,7 @@ public abstract class ERD2WPage extends D2WPage implements ERXExceptionHolder, E
         // Make sure the property key is cleared out.  In some embedded page configurations, invoking an action in the embedded component 
         // interrupts the repetition over the property keys, preventing the nullification of the value at the end of the repetition.  This causes
         // weird stuff to happen.
-        d2wContext().takeValueForKey(null, "propertyKey");
+        d2wContext().takeValueForKey(null, ERD2WKeys.PROPERTY_KEY);
         
         _pageController = null;
         
@@ -330,7 +332,7 @@ public abstract class ERD2WPage extends D2WPage implements ERXExceptionHolder, E
      */
 	@Override
     public EOEnterpriseObject object() {
-        return (EOEnterpriseObject) d2wContext().valueForKey(Keys.object);
+        return d2wContext() != null ? (EOEnterpriseObject) d2wContext().valueForKey(Keys.object) : null;
     }
 
 	@Override
@@ -445,6 +447,9 @@ public abstract class ERD2WPage extends D2WPage implements ERXExceptionHolder, E
         errorMessages.removeAllObjects();
         errorKeyOrder.removeAllObjects();
         keyPathsWithValidationExceptions.removeAllObjects();
+        if (d2wContext() != null) {
+            ((ERD2WContext) d2wContext()).clearValidationFailed();
+        }
         if(validationDelegate() != null) {
         	validationDelegate().clearValidationFailed();
         }
@@ -545,7 +550,7 @@ public abstract class ERD2WPage extends D2WPage implements ERXExceptionHolder, E
     public ValidationDelegate validationDelegate() {
     	if(!validationDelegateInited && _localContext != null && shouldCollectValidationExceptions()) {
     		// initialize validation delegate
-    		String delegateClassName = (String)_localContext.valueForKey("validationDelegateClassName");
+    		String delegateClassName = (String)_localContext.valueForKey(ERD2WKeys.VALIDATION_DELEGATE_CLASS_NAME);
     		if(delegateClassName != null) {
 	    		try {
 	    			Class<? extends ValidationDelegate> delegateClass = 
@@ -665,7 +670,7 @@ public abstract class ERD2WPage extends D2WPage implements ERXExceptionHolder, E
      * 
      */
     public boolean isEntityEditable() {
-        return ERXValueUtilities.booleanValueWithDefault(d2wContext().valueForKey("isEntityEditable"), !super.isEntityReadOnly());
+        return ERXValueUtilities.booleanValueWithDefault(d2wContext().valueForKey(ERD2WKeys.IS_ENTITY_EDITABLE), !super.isEntityReadOnly());
     }
 
     /**
@@ -946,7 +951,7 @@ public abstract class ERD2WPage extends D2WPage implements ERXExceptionHolder, E
      */
     public NSArray<ERD2WContainer> tabSectionsContents() {
         if (_tabSectionsContents == null) {
-            NSArray tabSectionContentsFromRule = (NSArray) d2wContext().valueForKey("tabSectionsContents");
+            NSArray tabSectionContentsFromRule = (NSArray) d2wContext().valueForKey(ERD2WKeys.TAB_SECTION_CONTENTS);
             if (tabSectionContentsFromRule == null)
                 tabSectionContentsFromRule = (NSArray) d2wContext().valueForKey(Keys.displayPropertyKeys);
 
@@ -1156,7 +1161,7 @@ public abstract class ERD2WPage extends D2WPage implements ERXExceptionHolder, E
     @Override
     public NextPageDelegate nextPageDelegate() {
         if (_nextPageDelegate == null) {
-            _nextPageDelegate = (NextPageDelegate) d2wContext().valueForKey("nextPageDelegate");
+            _nextPageDelegate = (NextPageDelegate) d2wContext().valueForKey(ERD2WKeys.NEXT_PAGE_DELEGATE);
         }
         return _nextPageDelegate;
     }
@@ -1221,7 +1226,7 @@ public abstract class ERD2WPage extends D2WPage implements ERXExceptionHolder, E
      */
     public ERDBranchDelegateInterface pageController() {
         if (_pageController == null) {
-            _pageController = (ERDBranchDelegateInterface) d2wContext().valueForKey("pageController");
+            _pageController = (ERDBranchDelegateInterface) d2wContext().valueForKey(ERD2WKeys.PAGE_CONTROLLER);
         }
         return _pageController;
     }
@@ -1238,8 +1243,8 @@ public abstract class ERD2WPage extends D2WPage implements ERXExceptionHolder, E
     public NSDictionary settings() {
         String pc = d2wContext().dynamicPage();
         if(pc != null) {
-            String parentPageConfigurationID = (String) d2wContext().valueForKey("pageConfigurationID");
-            return new NSDictionary(new Object[] { pc, parentPageConfigurationID, d2wContext().valueForKey("task") }, new Object[] { "parentPageConfiguration", "parentPageConfigurationID", "parentTask" });
+            String parentPageConfigurationID = (String) d2wContext().valueForKey(ERD2WKeys.PAGE_CONFIGURATION_ID);
+            return new NSDictionary(new Object[] { pc, parentPageConfigurationID, d2wContext().valueForKey(ERD2WKeys.TASK) }, new Object[] { ERD2WKeys.PARENT_PAGE_CONFIGURATION, ERD2WKeys.PARENT_PAGE_CONFIGURATION_ID, ERD2WKeys.PARENT_TASK });
         }
         return null;
     }
@@ -1398,7 +1403,7 @@ public abstract class ERD2WPage extends D2WPage implements ERXExceptionHolder, E
         NSMutableArray classes = new NSMutableArray();
         D2WContext d2wContext = d2wContext();
 		String task = d2wContext.task();
-		String subTask = (String)d2wContext.valueForKey("subTask");
+		String subTask = (String)d2wContext.valueForKey(ERD2WKeys.SUB_TASK);
 		String elementClassPrefix = ERXStringUtilities.capitalize(task) + "Table";
 		classes.addObject(elementClassPrefix);
 		if (subTask != null) {
@@ -1444,7 +1449,7 @@ public abstract class ERD2WPage extends D2WPage implements ERXExceptionHolder, E
             classes.addObject(propertyKey.replaceAll("\\.", "_"));
 
             // Required?
-            if (ERXValueUtilities.booleanValue(d2wContext.valueForKey("displayRequiredMarker")) && !"query".equals(task())) {
+            if (ERXValueUtilities.booleanValue(d2wContext.valueForKey(ERD2WKeys.DISPLAY_REQUIRED_MARKER)) && !ERD2WKeys.TASK_QUERY.equals(task())) {
                 classes.addObject("required");
             }
 
@@ -1467,7 +1472,7 @@ public abstract class ERD2WPage extends D2WPage implements ERXExceptionHolder, E
      * @return the inline style declarations
      */
     public String inlineStyleDeclarationForPropertyName() {
-        return (String)d2wContext().valueForKey("inlineStyleForPropertyName");
+        return (String)d2wContext().valueForKey(ERD2WKeys.INLINE_STYLE_FOR_PROPERTY_NAME);
     }
 
     /**
@@ -1475,7 +1480,7 @@ public abstract class ERD2WPage extends D2WPage implements ERXExceptionHolder, E
      * @return the inline style declarations
      */
     public String inlineStyleDeclarationForPropertyKey() {
-        return (String)d2wContext().valueForKey("inlineStyle");
+        return (String)d2wContext().valueForKey(ERD2WKeys.INLINE_STYLE);
     }
 
 	private void writeObject(ObjectOutputStream out) throws IOException {

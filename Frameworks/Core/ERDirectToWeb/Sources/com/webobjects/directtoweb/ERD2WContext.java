@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.webobjects.appserver.WOApplication;
 import com.webobjects.appserver.WOSession;
 import com.webobjects.eoaccess.EOAttribute;
@@ -22,6 +24,12 @@ import com.webobjects.eoaccess.EOEntity;
 import com.webobjects.eoaccess.EOModelGroup;
 import com.webobjects.eocontrol.EOEditingContext;
 import com.webobjects.eocontrol.EOEnterpriseObject;
+import com.webobjects.foundation.NSArray;
+import com.webobjects.foundation.NSMutableArray;
+import com.webobjects.foundation.NSValidation.ValidationException;
+
+import er.extensions.validation.ERXValidationException;
+import er.extensions.validation.ERXValidationFactory;
 
 
 /**
@@ -40,7 +48,9 @@ public class ERD2WContext extends D2WContext implements Serializable {
 
     private static Map customAttributes = new HashMap();
     private static final Object NOT_FOUND = new Object();
-    
+
+    private NSMutableArray<ERXValidationException> validationExceptions;
+
     static {
         if(WOApplication.application().isConcurrentRequestHandlingEnabled()) {
             customAttributes = Collections.synchronizedMap(customAttributes);
@@ -134,6 +144,50 @@ public class ERD2WContext extends D2WContext implements Serializable {
             }
         }
         return eoattribute;
+    }
+    
+    /*
+     * The validation handling is WIP, mostly waiting for a possibility to get
+     * rid of the NSValidation.ValidationException vs ERXValidationException
+     * schism.
+     */
+    public NSArray<ERXValidationException> validationExceptions() {
+        return validationExceptions.immutableClone();
+    }
+
+    public void addToValidationExceptions(ValidationException exception) {
+        if (exception != null) {
+            if (validationExceptions == null) {
+                validationExceptions = new NSMutableArray<>();
+            }
+            if (exception instanceof ERXValidationException) {
+                validationExceptions.addObject((ERXValidationException) exception);
+            }
+            else {
+                validationExceptions.addObject(ERXValidationFactory.defaultFactory().convertException(exception));
+            }
+        }
+    }
+    
+    public boolean hasValidationExceptionForPropertyKey(String propertyKey) {
+        return validationExceptionForPropertyKey(propertyKey) == null ? false : true; 
+    }
+
+    public ERXValidationException validationExceptionForPropertyKey(String propertyKey) {
+        ERXValidationException e = null;
+        if (validationExceptions != null && StringUtils.isNotBlank(propertyKey)) {
+            for (ERXValidationException anException : validationExceptions) {
+                if (propertyKey.equals(anException.propertyKey())) {
+                    e = anException;
+                    break;
+                }
+            }
+        }
+        return e;
+    }
+
+    public void clearValidationFailed() {
+        validationExceptions = null;
     }
     
 	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {

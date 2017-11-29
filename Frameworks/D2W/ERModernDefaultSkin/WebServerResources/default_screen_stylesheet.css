@@ -827,11 +827,6 @@ span.ErrorLabel {
 	height: 200px;
 }
 
-.ErrorLine .AttrVal span {
-	display: inline-table;
-	border: 2px solid #d60000;
-}
-
 .EditAttrVal,
 .QueryAllAttrVal,
 .QueryAttrVal {

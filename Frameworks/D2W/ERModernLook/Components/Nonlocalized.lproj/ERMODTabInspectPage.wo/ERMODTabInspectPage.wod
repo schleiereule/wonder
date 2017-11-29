@@ -69,6 +69,11 @@ ShowTopActionBlock : WOConditional {
 	condition = d2wContext.showTopActionBlock;
 }
 
+ShouldNotDisplayValidationErrorsInline : WOConditional {
+	condition = d2wContext.shouldDisplayValidationExceptionsInline;
+	negate = true;
+}
+
 ErrorBlock : ERMODErrorBlock {
   d2wContext = d2wContext;
   errorMessage = errorMessage;

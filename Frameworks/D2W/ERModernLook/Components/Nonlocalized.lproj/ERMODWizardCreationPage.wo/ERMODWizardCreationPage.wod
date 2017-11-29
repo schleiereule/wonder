@@ -53,6 +53,11 @@ BannerComponent : WOSwitchComponent {
   tabSectionsContents = tabSectionsContents;
 }
 
+ShouldNotDisplayValidationErrorsInline : WOConditional {
+	condition = d2wContext.shouldDisplayValidationExceptionsInline;
+	negate = true;
+}
+
 ErrorBlock : ERMODErrorBlock {
   errorMessage = errorMessage;
   errorMessages = errorMessages;

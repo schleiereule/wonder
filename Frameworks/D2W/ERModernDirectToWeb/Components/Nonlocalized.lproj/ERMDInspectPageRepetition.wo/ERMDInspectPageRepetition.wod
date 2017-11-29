@@ -34,6 +34,29 @@ EmptyLabelSpan : WOGenericContainer {
 	class = d2wContext.classForEmptyLabelSpan;
 }
 
+ErrorBlockDiv : WOGenericContainer {
+	elementName = "div";
+	class = d2wContext.classForErrorBlock;
+}
+
+ShouldDisplayValidationErrorsInline : WOConditional {
+	condition = d2wContext.shouldDisplayValidationExceptionsInline;
+}
+
+HasErrorsConditional : WOConditional {
+	condition = validationExceptionOccurredForPropertyKey;
+}
+
+DictionaryRepetition : WORepetition {
+	list = validationExceptions;
+	item = aValidationException;
+}
+
+ErrorMessageItem : WOString {
+	value = aValidationException.localizedMessage;
+	escapeHTML = false;
+}
+
 LabelWrapper : WOGenericContainer {
 	elementName = "span";
 	class = d2wContext.classForLabelSpan;
