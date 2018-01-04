@@ -27,15 +27,6 @@ SecondaryActionBlock: ERMODSecondaryActionButtons {
 	object = object;
 }
 
-EditButton: CCSmartAjaxButton {
-	action = editAction;
-	alt = "Edits this object";
-	value = d2wContext.editButtonLabel;
-	class = "Button PageButton EditPageButton";
-	useAjax = d2wContext.useAjaxControlsWhenEmbedded;
-    updateContainerID = d2wContext.idForParentMainContainer;
-}
-
 RequiredWrapper : ERMODRequiredWrapper {
 	d2wContext = d2wContext;
 }
@@ -46,33 +37,10 @@ InspectPageRepetition: WOSwitchComponent {
 	object = object;
 }
 
-IsNotEditingConditional: WOConditional {
-	_unroll = true;
-	condition = isEditing;
-	negate = true;
-}
-
-IsObjectEditable: WOConditional {
-	condition = isObjectEditable;
-}
-
 PageWrapper: WOSwitchComponent {
 	WOComponentName = d2wContext.pageWrapperName;
 	_componentUnroll = true;
 	_unroll = true;
-}
-
-ReturnButton: CCSmartAjaxButton {
-	alt = "Returns to the previous page";
-	action = nextPage;
-	value = d2wContext.returnButtonLabel;
-	class = "Button PageButton ReturnPageButton";
-	useAjax = d2wContext.useAjaxControlsWhenEmbedded;
-    updateContainerID = d2wContext.idForParentMainContainer;
-}
-
-ShowCancel: WOConditional {
-	condition = showCancel;
 }
 
 TopActionBlock : WOGenericContainer {
@@ -85,7 +53,7 @@ BottomActionBlock : WOGenericContainer {
 	class = d2wContext.classForBottomActionBlock;
 }
 
-BottomActions: ERD2WExtraDisplayPropertyKeysComponent {
+PageActions: ERD2WExtraDisplayPropertyKeysComponent {
 	localContext = d2wContext;
 	extraPropertiesKey = "belowControllerPropertyKeys";
 }
@@ -107,8 +75,4 @@ ErrorBlock : ERMODErrorBlock {
 InnerWrapper : WOGenericContainer {
 	elementName = "div";
 	class = d2wContext.classForInnerWrapper;
-}
-
-ShouldShowDefaultPageButtons : WOConditional {
-	condition = d2wContext.shouldShowDefaultPageButtons;
 }
