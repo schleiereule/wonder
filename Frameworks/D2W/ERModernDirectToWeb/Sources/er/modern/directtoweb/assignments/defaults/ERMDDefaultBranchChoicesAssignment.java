@@ -27,6 +27,7 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	public static final NSArray<String> inspectControllerDependentKeys = new NSArray<String>("task", "entity", "frame", "isEntityDeletable", "isEntityEditable", "readOnly", "object.canDelete", "object.canUpdate");
 	public static final NSArray<String> editControllerDependentKeys = new NSArray<String>("task", "subTask", "tabCount", "tabIndex");
 	public static final NSArray<String> toManyRelationshipDependentKeys = new NSArray<String>("task", "entity", "parentRelationship", "frame", "isEntityEditable", "readOnly", "shouldShowQueryRelatedButton");
 	public static final NSArray<String> toOneRelationshipDependentKeys = new NSArray<String>("task", "entity", "parentRelationship", "frame", "isEntityDeletable", "isEntityEditable", "isEntityInspectable", "readOnly", "object.canDelete",
@@ -37,6 +38,7 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 
 	static {
 		NSMutableDictionary<String, NSArray<String>> keys = new NSMutableDictionary<String, NSArray<String>>();
+		keys.setObjectForKey(inspectControllerDependentKeys, "inspectControllerChoices");
 		keys.setObjectForKey(editControllerDependentKeys, "editControllerChoices");
 		keys.setObjectForKey(toManyRelationshipDependentKeys, "toManyControllerChoices");
 		keys.setObjectForKey(toOneRelationshipDependentKeys, "toOneControllerChoices");
@@ -59,6 +61,29 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 	@Override
 	public NSArray<String> dependentKeys(String keyPath) {
 		return dependentKeys.objectForKey(keyPath);
+	}
+	
+	public Object inspectControllerChoices(D2WContext c) {
+		NSMutableArray<String> choices = new NSMutableArray<String>();
+		EOEnterpriseObject eo = (EOEnterpriseObject)c.valueForKey("object");
+		EOEntity e = c.entity();
+		boolean unguarded = !ERXGuardedObjectInterface.class.isAssignableFrom(classForEntity(e));
+		boolean isEntityEditable = ERXValueUtilities.booleanValue(c.valueForKey("isEntityEditable"));
+		boolean isEntityDeletable = ERXValueUtilities.booleanValue(c.valueForKey("isEntityDeletable"));
+		boolean canUpdate = eo instanceof ERXGuardedObjectInterface?((ERXGuardedObjectInterface)eo).canUpdate():unguarded;
+		boolean canDelete = eo instanceof ERXGuardedObjectInterface?((ERXGuardedObjectInterface)eo).canDelete():unguarded;
+		boolean isEntityWritable = !ERXValueUtilities.booleanValue(c.valueForKey("readOnly"));
+
+		if(!c.frame()) {
+			choices.add("_return");
+		}
+		if(isEntityWritable && isEntityEditable && canUpdate) {
+			choices.add("_edit");
+		}
+		if(isEntityWritable && isEntityDeletable && canDelete) {
+			choices.add("_deleteReturn");
+		}
+		return choices;
 	}
 
 	public Object editControllerChoices(D2WContext c) {
