@@ -11,16 +11,22 @@ import com.webobjects.directtoweb.D2WPage;
 import com.webobjects.directtoweb.ERD2WUtilities;
 import com.webobjects.directtoweb.EditPageInterface;
 import com.webobjects.directtoweb.EditRelationshipPageInterface;
+import com.webobjects.directtoweb.ErrorPageInterface;
 import com.webobjects.directtoweb.InspectPageInterface;
 import com.webobjects.directtoweb.ListPageInterface;
 import com.webobjects.directtoweb.NextPageDelegate;
+import com.webobjects.eoaccess.EODatabaseContext;
 import com.webobjects.eoaccess.EODatabaseDataSource;
+import com.webobjects.eoaccess.EODatabaseOperation;
 import com.webobjects.eoaccess.EOGeneralAdaptorException;
+import com.webobjects.eoaccess.EOObjectNotAvailableException;
 import com.webobjects.eoaccess.EOUtilities;
 import com.webobjects.eocontrol.EOClassDescription;
 import com.webobjects.eocontrol.EOEditingContext;
 import com.webobjects.eocontrol.EOEnterpriseObject;
+import com.webobjects.eocontrol.EOSharedEditingContext;
 import com.webobjects.foundation.NSArray;
+import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSKeyValueCoding;
 import com.webobjects.foundation.NSMutableDictionary;
 import com.webobjects.foundation.NSNotificationCenter;
@@ -31,6 +37,7 @@ import er.directtoweb.delegates.ERDBranchDelegate;
 import er.directtoweb.delegates.ERDBranchInterface;
 import er.directtoweb.delegates.ERDPageDelegate;
 import er.directtoweb.delegates.ERDQueryValidationDelegate;
+import er.directtoweb.interfaces.ERDErrorPageInterface;
 import er.directtoweb.interfaces.ERDObjectSaverInterface;
 import er.directtoweb.pages.ERD2WInspectPage;
 import er.directtoweb.pages.ERD2WPage;
@@ -43,6 +50,8 @@ import er.extensions.eof.ERXEOControlUtilities;
 import er.extensions.eof.ERXGenericRecord;
 import er.extensions.foundation.ERXValueUtilities;
 import er.extensions.localization.ERXLocalizer;
+import er.extensions.validation.ERXValidationException;
+import er.extensions.validation.ERXValidationFactory;
 import er.modern.directtoweb.ERMDNotificationNameRegistry;
 import er.modern.directtoweb.delegates.ERMD2WConfirmCancellationDelegate;
 
@@ -71,6 +80,40 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 
 	public boolean shouldRevertUponSaveFailure(D2WContext c) {
 		return ERXValueUtilities.booleanValueWithDefault(c.valueForKey("shouldRevertUponSaveFailure"), false);
+	}
+
+	@D2WDelegate(requiresFormSubmit = true)
+	public WOComponent _edit(WOComponent sender) {
+		EOEnterpriseObject obj = object(sender);
+		if (obj == null) {
+			return sender.context().page();
+		}
+		D2WContext d2wContext = d2wContext(sender);
+		boolean useAjax = ERXValueUtilities.booleanValue(d2wContext.valueForKey("useAjaxControlsWhenEmbedded"));
+		if (useAjax) {
+			EOEditingContext ec = ERXEC.newEditingContext(obj.editingContext());
+			EOEnterpriseObject localObj = ERXEOControlUtilities.localInstanceOfObject(ec, obj);
+			d2wContext.takeValueForKey(localObj, "objectBeingEdited");
+
+			// for ERMODInspectPage
+			d2wContext.takeValueForKey((String) d2wContext.valueForKey("pageConfiguration"), "previousPageConfiguration");
+			d2wContext.takeValueForKey((String) d2wContext.valueForKey("task"), "previousTask");
+
+			d2wContext.takeValueForKey("edit", "inlineTask");
+			String newConfig = (String) d2wContext.valueForKey("inlinePageConfiguration");
+			d2wContext.takeValueForKey(newConfig, "pageConfiguration");
+			d2wContext.takeValueForKey("edit", "task");
+			return null;
+		} else {
+			Object value = d2wContext.valueForKey("useNestedEditingContext");
+			boolean createNestedContext = ERXValueUtilities.booleanValue(value);
+			EOEnterpriseObject eo = ERXEOControlUtilities.editableInstanceOfObject(obj, createNestedContext);
+			EditPageInterface epi = D2W.factory().editPageForEntityNamed(eo.entityName(), sender.session());
+			epi.setObject(eo);
+			epi.setNextPage(sender.context().page());
+			eo.editingContext().hasChanges(); // Ensuring it survives.
+			return (WOComponent) epi;
+		}
 	}
 
 	@D2WDelegate(requiresFormSubmit = true)
@@ -152,13 +195,11 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 			if (shouldSaveChanges(c) && hasChanges) {
 				try {
 					ec.saveChanges();
-                    // play nice with the ERDObjectSaverInterface by informing
-                    // it that the object was saved
-                    ERDObjectSaverInterface osi = (ERDObjectSaverInterface) ERD2WUtilities
-                            .enclosingComponentOfClass(sender,
-                                    ERDObjectSaverInterface.class);
+					// play nice with the ERDObjectSaverInterface by informing
+					// it that the object was saved
+					ERDObjectSaverInterface osi = (ERDObjectSaverInterface) ERD2WUtilities.enclosingComponentOfClass(sender, ERDObjectSaverInterface.class);
 					if (osi != null) {
-					    osi.setObjectWasSaved(true);
+						osi.setObjectWasSaved(true);
 					}
 					nextPage = _nextPageFromDelegate(page);
 					// Refresh object to update derived attributes
@@ -207,28 +248,22 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 	public WOComponent _cancelEdit(WOComponent sender) {
 		D2WContext c = d2wContext(sender);
 		EOEnterpriseObject eo = object(sender);
-        if (ERXValueUtilities.booleanValueWithDefault(
-                c.valueForKey("showConfirmPageOnCancel"), false)) {
-            // implement confirm page for cancellation
-            ERD2WWizardCreationPage wizardPage = ERD2WUtilities
-                    .enclosingComponentOfClass(sender, ERD2WWizardCreationPage.class);
-            if (wizardPage != null) {
-                // only show this if we've been through more than one page
-                if (wizardPage.currentStep() > 1
-                        && ERXEOControlUtilities.isNewObject(wizardPage.object())) {
-                    ConfirmPageInterface cpi = (ConfirmPageInterface) D2W.factory()
-                            .pageForConfigurationNamed(
-                                    "ConfirmCancelCreationOf" + wizardPage.entityName(),
-                                    sender.session());
-                    cpi.setCancelDelegate(new ERDPageDelegate(sender.context().page()));
-                    cpi.setConfirmDelegate(new ERMD2WConfirmCancellationDelegate(sender));
-                    cpi.setMessage((String) c.valueForKey("cancelMessage"));
-                    if (cpi instanceof InspectPageInterface) {
-                        ((InspectPageInterface) cpi).setObject(wizardPage.object());
-                    }
-                    return (WOComponent) cpi;
-                }
-            }
+		if (ERXValueUtilities.booleanValueWithDefault(c.valueForKey("showConfirmPageOnCancel"), false)) {
+			// implement confirm page for cancellation
+			ERD2WWizardCreationPage wizardPage = ERD2WUtilities.enclosingComponentOfClass(sender, ERD2WWizardCreationPage.class);
+			if (wizardPage != null) {
+				// only show this if we've been through more than one page
+				if (wizardPage.currentStep() > 1 && ERXEOControlUtilities.isNewObject(wizardPage.object())) {
+					ConfirmPageInterface cpi = (ConfirmPageInterface) D2W.factory().pageForConfigurationNamed("ConfirmCancelCreationOf" + wizardPage.entityName(), sender.session());
+					cpi.setCancelDelegate(new ERDPageDelegate(sender.context().page()));
+					cpi.setConfirmDelegate(new ERMD2WConfirmCancellationDelegate(sender));
+					cpi.setMessage((String) c.valueForKey("cancelMessage"));
+					if (cpi instanceof InspectPageInterface) {
+						((InspectPageInterface) cpi).setObject(wizardPage.object());
+					}
+					return (WOComponent) cpi;
+				}
+			}
 		}
 		ERD2WInspectPage page = ERD2WUtilities.enclosingComponentOfClass(sender, ERD2WInspectPage.class);
 		EOEditingContext ec = eo != null ? eo.editingContext() : null;
@@ -288,6 +323,7 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 		}
 	}
 
+	@D2WDelegate(requiresFormSubmit = true)
 	public WOComponent _returnRelated(WOComponent sender) {
 		WOComponent nextPage = null;
 		EditRelationshipPageInterface erpi = ERD2WUtilities.enclosingComponentOfClass(sender, EditRelationshipPageInterface.class);
@@ -311,6 +347,7 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 		return nextPage;
 	}
 
+	@D2WDelegate(requiresFormSubmit = true)
 	public WOComponent _query(WOComponent sender) {
 		ERD2WQueryPage page = ERD2WUtilities.enclosingComponentOfClass(sender, ERD2WQueryPage.class);
 		WOComponent nextPage = null;
@@ -355,6 +392,7 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 		return nextPage;
 	}
 
+	@D2WDelegate(requiresFormSubmit = true)
 	public WOComponent _return(WOComponent sender) {
 		D2WPage page = ERD2WUtilities.enclosingComponentOfClass(sender, D2WPage.class);
 		WOComponent nextPage = _nextPageFromDelegate(page);
@@ -364,12 +402,106 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 		return nextPage;
 	}
 
+	@D2WDelegate(requiresFormSubmit = true)
+	public WOComponent _delete(WOComponent sender) {
+		return _deleteObject(sender, sender.context().page());
+	}
+
+	@D2WDelegate(requiresFormSubmit = true)
+	public WOComponent _deleteReturn(WOComponent sender) {
+		WOComponent nextPage = _deleteObject(sender, _return(sender));
+		return nextPage;
+	}
+
+	@D2WDelegate(requiresFormSubmit = true)
 	public WOComponent _clear(WOComponent sender) {
 		D2WPage page = ERD2WUtilities.enclosingComponentOfClass(sender, D2WPage.class);
 		if (page instanceof ERD2WQueryPage) {
 			((ERD2WQueryPage) page).clearAction();
 		}
 		return sender.context().page();
+	}
+
+	protected WOComponent _deleteObject(WOComponent sender, WOComponent nextPage) {
+		EOEnterpriseObject eo = object(sender);
+		if (eo != null && eo.editingContext() != null) {
+			EOEditingContext ec = eo.editingContext();
+			NSValidation.ValidationException exception = null;
+
+			try {
+				if (ec instanceof EOSharedEditingContext) {
+					EOEditingContext ec2 = ERXEC.newEditingContext();
+					ec2.lock();
+					try {
+						ec2.setSharedEditingContext(null);
+						eo = ERXEOControlUtilities.localInstanceOfObject(ec2, eo);
+						ec2.deleteObject(eo);
+						ec2.saveChanges();
+					} finally {
+						ec2.unlock();
+						ec2.dispose();
+					}
+				} else {
+					/*
+					 * Delete the object in a nested ec first to prevent the appearance of deletion
+					 * from display groups when if validation fails
+					 */
+					EOEnterpriseObject obj = ERXEOControlUtilities.editableInstanceOfObject(eo, true);
+					EOEditingContext childEC = obj.editingContext();
+					childEC.deleteObject(obj);
+					childEC.saveChanges();
+
+					if (ERXEOControlUtilities.isNewObject(eo)) {
+						ec.processRecentChanges();
+					} else {
+						ec.saveChanges();
+					}
+				}
+			} catch (EOObjectNotAvailableException e) {
+				exception = ERXValidationFactory.defaultFactory().createCustomException(eo, "EOObjectNotAvailableException");
+			} catch (EOGeneralAdaptorException e) {
+				NSDictionary<?, ?> userInfo = e.userInfo();
+				if (userInfo != null) {
+					EODatabaseOperation op = (EODatabaseOperation) userInfo.objectForKey(EODatabaseContext.FailedDatabaseOperationKey);
+					if (op.databaseOperator() == EODatabaseOperation.DatabaseDeleteOperator) {
+						exception = ERXValidationFactory.defaultFactory().createCustomException(eo, "EOObjectNotAvailableException");
+					}
+				}
+				if (exception == null) {
+					exception = ERXValidationFactory.defaultFactory().createCustomException(eo, "Database error: " + e.getMessage());
+				}
+			} catch (NSValidation.ValidationException e) {
+				exception = e;
+			}
+			if (exception != null) {
+				if (exception instanceof ERXValidationException) {
+					ERXValidationException ex = (ERXValidationException) exception;
+					D2WContext c = d2wContext(sender);
+					ex.setContext(c);
+
+					Object o = ex.object();
+					if (o instanceof EOEnterpriseObject) {
+						EOEnterpriseObject obj = (EOEnterpriseObject) o;
+						c.takeValueForKey(obj.entityName(), "entityName");
+						c.takeValueForKey(ex.propertyKey(), "propertyKey");
+					}
+				}
+				if (log.isDebugEnabled()) {
+					log.debug("Validation Exception: " + exception.getMessage(), exception);
+				}
+				ec.revert();
+				String errorMessage = ERXLocalizer.currentLocalizer().localizedTemplateStringForKeyWithObject("CouldNotSave", exception);
+				ErrorPageInterface epf = D2W.factory().errorPage(sender.session());
+				if (epf instanceof ERDErrorPageInterface) {
+					ERDErrorPageInterface err = (ERDErrorPageInterface) epf;
+					err.setException(exception);
+				}
+				epf.setMessage(errorMessage);
+				epf.setNextPage(nextPage);
+				return (WOComponent) epf;
+			}
+		}
+		return nextPage;
 	}
 
 	protected WOComponent _nextPageFromDelegate(D2WPage page) {
