@@ -777,6 +777,25 @@ public class ERXModelGroup extends EOModelGroup {
 		model.setConnectionDictionary(newConnectionDictionary);
 	}
 	
+	protected void fixSolrDictionary(EOModel model) {
+		String modelName = model.name();
+		String serverUrl = getProperty(modelName + ".serverUrl", "Solr.global.serverUrl");
+		
+		NSDictionary<String, Object> connectionDictionary = model.connectionDictionary();
+		if (connectionDictionary == null) {
+			connectionDictionary = new NSMutableDictionary<>();
+			log.warn("The EOModel '{}' does not have a connection dictionary, providing an empty one.", model.name());
+			model.setConnectionDictionary(connectionDictionary);
+		}
+
+		NSMutableDictionary<String, Object> newConnectionDictionary = new NSMutableDictionary<>(connectionDictionary);
+		if (serverUrl != null) {
+			newConnectionDictionary.setObjectForKey(serverUrl, "serverUrl");
+		}
+
+		model.setConnectionDictionary(newConnectionDictionary);
+	}
+	
 	protected void fixJDBCDictionary(EOModel model) {
 		String aModelName = model.name();
 
@@ -983,6 +1002,9 @@ public class ERXModelGroup extends EOModelGroup {
 		}
 		else if (model.adaptorName().indexOf("JNDI") != -1) {
 			fixJNDIDictionary(model);
+		}
+		else if (model.adaptorName().indexOf("Solr") != -1) {
+			fixSolrDictionary(model);
 		}
 
 		if (log.isDebugEnabled() && old != null && !old.equals(model.connectionDictionary()) && model.connectionDictionary() != null) {

@@ -40,48 +40,42 @@ import er.extensions.foundation.ERXStringUtilities;
 import er.extensions.localization.ERXLocalizer;
 
 /**
- * The branch delegate is used in conjunction with the
- * {@link ERDMessagePageInterface ERDMessagePageInterface} to allow flexible
- * branching for message pages. Branch delegates can only be used with templates
- * that implement the {@link ERDBranchInterface ERDBranchInterface}.
+ * The branch delegate is used in conjunction with the {@link ERDMessagePageInterface
+ * ERDMessagePageInterface} to allow flexible branching for message pages. Branch delegates can only
+ * be used with templates that implement the {@link ERDBranchInterface ERDBranchInterface}.
  */
 public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 	/**
-	 * Do I need to update serialVersionUID? See section 5.6 <cite>Type Changes
-	 * Affecting Serialization</cite> on page 51 of the
-	 * <a href="http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf">Java Object
-	 * Serialization Spec</a>
+	 * Do I need to update serialVersionUID? See section 5.6 <cite>Type Changes Affecting
+	 * Serialization</cite> on page 51 of the
+	 * <a href="http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf">Java Object Serialization Spec</a>
 	 */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Runtime flags for the delegate, so you can have one delegate for all
-	 * tasks.
+	 * Runtime flags for the delegate, so you can have one delegate for all tasks.
 	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.METHOD)
 	public @interface D2WDelegate {
 		/**
-		 * Returns the names of the scope where you can have this method. One of
-		 * "selection,object"
+		 * Returns the names of the scope where you can have this method. One of "selection,object"
 		 */
 		public String scope() default "";
 
 		/**
-		 * Returns the names of the tasks where you can have this method.
-		 * Example "query,select"
+		 * Returns the names of the tasks where you can have this method. Example "query,select"
 		 */
 		public String availableTasks() default "";
 
 		/**
-		 * Returns the names of the pages where you can have this method.
-		 * Example "ListWebMaster,QueryWebMaster"
+		 * Returns the names of the pages where you can have this method. Example
+		 * "ListWebMaster,QueryWebMaster"
 		 */
 		public String availablePages() default "";
 
 		/**
-		 * Returns the name of the button group for this method. Intended for
-		 * grouping/sorting."
+		 * Returns the name of the button group for this method. Intended for grouping/sorting."
 		 */
 		public String group() default "";
 
@@ -116,10 +110,9 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 	public static final String BRANCH_USER_INFO = "userInfo";
 
 	/**
-	 * Implementation of the {@link NextPageDelegate NextPageDelegate}
-	 * interface. This method provides the dynamic dispatch based on the
-	 * selected branch provided by the sender. Will call the method
-	 * &lt;branchName&gt;(WOComponent) on itself returning the result.
+	 * Implementation of the {@link NextPageDelegate NextPageDelegate} interface. This method
+	 * provides the dynamic dispatch based on the selected branch provided by the sender. Will call
+	 * the method &lt;branchName&gt;(WOComponent) on itself returning the result.
 	 * 
 	 * @param sender
 	 *            template invoking the branch delegate
@@ -161,8 +154,7 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 	 * @param method
 	 *            name of the method in question
 	 * @param label
-	 *            label for the button, a beautified method name will be used if
-	 *            set to null.
+	 *            label for the button, a beautified method name will be used if set to null.
 	 * @return NSDictionary suitable as a branch choice.
 	 */
 	protected NSDictionary branchChoiceDictionary(String method, String label) {
@@ -194,8 +186,7 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 	 * @param method
 	 *            name of the method in question
 	 * @param label
-	 *            label for the button, a beautified method name will be used if
-	 *            set to null.
+	 *            label for the button, a beautified method name will be used if set to null.
 	 * @param group
 	 *            name of the group of the method
 	 * @return NSDictionary suitable as a branch choice.
@@ -212,8 +203,8 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 	}
 
 	/**
-	 * Calculates which branches to show in the display first asking the context
-	 * for the key <b>branchChoices</b>. If this returns null then
+	 * Calculates which branches to show in the display first asking the context for the key
+	 * <b>branchChoices</b>. If this returns null then
 	 * 
 	 * @param context
 	 *            current D2W context
@@ -226,18 +217,29 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 		} else {
 			NSMutableArray translatedChoices = new NSMutableArray();
 			for (Iterator iter = choices.iterator(); iter.hasNext();) {
+
 				Object o = iter.next();
+
 				String method = null;
 				String label = null;
+				String group = null;
+				String hotkey = null;
+				boolean requiresFormSubmit = true;
+
 				NSMutableDictionary entry = new NSMutableDictionary();
+
 				if (o instanceof NSDictionary) {
 					entry.addEntriesFromDictionary((NSDictionary) o);
 					method = (String) entry.objectForKey(BRANCH_NAME);
 					label = (String) entry.objectForKey(BRANCH_LABEL);
+					group = (String) entry.objectForKey(BRANCH_GROUP);
+					hotkey = (String) entry.objectForKey(BRANCH_HOTKEY);
 				} else if (o instanceof String) {
 					method = (String) o;
 					entry.setObjectForKey(method, BRANCH_NAME);
 				}
+
+				// button label
 				if (label == null) {
 					label = ERXLocalizer.currentLocalizer().localizedDisplayNameForKey(BRANCH_PREFIX, method);
 				} else if (label.startsWith(BRANCH_PREFIX + ".")) {
@@ -255,40 +257,45 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 					// otherwise just return it.
 					label = ERXLocalizer.currentLocalizer().localizedStringForKeyWithDefault(label);
 				}
-				String group = ERXProperties.stringForKey("er.directtoweb.delegates.ERDBranchDelegate.defaultGroup");
-				String hotkey = null;
-				boolean requiresFormSubmit = true;
+
+				// button group, hotKey, formSubmit
 				try {
 					Method m = getClass().getMethod(method, new Class[] { WOComponent.class });
 					if (m.isAnnotationPresent(D2WDelegate.class)) {
 						D2WDelegate info = m.getAnnotation(D2WDelegate.class);
-						group = info.group();
+						if (StringUtils.isBlank(group))
+							group = info.group();
 						requiresFormSubmit = info.requiresFormSubmit();
-						hotkey = info.hotkey();
+						if (StringUtils.isBlank(hotkey))
+							hotkey = info.hotkey();
 					}
 				} catch (NoSuchMethodException e) {
 					log.error("Caught no such method exception while calculating the branch choices for context: " + this + " exception: " + e.getMessage());
 				} catch (SecurityException e) {
 					log.error("Caught security exception while calculating the branch choices for context: " + this + " exception: " + e.getMessage());
 				}
-				entry.setObjectForKey(group, BRANCH_GROUP);
-				entry.setObjectForKey(requiresFormSubmit, BRANCH_REQUIRESFORMSUBMIT);
+
+				if (StringUtils.isBlank(group)) {
+					group = ERXProperties.stringForKey("er.directtoweb.delegates.ERDBranchDelegate.defaultGroup");
+				}
+
 				entry.setObjectForKey(label, BRANCH_LABEL);
+				entry.setObjectForKey(group, BRANCH_GROUP);
 				if (StringUtils.isNotBlank(hotkey)) {
 					entry.setObjectForKey(hotkey, BRANCH_HOTKEY);
 				}
+				entry.setObjectForKey(requiresFormSubmit, BRANCH_REQUIRESFORMSUBMIT);
 				entry.setObjectForKey(method + "Action", BRANCH_BUTTON_ID);
 				translatedChoices.addObject(entry);
 			}
-			choices = translatedChoices;
+			choices = ERXArrayUtilities.sortedArraySortedWithKeys(translatedChoices, new NSArray<>(BRANCH_GROUP, BRANCH_LABEL), EOSortOrdering.CompareAscending);
 		}
 		return choices;
 	}
 
 	/**
-	 * Uses reflection to find all of the public methods that don't start with
-	 * an underscore and take a single WOComponent as a parameter are returned.
-	 * The methods are sorted by this key.
+	 * Uses reflection to find all of the public methods that don't start with an underscore and
+	 * take a single WOComponent as a parameter are returned. The methods are sorted by this key.
 	 * 
 	 * @param context
 	 *            current D2W context
@@ -337,9 +344,6 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 					}
 				}
 			}
-			// choices =
-			// ERXArrayUtilities.sortedArraySortedWithKey(methodChoices,
-			// BRANCH_LABEL);
 			choices = ERXArrayUtilities.sortedArraySortedWithKeys(methodChoices, new NSArray<>(BRANCH_GROUP, BRANCH_LABEL), EOSortOrdering.CompareAscending);
 		} catch (SecurityException e) {
 			log.error("Caught security exception while calculating the branch choices for delegate: " + this + " exception: " + e.getMessage());
@@ -348,8 +352,7 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 	}
 
 	/**
-	 * Gets the D2W context from the innermost enclosing D2W component of the
-	 * sender.
+	 * Gets the D2W context from the innermost enclosing D2W component of the sender.
 	 * 
 	 * @param sender
 	 */
