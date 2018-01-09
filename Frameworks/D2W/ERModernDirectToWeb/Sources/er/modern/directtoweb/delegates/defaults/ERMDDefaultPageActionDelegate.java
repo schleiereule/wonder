@@ -82,7 +82,7 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 		return ERXValueUtilities.booleanValueWithDefault(c.valueForKey("shouldRevertUponSaveFailure"), false);
 	}
 
-	@D2WDelegate(requiresFormSubmit = true)
+	@D2WDelegate(requiresFormSubmit = true, group = "zGroup")
 	public WOComponent _edit(WOComponent sender) {
 		EOEnterpriseObject obj = object(sender);
 		if (obj == null) {
@@ -116,7 +116,7 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 		}
 	}
 
-	@D2WDelegate(requiresFormSubmit = true)
+	@D2WDelegate(requiresFormSubmit = true, group = "yGroup")
 	public void _nextStep(WOComponent sender) {
 		NSNotificationCenter.defaultCenter().postNotification(ERD2WWizardCreationPage.WILL_GOTO_NEXT_PAGE, null);
 		ERD2WWizardCreationPageTemplate page = ERD2WUtilities.enclosingComponentOfClass(sender, ERD2WWizardCreationPageTemplate.class);
@@ -137,7 +137,7 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 		NSNotificationCenter.defaultCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_NEXT_STEP_ACTION, null, userInfo);
 	}
 
-	@D2WDelegate(requiresFormSubmit = true)
+	@D2WDelegate(requiresFormSubmit = true, group = "xGroup")
 	public void _prevStep(WOComponent sender) {
 		ERD2WWizardCreationPageTemplate page = ERD2WUtilities.enclosingComponentOfClass(sender, ERD2WWizardCreationPageTemplate.class);
 		NSArray<ERD2WContainer> tabs = page.tabSectionsContents();
@@ -158,7 +158,7 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 		NSNotificationCenter.defaultCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_PREVIOUS_STEP_ACTION, null, userInfo);
 	}
 
-	@D2WDelegate(requiresFormSubmit = true)
+	@D2WDelegate(requiresFormSubmit = true, group = "zGroup")
 	public WOComponent _save(WOComponent sender) {
 		WOComponent nextPage = sender.context().page();
 		EOEnterpriseObject eo = object(sender);
@@ -244,7 +244,7 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 		return nextPage;
 	}
 
-	@D2WDelegate(requiresFormSubmit = false)
+	@D2WDelegate(requiresFormSubmit = false, group = "wGroup")
 	public WOComponent _cancelEdit(WOComponent sender) {
 		D2WContext c = d2wContext(sender);
 		EOEnterpriseObject eo = object(sender);
@@ -392,7 +392,7 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 		return nextPage;
 	}
 
-	@D2WDelegate(requiresFormSubmit = true)
+	@D2WDelegate(requiresFormSubmit = true, group = "aGroup")
 	public WOComponent _return(WOComponent sender) {
 		D2WPage page = ERD2WUtilities.enclosingComponentOfClass(sender, D2WPage.class);
 		WOComponent nextPage = _nextPageFromDelegate(page);
