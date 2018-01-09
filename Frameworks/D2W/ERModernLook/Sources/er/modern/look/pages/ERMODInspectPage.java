@@ -5,11 +5,9 @@ import com.webobjects.foundation.NSNotification;
 import com.webobjects.foundation.NSNotificationCenter;
 import com.webobjects.foundation.NSSelector;
 
-import er.ajax.AjaxUpdateContainer;
 import er.directtoweb.pages.templates.ERD2WInspectPageTemplate;
 import er.extensions.eof.ERXConstant;
 import er.extensions.foundation.ERXStringUtilities;
-import er.extensions.foundation.ERXValueUtilities;
 import er.modern.directtoweb.ERMDNotificationNameRegistry;
 
 /**
@@ -72,19 +70,12 @@ public class ERMODInspectPage extends ERD2WInspectPageTemplate {
 	public void handleSaveNotification(NSNotification notification) {
 		if (shouldHandleNotification(notification)) {
 			resetTask();
-			boolean useAjax = ERXValueUtilities.booleanValue(d2wContext().valueForKey(Keys.useAjaxControlsWhenEmbedded));
-			if (useAjax)
-				AjaxUpdateContainer.safeUpdateContainerWithID((String) d2wContext().valueForKey("idForParentMainContainer"), context());
 		}
 	}
 
 	public void handleCancelEditNotification(NSNotification notification) {
 		if (shouldHandleNotification(notification)) {
 			resetTask();
-			boolean useAjax = ERXValueUtilities.booleanValue(d2wContext().valueForKey(Keys.useAjaxControlsWhenEmbedded));
-			if (useAjax) {
-				AjaxUpdateContainer.safeUpdateContainerWithID((String) d2wContext().valueForKey("idForParentMainContainer"), context());
-			}
 		}
 	}
 

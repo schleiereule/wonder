@@ -2,23 +2,16 @@ package er.modern.look.pages;
 
 import org.apache.commons.lang3.ObjectUtils;
 
-import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.directtoweb.D2WContext;
-import com.webobjects.eocontrol.EOEditingContext;
 import com.webobjects.eocontrol.EOEnterpriseObject;
 import com.webobjects.foundation.NSNotification;
 import com.webobjects.foundation.NSNotificationCenter;
 import com.webobjects.foundation.NSSelector;
 
-import er.ajax.AjaxUpdateContainer;
 import er.directtoweb.pages.templates.ERD2WTabInspectPageTemplate;
 import er.extensions.eof.ERXConstant;
-import er.extensions.eof.ERXEC;
-import er.extensions.eof.ERXEOControlUtilities;
-import er.extensions.foundation.ERXValueUtilities;
 import er.modern.directtoweb.ERMDNotificationNameRegistry;
-import er.modern.look.pages.ERMODInspectPage.Keys;
 
 /**
  * A modernized tab inspect/edit template.
@@ -84,18 +77,12 @@ public class ERMODTabInspectPage extends ERD2WTabInspectPageTemplate {
 	public void handleSaveNotification(NSNotification notification) {
 		if (shouldHandleNotification(notification)) {
 			resetTask();
-			boolean useAjax = ERXValueUtilities.booleanValue(d2wContext().valueForKey(Keys.useAjaxControlsWhenEmbedded));
-			if (useAjax)
-				AjaxUpdateContainer.safeUpdateContainerWithID((String) d2wContext().valueForKey("idForParentMainContainer"), context());
 		}
 	}
 
 	public void handleCancelEditNotification(NSNotification notification) {
 		if (shouldHandleNotification(notification)) {
 			resetTask();
-			boolean useAjax = ERXValueUtilities.booleanValue(d2wContext().valueForKey(Keys.useAjaxControlsWhenEmbedded));
-			if (useAjax)
-				AjaxUpdateContainer.safeUpdateContainerWithID((String) d2wContext().valueForKey("idForParentMainContainer"), context());
 		}
 	}
 
@@ -114,30 +101,6 @@ public class ERMODTabInspectPage extends ERD2WTabInspectPageTemplate {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Perform the edit action. Overridden to support ajax behaviour. When
-	 * useAjaxControlsWhenEmbedded is true, then we will switch the behaviour of
-	 * this page to edit and update ajax update the form.
-	 */
-	@Override
-	public WOComponent editAction() {
-		boolean useAjax = ERXValueUtilities.booleanValue(d2wContext().valueForKey(Keys.useAjaxControlsWhenEmbedded));
-		if (useAjax) {
-			EOEditingContext ec = ERXEC.newEditingContext(object().editingContext());
-			EOEnterpriseObject localObj = ERXEOControlUtilities.localInstanceOfObject(ec, object());
-			d2wContext().takeValueForKey(localObj, Keys.objectBeingEdited);
-			_previousPageConfig = (String) d2wContext().valueForKey(Keys.pageConfiguration);
-			_previousTask = (String) d2wContext().valueForKey(Keys.task);
-			d2wContext().takeValueForKey("edit", Keys.inlineTask);
-			String newConfig = (String) d2wContext().valueForKey(Keys.inlinePageConfiguration);
-			d2wContext().takeValueForKey(newConfig, Keys.pageConfiguration);
-			d2wContext().takeValueForKey("edit", Keys.task);
-			return null;
-		} else {
-			return super.editAction();
-		}
 	}
 
 	/**
