@@ -1,0 +1,4 @@
+ToOneListRepetition: ERMDSimpleListPageRepetition {
+    d2wContext = localContext;
+    displayGroup = displayGroup;
+}
