@@ -57,6 +57,7 @@
     20 : (task != 'edit' and RuleIsDisabled isEqual: 'YES') => hasForm = "false" [com.webobjects.directtoweb.BooleanAssignment],
     20 : task = 'query' => pageActionConfiguration = {"_query" = {"updateContainerKey" = "idForParentMainContainer"; }; } [ERDDelayedAssignment],
     20 : *true* => datePickerHideControl = "true" [com.webobjects.directtoweb.BooleanAssignment],
+    50 : pageConfiguration like '*Embedded*' => pageActionConfiguration = {"_cancelEdit" = {"branchGroup" = "yGroup"; "updateContainerKey" = "idForParentMainContainer"; }; "_edit" = {"branchGroup" = "zGroup"; "updateContainerKey" = "idForParentMainContainer"; }; "_query" = {"updateContainerKey" = "idForParentMainContainer"; }; "_save" = {"branchGroup" = "zGroup"; "updateContainerKey" = "idForParentMainContainer"; }; } [ERDDelayedAssignment],
     100 : *true* => alternativeText = "<ERMDDefaultUIStringAssignment>" [er.modern.directtoweb.assignments.defaults.ERMDDefaultUIStringAssignment],
     100 : *true* => isEntityRemoveable = "true" [com.webobjects.directtoweb.BooleanAssignment]
 )
