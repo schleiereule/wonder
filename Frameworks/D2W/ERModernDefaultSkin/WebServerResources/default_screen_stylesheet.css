@@ -1745,17 +1745,21 @@ span span.Tooltip.HelpTooltip.PropertyHelpTooltip + a {
 #ERD2WDebugFlags {
 	position: fixed;
 	bottom: 25px;
-	left: 0;
+	right: 0;
 	z-index: 1000;
 	padding: 5px;
 	border: 1px solid #aaa;
 	background-color: #fff;
-	-moz-border-radius-topright: 8px;
-	-webkit-border-top-right-radius: 8px;
-	-moz-border-radius-bottomright: 8px;
-	-webkit-border-bottom-right-radius: 8px;
+	-moz-border-radius-topleft: 8px;
+	-webkit-border-top-left-radius: 8px;
+	-moz-border-radius-bottomleft: 8px;
+	-webkit-border-bottom-left-radius: 8px;
 	opacity: 0.6;
 	-moz-opacity:0.6;
+}
+
+#ERD2WDebugFlags li {
+	list-style: none;
 }
 
 /* ERD2WEditTags */

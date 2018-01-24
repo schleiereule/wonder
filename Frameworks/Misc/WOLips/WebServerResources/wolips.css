@@ -17,16 +17,16 @@ html._wolSelected body {
 span#_wolToolBarContainer {
 	position:fixed;
 	bottom: 0px;
-	left: 0px;
+	right: 0px;
 	padding: 5px 5px;
 	z-index: 99999;
-	-webkit-border-top-right-radius: 5px;
+	-webkit-border-top-left-radius: 5px;
 	background-color: rgba(240, 240, 255, 0.8) !important;
 	background-color: rgb(240, 240, 255);
 	font-size: 8pt;
 	border: 1px solid rgb(200, 200, 215);
 	border-bottom: none;
-	border-left: none;
+	border-right: none;
 	font-family: Helvetica, Arial, Geneva;
 	color: rgb(80, 80, 95);
 }

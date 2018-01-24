@@ -91,8 +91,8 @@ var WOLipsClickToOpen = {
 
     var componentStack = WOLipsClickToOpen.componentStackForElement(target);
     if (componentStack != null) {
-      //WOLipsClickToOpen.targetChanged(componentStack.firstComponent, e.ctrlKey);
-      WOLipsClickToOpen.targetChanged(componentStack.firstComponent, e.metaKey);
+      //WOLipsClickToOpen.targetChanged(componentStack.lastComponent, e.ctrlKey);
+      WOLipsClickToOpen.targetChanged(componentStack.lastComponent, e.metaKey);
       var componentBreadCrumb = [];
       componentStack.componentNames.each(function(value, index) {
         var componentParts = value.split('.');
@@ -100,7 +100,7 @@ var WOLipsClickToOpen = {
       });
       var componentBreadCrumbElement = $('_componentBreadCrumb');
       if (componentBreadCrumbElement != null) {
-        componentBreadCrumbElement.innerHTML = componentBreadCrumb.join(' <span class = "_wolUnimportant">&lt;</span> ');
+        componentBreadCrumbElement.innerHTML = componentBreadCrumb.join(' <span class = "_wolUnimportant">&gt;</span> ');
       }
     }
   },
@@ -191,7 +191,7 @@ var WOLipsClickToOpen = {
   },
   
   componentStackForElement : function(target) {
-    var firstComponentElement = null;
+    var lastComponentElement = null;
     var componentNamesStr = null;
     while (target != null) {
       if (target.getAttribute) {
@@ -201,11 +201,9 @@ var WOLipsClickToOpen = {
             componentNamesStr = componentName;
           }
           else {
-            componentNamesStr += "," + componentName; 
+            componentNamesStr = componentName + "," + componentNamesStr; 
           }
-          if (firstComponentElement == null) {
-            firstComponentElement = target;
-          }
+          lastComponentElement = target;
         }
         target = Element.up(target);
       }
@@ -217,7 +215,7 @@ var WOLipsClickToOpen = {
     if (componentNamesStr == null) {
       componentNames = null;
     } else {
-      componentNames = { firstComponent: firstComponentElement, componentNames: componentNamesStr.split(',') };
+      componentNames = { lastComponent: lastComponentElement, componentNames: componentNamesStr.split(',') };
     }
     return componentNames;
   }
@@ -248,7 +246,7 @@ var WOLipsToolBar = {
   
   update : function() {
     if ($('_wolToolBar').visible()) {
-      $('_wolHandle').innerHTML = '&lt;';
+      $('_wolHandle').innerHTML = '&gt;';
       $('_wolHandle').onclick = WOLipsToolBar.toggle;
       $('_wolToolBarContainer').onclick = null;
       $('_wolToolBarContainer').style.cursor = 'auto';
@@ -256,7 +254,7 @@ var WOLipsToolBar = {
     else {
       $('_wolToolBarContainer').style.cursor = 'pointer';
       $('_wolToolBarContainer').onclick = WOLipsToolBar.toggle;
-      $('_wolHandle').innerHTML = '&gt;';
+      $('_wolHandle').innerHTML = '&lt;';
       $('_wolHandle').onclick = null;
     }
   }
