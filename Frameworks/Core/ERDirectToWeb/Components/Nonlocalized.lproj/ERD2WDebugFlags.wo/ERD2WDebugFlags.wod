@@ -55,6 +55,10 @@ SQLNotEnabled: WOConditional {
     negate = true;
 }
 
+shouldDefaultToMinimized : WOConditional {
+	condition = shouldDefaultToMinimized;
+}
+
 Clear: WOHyperlink {
 	action = clearD2WRuleCache;
 	class = ^linkClass;

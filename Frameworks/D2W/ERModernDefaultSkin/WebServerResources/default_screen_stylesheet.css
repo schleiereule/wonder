@@ -1746,6 +1746,26 @@ span span.Tooltip.HelpTooltip.PropertyHelpTooltip + a {
 	display: none;
 }
 
+#ERD2WDebugFlagsToggle {
+    position: absolute;
+}
+
+#ERD2WDebugFlagsToggle a {
+    position: relative;
+    right: 24px;
+    top: 40px;
+    border: 1px solid #ccc;
+    border-right-color: white;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    background-color: white;
+    height: 21px;
+	width: 14px;
+    display: block;
+	padding: 6px 0px 2px 4px;
+	color: #aaa;
+}
+
 #ERD2WDebugFlags {
 	position: fixed;
 	bottom: 25px;
@@ -1760,6 +1780,11 @@ span span.Tooltip.HelpTooltip.PropertyHelpTooltip + a {
 	-webkit-border-bottom-left-radius: 8px;
 	opacity: 0.6;
 	-moz-opacity:0.6;
+	width: 88px;
+}
+
+#ERD2WDebugFlags.Minimized {
+	right: -100px;
 }
 
 #ERD2WDebugFlags li {

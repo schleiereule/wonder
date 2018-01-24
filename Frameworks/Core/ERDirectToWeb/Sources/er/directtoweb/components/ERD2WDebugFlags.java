@@ -112,6 +112,17 @@ public class ERD2WDebugFlags extends WOComponent {
     }
 
     /**
+     * The implementation of the UI code depends on ERD2WDebugFlags being placed
+     * inside of an element with an ID of ERD2WDebugFlags, as has been
+     * "traditionally the case".
+     * 
+     * @return true if the component should be rendered minimized
+     */
+    public boolean shouldDefaultToMinimized() {
+        return ERXProperties.booleanForKeyWithDefault("er.directtoweb.components.ERD2WDebugFlags", false);
+    }
+    
+    /**
      * Check if Selenium Framework is installed.
      * 
      * @return if Selenium Framework is Installed the <code>true</code> will return

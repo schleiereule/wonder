@@ -14,9 +14,21 @@
             newSS.id='debug-stylesheet';
             document.documentElement.childNodes[0].appendChild(newSS);
         }
+    };
+    function ERD2WDebugFlags_toggle() {
+    	var div = document.getElementById('ERD2WDebugFlags');
+    	if (div.classList.contains('Minimized')) {
+    		div.classList.remove('Minimized');
+	    	document.querySelector('#ERD2WDebugFlagsToggle a').textContent=">";
+    	} else {
+    		div.classList.add('Minimized');
+        	document.querySelector('#ERD2WDebugFlagsToggle a').textContent="<";
+    	}
     }
+    
   </script>
-  
+  <span id = "ERD2WDebugFlagsToggle"><a onClick = "ERD2WDebugFlags_toggle();void(0);">&gt;</a></span>
+  <webobject name = "shouldDefaultToMinimized"><script>document.getElementById('ERD2WDebugFlags').classList.add('Minimized');document.querySelector('#ERD2WDebugFlagsToggle a').textContent="<";</script></webobject>
   <ul class="DebugFlags">
     <li><webobject name="Clear"><webobject name="LOCALIZE_clear" /></webobject></li>
     <li><webobject name="Log4J"><webobject name="LOCALIZE_log4j" /></webobject></li>
