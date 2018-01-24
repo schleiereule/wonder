@@ -707,7 +707,10 @@ ul.L2WithChildren li.Nav2Selected {
 
 .InnerWrapper {
 	padding-top:  20px;
-	border-top: 1px solid #f5f5f5;
+}
+
+#PageHelp {
+	margin-bottom: 15px;
 }
 
 .EmbeddedEditRelationshipInnerWrapper,
@@ -1233,9 +1236,10 @@ span.ErrorLabel {
 }
 
 .TopBatchSize {
-	position: absolute;
-	top: 4px;
-	right: 50px;
+	float: right;
+	position: relative;
+	bottom: 32px;
+	margin-bottom: -20px;
 }
 
 .ERDBatchSize_Wrapper {
