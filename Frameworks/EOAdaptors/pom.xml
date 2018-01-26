@@ -15,5 +15,6 @@
 		<module>JavaLuceneAdaptor</module>
 		<module>JavaMemoryAdaptor</module>
 		<module>JavaNeo4JAdaptor</module>
+		<module>JavaSolrAdaptor</module>
 	</modules>
 </project>
