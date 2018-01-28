@@ -119,7 +119,7 @@ public class ERD2WDebugFlags extends WOComponent {
      * @return true if the component should be rendered minimized
      */
     public boolean shouldDefaultToMinimized() {
-        return ERXProperties.booleanForKeyWithDefault("er.directtoweb.components.ERD2WDebugFlags", false);
+        return ERXProperties.booleanForKeyWithDefault("er.directtoweb.components.ERD2WDebugFlags.defaultToMinimized", true);
     }
     
     /**
