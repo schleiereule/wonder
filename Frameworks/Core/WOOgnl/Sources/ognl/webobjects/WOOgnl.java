@@ -16,6 +16,14 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ognl.ClassResolver;
+import ognl.Ognl;
+import ognl.OgnlException;
+import ognl.OgnlRuntime;
+import ognl.helperfunction.WOHelperFunctionHTMLParser;
+import ognl.helperfunction.WOHelperFunctionParser;
+import ognl.helperfunction.WOHelperFunctionTagRegistry;
+
 import com.webobjects.appserver.WOApplication;
 import com.webobjects.appserver.WOAssociation;
 import com.webobjects.appserver._private.WOBindingNameAssociation;
@@ -31,15 +39,6 @@ import com.webobjects.foundation.NSNotificationCenter;
 import com.webobjects.foundation.NSSelector;
 import com.webobjects.foundation.NSSet;
 import com.webobjects.foundation._NSUtilities;
-
-import ognl.ClassResolver;
-import ognl.Ognl;
-import ognl.OgnlContext;
-import ognl.OgnlException;
-import ognl.OgnlRuntime;
-import ognl.helperfunction.WOHelperFunctionHTMLParser;
-import ognl.helperfunction.WOHelperFunctionParser;
-import ognl.helperfunction.WOHelperFunctionTagRegistry;
 
 /**
  * <span class="en">
@@ -123,10 +122,12 @@ public class WOOgnl {
 		return DefaultWOOgnlBindingFlag;
 	}
 
-	public OgnlContext newDefaultContext() {
-		// allow access to everything that is not declared private
-		OgnlContext context = new OgnlContext(classResolver(), null, new DefaultMemberAccess(false, true, true));
-		return context;
+	public Hashtable newDefaultContext() {
+		Hashtable h = new Hashtable();
+		if (classResolver() != null) {
+			h.put("classResolver", classResolver());
+		}
+		return h;
 	}
 
 	public void configureWOForOgnl() {
