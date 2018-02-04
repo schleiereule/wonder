@@ -158,11 +158,13 @@ textarea {
 .ERMDEmptyList {
 	border-left: none;
 	border-right: none;
-	padding: 10px 42px;
+	padding: 10px 10px 10px 42px;
 	color: #554433;
 	font-weight: bold;
 	font-size: 110%;
 	margin: 20px 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .EmbeddedInnerWrapper .ERMDEmptyList {
