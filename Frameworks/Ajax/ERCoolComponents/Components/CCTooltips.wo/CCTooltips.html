@@ -11,21 +11,22 @@
   Opentip.defaultStyle = 'wonder';
 
   function addOpentips() {
-       // collect all candidates, i.e. elements matching the target class
-       var candidates = document.getElementsByClassName('<webobject name = "TargetClass"/>');
-       for (i = 0; i < candidates.length; i++) { 
-  	var candidate = candidates[i];
-  	var isCandidateOverflowing = candidate.offsetWidth < candidate.scrollWidth;
-  	var isParentOverflowing = candidate.parentElement.offsetWidth < candidate.parentElement.scrollWidth;
-  	// only add a tooltip for elements that are overflowing and have no title attribute set
-  	if ((isCandidateOverflowing || isParentOverflowing) && !candidate.title) {
-  		var existingOpentips = candidate.getAttribute('data-id');
-       		// if the element has a data-id attribute, it already has a tooltip
-       		if (!candidate.getAttribute('data-id')) {
-       			new Opentip(candidate, candidate.textContent, {});
-       		}
-    	}
-    }
+      // collect all candidates, i.e. elements matching the target class
+      var candidates = document.getElementsByClassName('<webobject name = "TargetClass"/>');
+      for (i = 0; i < candidates.length; i++) { 
+	  	var candidate = candidates[i];
+	  	var isCandidateOverflowing = candidate.offsetWidth < candidate.scrollWidth;
+	  	var isParentOverflowing = candidate.parentElement.offsetWidth < candidate.parentElement.scrollWidth;
+  		var hasOpentip = candidate.getAttribute('data-id') != undefined;
+	  	// only add a tooltip for elements that are overflowing and have no title attribute set
+	  	if ((isCandidateOverflowing || isParentOverflowing) && !candidate.title && !hasOpentip) {
+   			new Opentip(candidate, candidate.textContent, {});
+	    }
+	    // TODO handle removal of opentip when the element does not overflow after a resize,
+	    // which unfortunately is nigh on impossible with the current opentip API - even
+	    // deleting the DOM elements for created opentips does not help, as this won't get
+	    // rid of opentips that were not yet rendered
+	  }
   };
 
   function addObserver() {
@@ -40,4 +41,5 @@
 
   document.addEventListener("DOMContentLoaded", addOpentips, false);
   document.addEventListener("DOMContentLoaded", addObserver, false);
+  window.addEventListener('resize', addOpentips, false);
 </script>
