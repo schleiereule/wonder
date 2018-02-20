@@ -1,3 +1,9 @@
+Span: WOGenericContainer {
+	elementName = "span";
+	class = d2wContext.class;
+	omitTags = d2wContext.omitTags;
+}
+
 HasNoMessage: ERXNonNullConditional {
 	condition = ^emptyListMessage;
 	negate = true;
