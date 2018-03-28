@@ -110,6 +110,7 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 		EOEntity e = c.entity();
 		boolean isEntityEditable = ERXValueUtilities.booleanValue(c.valueForKey("isEntityEditable"));
 		boolean isEntityWritable = !ERXValueUtilities.booleanValue(c.valueForKey("readOnly"));
+		boolean isEntityCreatable = ERXValueUtilities.booleanValue(c.valueForKey("isEntityCreatable"));
 		boolean isConcrete = !e.isAbstractEntity();
 
 		boolean isEntityQueryable = ERXValueUtilities.booleanValue(c.valueForKey("shouldShowQueryRelatedButton"));
@@ -120,7 +121,7 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 		if ((rel.inverseRelationship() == null || isEntityWritable) && isEntityQueryable) {
 			choices.add("_queryRelated");
 		}
-		if (isEntityWritable && isEntityEditable && isConcrete && e.subEntities().isEmpty()) {
+		if (isEntityWritable && isEntityEditable && isEntityCreatable && isConcrete && e.subEntities().isEmpty()) {
 			choices.add("_createRelated");
 		}
 		return choices;
@@ -135,6 +136,7 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 		boolean isNonNull = ERXValueUtilities.booleanValue(c.valueForKeyPath("object.isNonNull"));
 		boolean unguarded = !ERXGuardedObjectInterface.class.isAssignableFrom(classForEntity(e));
 		boolean isEntityEditable = ERXValueUtilities.booleanValue(c.valueForKey("isEntityEditable"));
+		boolean isEntityCreatable = ERXValueUtilities.booleanValue(c.valueForKey("isEntityCreatable"));
 		boolean isEntityDeletable = ERXValueUtilities.booleanValue(c.valueForKey("isEntityDeletable"));
 		boolean isEntityInspectable = ERXValueUtilities.booleanValue(c.valueForKey("isEntityInspectable"));
 		boolean canUpdate = eo instanceof ERXGuardedObjectInterface ? ((ERXGuardedObjectInterface) eo).canUpdate() : unguarded;
@@ -153,7 +155,7 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 		if (isEntityInspectable && !isPendingDeletion && (isNonNull || (!nullInterface))) {
 			choices.add("_inspectRelated");
 		}
-		if (isEntityWritable && isEntityEditable && isConcrete && e.subEntities().isEmpty()) {
+		if (isEntityWritable && isEntityEditable && isEntityCreatable && isConcrete && e.subEntities().isEmpty()) {
 			choices.add("_createRelated");
 		}
 		if (isEntityWritable && isEntityEditable && !isPendingDeletion && canUpdate) {
