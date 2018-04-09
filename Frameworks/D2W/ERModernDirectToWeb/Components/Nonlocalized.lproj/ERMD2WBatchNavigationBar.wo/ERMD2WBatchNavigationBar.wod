@@ -20,6 +20,7 @@ PreviousPageAction : AjaxUpdateLink {
 	action = previousPage;
 	class = "paginatorPrev";
 	updateContainerID = updateContainerID;
+	hotkey = d2wContext.batchNavPreviousHotkey;
 }
 
 HasNextPageConditional : WOConditional {
@@ -35,6 +36,7 @@ NextPageAction : AjaxUpdateLink {
 	action = nextPage;
 	class = "paginatorNext";
 	updateContainerID = updateContainerID;
+	hotkey = d2wContext.batchNavNextHotkey;
 }
 
 SelectPageAction : AjaxUpdateLink {
@@ -91,6 +93,14 @@ PreviousLabel : ERXLocalizedString {
 
 OfLabel : ERXLocalizedString {
 	value = "ERXBatchNavigationBar.of";
+}
+
+hasHotkeys : WOConditional {
+	condition = hasHotkeys;
+}
+
+KeyboardNavScript : ERXJavaScript {
+	scriptString = "setupKeyboardNav();";
 }
 
 False : WOConditional {
