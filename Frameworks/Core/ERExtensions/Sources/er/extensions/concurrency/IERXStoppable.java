@@ -23,5 +23,10 @@ public interface IERXStoppable {
 	 * Gracefully stops this task. Work that has already completed is left in completed state and work that is yet to be done is not started.
 	 */
 	public void stop();
+	
+	/**
+	 * @return Whether the process will be stopped.
+	 */
+	public Boolean willStop();
 
 }
