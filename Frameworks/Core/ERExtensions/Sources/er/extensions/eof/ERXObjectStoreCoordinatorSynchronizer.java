@@ -141,6 +141,9 @@ public class ERXObjectStoreCoordinatorSynchronizer {
 	}
 
 	public void addObjectStore(EOObjectStoreCoordinator osc) {
+		if ((osc instanceof ERXObjectStoreCoordinator) && (!((ERXObjectStoreCoordinator) osc)._shouldSync)) {
+			return;
+		}
 		synchronized (_coordinators) {
 			if (!_coordinators.containsObject(osc)) {
 				_coordinators.addObject(osc);
@@ -153,6 +156,9 @@ public class ERXObjectStoreCoordinatorSynchronizer {
 	}
 
 	public void removeObjectStore(EOObjectStoreCoordinator osc) {
+		if ((osc instanceof ERXObjectStoreCoordinator) && (!((ERXObjectStoreCoordinator) osc)._shouldSync)) {
+			return;
+		}
 		synchronized (_coordinators) {
 			if (_coordinators.containsObject(osc)) {
 				_coordinators.removeObject(osc);

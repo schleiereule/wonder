@@ -231,6 +231,19 @@ public class ERXObjectStoreCoordinator extends EOObjectStoreCoordinator {
 		_name = name;
 	}
 	
+	/**
+	 * if _shouldSync is false this ERXObjectStoreCoordinator will not be added
+	 * to the ERXObjectStoreCoordinatorSynchronizer coordinator array
+	 */
+	protected boolean _shouldSync = true;
+	
+	public ERXObjectStoreCoordinator(boolean shouldClose, Boolean shouldSync) {
+		_shouldClose = shouldClose;
+		_shouldSync = shouldSync;
+	}
+	
+	
+	
 	@Override
 	public String toString() {
 		ToStringBuilder b = new ToStringBuilder(this);
