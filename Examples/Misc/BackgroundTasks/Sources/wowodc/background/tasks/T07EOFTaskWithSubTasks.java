@@ -90,6 +90,11 @@ public class T07EOFTaskWithSubTasks extends ERXTask<EOGlobalID> implements Calla
 			_task2.stop();
 		}
 	}
+	
+	@Override
+	public Boolean willStop() {
+		return _isStopped;
+	}
 
 	public Double percentComplete() {
 		double _percent = 0.0d;

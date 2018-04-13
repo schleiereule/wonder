@@ -209,4 +209,10 @@ public class T06EOFFactorialUpdateTask extends ERXTask<EOGlobalID> implements Ca
 		log.info("The task was stopped by the user.");
 		_isStopped = true;
 	}
+	
+	@Override
+	public Boolean willStop() {
+		return _isStopped;
+	}
+	
 }

@@ -254,6 +254,11 @@ public class T05MultiThreadedEOFTask extends ERXTask<EOGlobalID> implements Call
 	}
 	
 	@Override
+	public Boolean willStop() {
+		return _isStopped;
+	}
+	
+	@Override
 	public String toString() {
 		StringBuilder b = new StringBuilder();
 		b.append(this.getClass().getSimpleName());

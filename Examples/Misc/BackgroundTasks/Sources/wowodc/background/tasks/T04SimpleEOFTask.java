@@ -150,4 +150,10 @@ public class T04SimpleEOFTask implements Callable<EOGlobalID>, IERXStatus , IERX
 		log.info("The task was stopped by the user.");
 		_isStopped = true;
 	}
+	
+	@Override
+	public Boolean willStop() {
+		return _isStopped;
+	}
+	
 }

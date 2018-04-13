@@ -89,4 +89,10 @@ public class T03BackgroundTaskWithProgressFeedback implements Runnable, IERXStat
 		log.info("The task was stopped by the user.");
 		_isStopped = true;
 	}
+	
+	@Override
+	public Boolean willStop() {
+		return _isStopped;
+	}
+	
 }
