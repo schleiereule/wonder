@@ -3,7 +3,6 @@ package er.modern.look.pages;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.UUID;
 
 import org.apache.commons.lang3.ObjectUtils;
 
@@ -84,6 +83,7 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 		public static String displayPropertyKeys = "displayPropertyKeys";
 		public static String subTask = "subTask";
 		public static String isEntityCreatable = "isEntityCreatable";
+		public static String propertyIsSortable = "propertyIsSortable";
 
 	}
 
@@ -432,7 +432,7 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 			}
 		}
 		if (sortOrderings == null) {
-			NSArray<String> sortOrderingDefinition = (NSArray<String>) d2wContext().valueForKey(Keys.defaultSortOrdering);
+		    NSArray<String> sortOrderingDefinition = (NSArray<String>) d2wContext().valueForKey(Keys.defaultSortOrdering);
 			if (sortOrderingDefinition != null) {
 				NSMutableArray<EOSortOrdering> validatedSortOrderings = new NSMutableArray<EOSortOrdering>();
 				NSArray<String> displayPropertyKeys = (NSArray<String>) d2wContext().valueForKey(Keys.displayPropertyKeys);
@@ -495,7 +495,10 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 	// this can be overridden by subclasses for which sorting has to be fixed
 	// (i.e. Grouping Lists)
 	public boolean userPreferencesCanSpecifySorting() {
-		return !"printerFriendly".equals(d2wContext().valueForKey(Keys.subTask));
+		// assume true if not set – if this is false, then sorting has been disabled for the entire page configuration
+		Boolean propertyIsSortable = ERXValueUtilities.booleanValueWithDefault(d2wContext().valueForKey(Keys.propertyIsSortable), true);
+		Boolean isPrinterFriendly = "printerFriendly".equals(d2wContext().valueForKey(Keys.subTask));
+		return propertyIsSortable && !isPrinterFriendly;
 	}
 	
 	// BATCH SIZE
