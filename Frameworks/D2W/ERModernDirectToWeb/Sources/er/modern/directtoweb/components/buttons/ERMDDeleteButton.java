@@ -330,6 +330,13 @@ public class ERMDDeleteButton extends ERMDActionButton {
     	}
     	return _dialogMessage;
     }
+    
+    public void reset() {
+        super.reset();
+        // reset cached values to avoid issues in column browser
+        _localUpdateContainer = null;
+        _dialogMessage = null;
+    }
 
 	private void writeObject(ObjectOutputStream out) throws IOException {
 		out.defaultWriteObject();
