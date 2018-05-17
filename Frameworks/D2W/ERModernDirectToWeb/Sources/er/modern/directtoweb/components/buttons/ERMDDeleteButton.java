@@ -331,6 +331,10 @@ public class ERMDDeleteButton extends ERMDActionButton {
     	return _dialogMessage;
     }
     
+	/**
+	 * Because this is a non-synchronizing, stateful component this method gets called
+	 * {@link er.directtoweb.components.ERDCustomComponent#appendToResponse(com.webobjects.appserver.WOResponse, WOContext)}
+	 */
     public void reset() {
         super.reset();
         // reset cached values to avoid issues in column browser
