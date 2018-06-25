@@ -6,7 +6,7 @@
 			</webobject>
 			<webobject name = "HasNoPreviousPageConditional"><span class="paginatorAtStart"><webobject name="PreviousLabel"/></span></webobject>
 			<webobject name = "PageNumberRepetition">
-				<webobject name = "IsCurrentPageNumberConditional"><span class="paginatorCurrentPage"><webobject name = "PageNumber"/></span></webobject>
+				<webobject name = "IsCurrentPageNumberConditional"><span class="paginatorCurrentPage"><webobject name = "ERXOptionalForm"><webobject name = "PageNumberField" /></webobject></span></webobject>
 				<webobject name = "IsNotCurrentPageNumberConditional">
 					<webobject name = "IsPageNumberConditional">
 						<webobject name = "SelectPageAction"><webobject name = "PageNumber"/></webobject>
@@ -18,6 +18,7 @@
 				<webobject name = "NextPageAction"><webobject name="NextLabel"/></webobject>
 			</webobject>
 			<webobject name = "HasNoNextPageConditional"><span class="paginatorAtEnd"><webobject name="NextLabel"/></span></webobject>
+			
 		</div>
 		<webobject name = "hasHotkeys">
 		    <webobject name = "KeyboardNavScript"></webobject>

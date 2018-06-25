@@ -1,3 +1,21 @@
+PageNumberField : AjaxInPlaceEditor {
+  value = currentBatchIndex;
+  width = "4";
+  numberformat = "0";
+  class = "ERMD2WBatchNavigationBar_BatchNumberValue";
+  id = batchIndexFieldID;
+  submitOnBlur = true;
+  okButton = false;
+  cancelLink = false;
+  onComplete = updateFunction;
+  formClassName = "ERMD2WBatchNavigationBar_BatchNumberForm";
+}
+
+ERXOptionalForm : ERXOptionalForm {
+  showForm = d2wContext.includeOptionalForm;
+  multipleSubmit = true;
+}
+
 PageNumberRepetition : WORepetition {
 	list = pageNumbers;
 	item = repetitionPageNumber;
