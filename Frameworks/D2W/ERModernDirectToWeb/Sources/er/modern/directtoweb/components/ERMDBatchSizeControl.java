@@ -158,11 +158,13 @@ public class ERMDBatchSizeControl extends ERDCustomComponent {
 	}
 	
 	public void setNumberOfObjectsPerBatch(Integer number) {
-		displayGroup().setNumberOfObjectsPerBatch(number);
-		NSNotificationCenter.defaultCenter().postNotification(
-				ERXBatchNavigationBar.BatchSizeChanged,
-				ERXConstant.integerForInt(number.intValue()),
-                new NSDictionary(d2wContext(),"d2wContext") );
+		if (displayGroup().numberOfObjectsPerBatch() != number) {
+			displayGroup().setNumberOfObjectsPerBatch(number);
+			NSNotificationCenter.defaultCenter().postNotification(
+					ERXBatchNavigationBar.BatchSizeChanged, 
+					ERXConstant.integerForInt(number.intValue()), 
+					new NSDictionary(d2wContext(), "d2wContext"));
+		}
 	}
 
     public int allObjectsCount() {
