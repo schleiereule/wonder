@@ -217,6 +217,9 @@ public class CCTagEditor extends AjaxDynamicElement {
     @SuppressWarnings("rawtypes")
     protected void setValueFromFormValue(WORequest request, WOContext context) {
         Object tags = request.formValuesForKey(formValueName(context));
+        if (tags == null) {
+            tags = NSArray.emptyArray();
+        }
         setValueForBinding(((NSArray) tags).componentsJoinedByString(" "), "value", context.component());
     }
 
