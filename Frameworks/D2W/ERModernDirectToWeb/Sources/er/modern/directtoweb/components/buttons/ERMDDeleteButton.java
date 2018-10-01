@@ -16,11 +16,11 @@ import com.webobjects.eocontrol.EOEditingContext;
 import com.webobjects.eocontrol.EOEnterpriseObject;
 import com.webobjects.eocontrol.EOGlobalID;
 import com.webobjects.foundation.NSMutableDictionary;
-import com.webobjects.foundation.NSNotificationCenter;
 import com.webobjects.foundation.NSValidation;
 
 import er.directtoweb.delegates.ERDDeletionDelegate;
 import er.directtoweb.delegates.ERDPageDelegate;
+import er.extensions.appserver.ERXSession;
 import er.extensions.eof.ERXEC;
 import er.extensions.eof.ERXEOControlUtilities;
 import er.extensions.eof.ERXGuardedObjectInterface;
@@ -187,7 +187,7 @@ public class ERMDDeleteButton extends ERMDActionButton {
 			userInfo.setObjectForKey(dds.masterObject(), OBJECT_KEY);
 			userInfo.setObjectForKey(dds.detailKey(), "propertyKey");
 		}
-    	NSNotificationCenter.defaultCenter().postNotification(BUTTON_PERFORMED_DELETE_ACTION, obj, userInfo);
+		ERXSession.session().notificationCenter().postNotification(BUTTON_PERFORMED_DELETE_ACTION, obj, userInfo);
     }
 	
     // OTHERS

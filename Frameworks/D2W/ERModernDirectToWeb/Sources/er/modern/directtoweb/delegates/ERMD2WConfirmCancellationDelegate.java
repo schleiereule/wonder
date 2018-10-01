@@ -7,11 +7,11 @@ import com.webobjects.directtoweb.NextPageDelegate;
 import com.webobjects.eocontrol.EOEditingContext;
 import com.webobjects.eocontrol.EOEnterpriseObject;
 import com.webobjects.foundation.NSMutableDictionary;
-import com.webobjects.foundation.NSNotificationCenter;
 
 import er.directtoweb.ERDirectToWeb;
 import er.directtoweb.pages.ERD2WInspectPage;
 import er.directtoweb.pages.ERD2WPage;
+import er.extensions.appserver.ERXSession;
 import er.extensions.foundation.ERXValueUtilities;
 import er.modern.directtoweb.ERMDNotificationNameRegistry;
 
@@ -37,7 +37,7 @@ public class ERMD2WConfirmCancellationDelegate implements NextPageDelegate {
             userInfo.put("parentPageConfigurationID", c.valueForKey("parentPageConfigurationID"));
         }
         userInfo.put("pageConfiguration", c.valueForKey("pageConfiguration"));
-        NSNotificationCenter.defaultCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_CANCEL_EDIT_ACTION, null, userInfo);
+        ERXSession.session().notificationCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_CANCEL_EDIT_ACTION, null, userInfo);
         return page.nextPage(false);
     }
 

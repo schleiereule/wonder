@@ -10,11 +10,11 @@ import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.foundation.NSMutableDictionary;
 import com.webobjects.foundation.NSNotification;
-import com.webobjects.foundation.NSNotificationCenter;
 import com.webobjects.foundation.NSSelector;
 
 import er.ajax.AjaxUpdateContainer;
 import er.directtoweb.components.ERDCustomComponent;
+import er.extensions.appserver.ERXSession;
 import er.extensions.appserver.ERXWOContext;
 import er.extensions.eof.ERXConstant;
 import er.extensions.eof.ERXKey;
@@ -104,10 +104,10 @@ public class ERMDAjaxNotificationCenter extends ERDCustomComponent {
     public void setD2wContext(D2WContext context) {
         if (context != null && !context.equals(d2wContext())) {
             log.debug("Removing observers for old context");
-            NSNotificationCenter.defaultCenter().removeObserver(this,
+            ERXSession.session().notificationCenter().removeObserver(this,
                     PropertyChangedNotification, null);
         }
-        NSNotificationCenter.defaultCenter().addObserver(this, propertyChanged,
+        ERXSession.session().notificationCenter().addObserver(this, propertyChanged,
                 PropertyChangedNotification, context);
         log.debug("Notifications registered for context: {}", context);
         super.setD2wContext(context);
@@ -190,7 +190,7 @@ public class ERMDAjaxNotificationCenter extends ERDCustomComponent {
                 userInfo.setObjectForKey(id, "ajaxNotificationCenterId");
                 // HACK: the delete action notification is the only way to
                 // trigger a relationship component update for now
-                NSNotificationCenter.defaultCenter().postNotification(
+                ERXSession.session().notificationCenter().postNotification(
                         ERMDDeleteButton.BUTTON_PERFORMED_DELETE_ACTION, obj, userInfo);
                 log.debug("Sent update notification for relationship: {}", aPropertyKey);
             }

@@ -11,10 +11,10 @@ import com.webobjects.directtoweb.QueryPageInterface;
 import com.webobjects.directtoweb.SelectPageInterface;
 import com.webobjects.eocontrol.EODataSource;
 import com.webobjects.eocontrol.EOEnterpriseObject;
-import com.webobjects.foundation.NSNotificationCenter;
 
 import er.directtoweb.components.ERDCustomComponent;
 import er.directtoweb.interfaces.ERDPickPageInterface;
+import er.extensions.appserver.ERXSession;
 import er.extensions.eof.ERXEOControlUtilities;
 import er.extensions.foundation.ERXValueUtilities;
 
@@ -85,7 +85,7 @@ public abstract class ERMDActionButton extends ERDCustomComponent {
 	 * @param note
 	 */
 	public void postNotification(String note) {
-		NSNotificationCenter.defaultCenter().postNotification(note, this);
+	    ERXSession.session().notificationCenter().postNotification(note, this);
 	}
 	
     /** Action buttons do not synchronize their variables. */

@@ -10,6 +10,7 @@ import com.webobjects.foundation.NSNotificationCenter;
 import er.ajax.AjaxUpdateContainer;
 import er.directtoweb.ERD2WKeys;
 import er.directtoweb.components.repetitions.ERDInspectPageRepetition;
+import er.extensions.appserver.ERXSession;
 import er.extensions.eof.ERXGenericRecord;
 import er.extensions.foundation.ERXStringUtilities;
 import er.extensions.foundation.ERXValueUtilities;
@@ -181,7 +182,7 @@ public class ERMDInspectPageRepetition extends ERDInspectPageRepetition {
      * Posts a change notification when an observed property key has changed.
      */
     public void postChangeNotification() {
-        NSNotificationCenter.defaultCenter().postNotification(
+        ERXSession.session().notificationCenter().postNotification(
                 ERMDAjaxNotificationCenter.PropertyChangedNotification, d2wContext());
     }
 }

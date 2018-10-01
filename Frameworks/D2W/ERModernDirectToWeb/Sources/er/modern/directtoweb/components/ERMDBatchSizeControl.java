@@ -3,14 +3,13 @@ package er.modern.directtoweb.components;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.appserver.WODisplayGroup;
 import com.webobjects.foundation.NSDictionary;
-import com.webobjects.foundation.NSNotificationCenter;
 
 import er.ajax.AjaxUpdateContainer;
 import er.directtoweb.components.ERDCustomComponent;
 import er.extensions.appserver.ERXDisplayGroup;
+import er.extensions.appserver.ERXSession;
 import er.extensions.batching.ERXBatchNavigationBar;
 import er.extensions.eof.ERXConstant;
-import er.extensions.foundation.ERXStringUtilities;
 import er.extensions.localization.ERXLocalizer;
 
 /**
@@ -160,7 +159,7 @@ public class ERMDBatchSizeControl extends ERDCustomComponent {
 	public void setNumberOfObjectsPerBatch(Integer number) {
 		if (displayGroup().numberOfObjectsPerBatch() != number) {
 			displayGroup().setNumberOfObjectsPerBatch(number);
-			NSNotificationCenter.defaultCenter().postNotification(
+			ERXSession.session().notificationCenter().postNotification(
 					ERXBatchNavigationBar.BatchSizeChanged, 
 					ERXConstant.integerForInt(number.intValue()), 
 					new NSDictionary(d2wContext(), "d2wContext"));

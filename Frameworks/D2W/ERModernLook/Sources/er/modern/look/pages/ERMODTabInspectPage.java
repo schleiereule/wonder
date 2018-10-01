@@ -6,10 +6,10 @@ import com.webobjects.appserver.WOContext;
 import com.webobjects.directtoweb.D2WContext;
 import com.webobjects.eocontrol.EOEnterpriseObject;
 import com.webobjects.foundation.NSNotification;
-import com.webobjects.foundation.NSNotificationCenter;
 import com.webobjects.foundation.NSSelector;
 
 import er.directtoweb.pages.templates.ERD2WTabInspectPageTemplate;
+import er.extensions.appserver.ERXSession;
 import er.extensions.eof.ERXConstant;
 import er.modern.directtoweb.ERMDNotificationNameRegistry;
 
@@ -60,17 +60,17 @@ public class ERMODTabInspectPage extends ERD2WTabInspectPageTemplate {
 	
 	@Override
 	public void awake() {
-		NSNotificationCenter.defaultCenter().addObserver(this, new NSSelector<Void>("handleSaveNotification", ERXConstant.NotificationClassArray),
+	    ERXSession.session().notificationCenter().addObserver(this, new NSSelector<Void>("handleSaveNotification", ERXConstant.NotificationClassArray),
 				ERMDNotificationNameRegistry.BUTTON_PERFORMED_SAVE_ACTION, null);
-		NSNotificationCenter.defaultCenter().addObserver(this, new NSSelector<Void>("handleCancelEditNotification", ERXConstant.NotificationClassArray),
+	    ERXSession.session().notificationCenter().addObserver(this, new NSSelector<Void>("handleCancelEditNotification", ERXConstant.NotificationClassArray),
 				ERMDNotificationNameRegistry.BUTTON_PERFORMED_CANCEL_EDIT_ACTION, null);
 		super.awake();
 	}
 
 	@Override
 	public void sleep() {
-		NSNotificationCenter.defaultCenter().removeObserver(this, ERMDNotificationNameRegistry.BUTTON_PERFORMED_SAVE_ACTION, null);
-		NSNotificationCenter.defaultCenter().removeObserver(this, ERMDNotificationNameRegistry.BUTTON_PERFORMED_CANCEL_EDIT_ACTION, null);
+	    ERXSession.session().notificationCenter().removeObserver(this, ERMDNotificationNameRegistry.BUTTON_PERFORMED_SAVE_ACTION, null);
+	    ERXSession.session().notificationCenter().removeObserver(this, ERMDNotificationNameRegistry.BUTTON_PERFORMED_CANCEL_EDIT_ACTION, null);
 		super.sleep();
 	}
 

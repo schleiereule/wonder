@@ -18,10 +18,10 @@ import org.slf4j.LoggerFactory;
 import com.webobjects.appserver.WOApplication;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.appserver.WOCookie;
+import com.webobjects.appserver.WOCookie.SameSite;
 import com.webobjects.appserver.WORequest;
 import com.webobjects.appserver.WOResponse;
 import com.webobjects.appserver.WOSession;
-import com.webobjects.appserver.WOCookie.SameSite;
 import com.webobjects.eocontrol.EOEditingContext;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSKeyValueCodingAdditions;
@@ -104,6 +104,9 @@ public class ERXSession extends ERXAjaxSession implements Serializable {
   
   /** the default session timeZone */
   private TimeZone _timeZone = TimeZone.getDefault();
+
+  /** session-local notification center */
+  private NSNotificationCenter notificationCenter;
 
   /**
    * _originalThreadName holds the original name from the WorkerThread which
@@ -863,4 +866,22 @@ public class ERXSession extends ERXAjaxSession implements Serializable {
   }
   private String currentD2WLook = null;
   	
+	
+  public NSNotificationCenter notificationCenter() {
+  	if (notificationCenter == null) {
+  		notificationCenter = new SessionNotificationCenter();
+  	}
+  	return notificationCenter;
+  }
+  
+  /**
+   * Simple subclass of NSNotificationCenter to be used within a session, thus
+   * limiting all notifications sent to the current session.
+   */
+  private static class SessionNotificationCenter extends NSNotificationCenter {
+
+	public SessionNotificationCenter() { }
+  
+  }
+
 }

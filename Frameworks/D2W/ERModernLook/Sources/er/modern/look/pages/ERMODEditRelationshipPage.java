@@ -25,12 +25,12 @@ import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.foundation.NSNotification;
-import com.webobjects.foundation.NSNotificationCenter;
 import com.webobjects.foundation.NSSelector;
 
 import er.directtoweb.pages.ERD2WEditRelationshipPage;
 import er.directtoweb.pages.ERD2WPage;
 import er.extensions.appserver.ERXDisplayGroup;
+import er.extensions.appserver.ERXSession;
 import er.extensions.eof.ERXConstant;
 import er.extensions.eof.ERXEC;
 import er.extensions.eof.ERXEOAccessUtilities;
@@ -107,13 +107,13 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
 	@Override
 	public void awake() {
 		_dataSource = null;
-		NSNotificationCenter.defaultCenter().addObserver(this, new NSSelector<Void>("relatedObjectDidChange", ERXConstant.NotificationClassArray), ERMDActionButton.BUTTON_PERFORMED_DELETE_ACTION, null);
+		ERXSession.session().notificationCenter().addObserver(this, new NSSelector<Void>("relatedObjectDidChange", ERXConstant.NotificationClassArray), ERMDActionButton.BUTTON_PERFORMED_DELETE_ACTION, null);
 		super.awake();
 	}
 
 	@Override
 	public void sleep() {
-		NSNotificationCenter.defaultCenter().removeObserver(this, ERMDActionButton.BUTTON_PERFORMED_DELETE_ACTION, null);
+		ERXSession.session().notificationCenter().removeObserver(this, ERMDActionButton.BUTTON_PERFORMED_DELETE_ACTION, null);
 		super.sleep();
 	}
 
@@ -253,7 +253,7 @@ public class ERMODEditRelationshipPage extends ERD2WPage implements ERMEditRelat
                 ERMDInspectPageRepetition.class);
         if (ERXValueUtilities.booleanValueWithDefault(
                 parent.valueForKeyPath("d2wContext.shouldObserve"), false)) {
-            NSNotificationCenter.defaultCenter().postNotification(
+            ERXSession.session().notificationCenter().postNotification(
                     ERMDAjaxNotificationCenter.PropertyChangedNotification,
                     parent.valueForKeyPath("d2wContext"));
         }

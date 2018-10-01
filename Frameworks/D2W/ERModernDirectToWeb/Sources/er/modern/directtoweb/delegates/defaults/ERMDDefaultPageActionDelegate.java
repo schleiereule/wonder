@@ -29,7 +29,6 @@ import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSKeyValueCoding;
 import com.webobjects.foundation.NSMutableDictionary;
-import com.webobjects.foundation.NSNotificationCenter;
 import com.webobjects.foundation.NSValidation;
 
 import er.directtoweb.ERD2WContainer;
@@ -44,6 +43,7 @@ import er.directtoweb.pages.ERD2WPage;
 import er.directtoweb.pages.ERD2WQueryPage;
 import er.directtoweb.pages.ERD2WWizardCreationPage;
 import er.directtoweb.pages.templates.ERD2WWizardCreationPageTemplate;
+import er.extensions.appserver.ERXSession;
 import er.extensions.eof.ERXEC;
 import er.extensions.eof.ERXEOAccessUtilities;
 import er.extensions.eof.ERXEOControlUtilities;
@@ -118,7 +118,7 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 
 	@D2WDelegate(requiresFormSubmit = true, group = "yGroup")
 	public void _nextStep(WOComponent sender) {
-		NSNotificationCenter.defaultCenter().postNotification(ERD2WWizardCreationPage.WILL_GOTO_NEXT_PAGE, null);
+		ERXSession.session().notificationCenter().postNotification(ERD2WWizardCreationPage.WILL_GOTO_NEXT_PAGE, null);
 		ERD2WWizardCreationPageTemplate page = ERD2WUtilities.enclosingComponentOfClass(sender, ERD2WWizardCreationPageTemplate.class);
 		NSArray<ERD2WContainer> tabs = page.tabSectionsContents();
 		ERD2WContainer tab = page.currentTab();
@@ -134,7 +134,7 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 			userInfo.put("parentPageConfigurationID", d2wContext(sender).valueForKey("parentPageConfigurationID"));
 		}
 		userInfo.put("pageConfiguration", d2wContext(sender).valueForKey("pageConfiguration"));
-		NSNotificationCenter.defaultCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_NEXT_STEP_ACTION, null, userInfo);
+		ERXSession.session().notificationCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_NEXT_STEP_ACTION, null, userInfo);
 	}
 
 	@D2WDelegate(requiresFormSubmit = true, group = "xGroup")
@@ -155,7 +155,7 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 			userInfo.put("parentPageConfigurationID", d2wContext(sender).valueForKey("parentPageConfigurationID"));
 		}
 		userInfo.put("pageConfiguration", d2wContext(sender).valueForKey("pageConfiguration"));
-		NSNotificationCenter.defaultCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_PREVIOUS_STEP_ACTION, null, userInfo);
+		ERXSession.session().notificationCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_PREVIOUS_STEP_ACTION, null, userInfo);
 	}
 
 	@D2WDelegate(requiresFormSubmit = true, group = "zGroup")
@@ -220,7 +220,7 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 			}
 			userInfo.put("pageConfiguration", c.valueForKey("pageConfiguration"));
 			userInfo.put("newObject", eo);
-			NSNotificationCenter.defaultCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_SAVE_ACTION, null, userInfo);
+			ERXSession.session().notificationCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_SAVE_ACTION, null, userInfo);
 		} catch (NSValidation.ValidationException e) {
 			page.setErrorMessage(ERXLocalizer.currentLocalizer().localizedTemplateStringForKeyWithObject("CouldNotSave", e));
 			page.validationFailedWithException(e, e.object(), "saveChangesExceptionKey");
@@ -276,7 +276,7 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 			userInfo.put("parentPageConfigurationID", c.valueForKey("parentPageConfigurationID"));
 		}
 		userInfo.put("pageConfiguration", c.valueForKey("pageConfiguration"));
-		NSNotificationCenter.defaultCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_CANCEL_EDIT_ACTION, null, userInfo);
+		ERXSession.session().notificationCenter().postNotification(ERMDNotificationNameRegistry.BUTTON_PERFORMED_CANCEL_EDIT_ACTION, null, userInfo);
 		return page.nextPage(false);
 	}
 

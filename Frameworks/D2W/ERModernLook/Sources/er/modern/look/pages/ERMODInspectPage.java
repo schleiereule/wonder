@@ -2,10 +2,10 @@ package er.modern.look.pages;
 
 import com.webobjects.appserver.WOContext;
 import com.webobjects.foundation.NSNotification;
-import com.webobjects.foundation.NSNotificationCenter;
 import com.webobjects.foundation.NSSelector;
 
 import er.directtoweb.pages.templates.ERD2WInspectPageTemplate;
+import er.extensions.appserver.ERXSession;
 import er.extensions.eof.ERXConstant;
 import er.extensions.foundation.ERXStringUtilities;
 import er.modern.directtoweb.ERMDNotificationNameRegistry;
@@ -54,16 +54,16 @@ public class ERMODInspectPage extends ERD2WInspectPageTemplate {
 
 	@Override
 	public void awake() {
-		NSNotificationCenter.defaultCenter().addObserver(this, new NSSelector<Void>("handleSaveNotification", ERXConstant.NotificationClassArray), ERMDNotificationNameRegistry.BUTTON_PERFORMED_SAVE_ACTION, null);
-		NSNotificationCenter.defaultCenter().addObserver(this, new NSSelector<Void>("handleCancelEditNotification", ERXConstant.NotificationClassArray), ERMDNotificationNameRegistry.BUTTON_PERFORMED_CANCEL_EDIT_ACTION, null);
+	    ERXSession.session().notificationCenter().addObserver(this, new NSSelector<Void>("handleSaveNotification", ERXConstant.NotificationClassArray), ERMDNotificationNameRegistry.BUTTON_PERFORMED_SAVE_ACTION, null);
+	    ERXSession.session().notificationCenter().addObserver(this, new NSSelector<Void>("handleCancelEditNotification", ERXConstant.NotificationClassArray), ERMDNotificationNameRegistry.BUTTON_PERFORMED_CANCEL_EDIT_ACTION, null);
 		super.awake();
 		clearValidationFailed();
 	}
 
 	@Override
 	public void sleep() {
-		NSNotificationCenter.defaultCenter().removeObserver(this, ERMDNotificationNameRegistry.BUTTON_PERFORMED_SAVE_ACTION, null);
-		NSNotificationCenter.defaultCenter().removeObserver(this, ERMDNotificationNameRegistry.BUTTON_PERFORMED_CANCEL_EDIT_ACTION, null);
+	    ERXSession.session().notificationCenter().removeObserver(this, ERMDNotificationNameRegistry.BUTTON_PERFORMED_SAVE_ACTION, null);
+	    ERXSession.session().notificationCenter().removeObserver(this, ERMDNotificationNameRegistry.BUTTON_PERFORMED_CANCEL_EDIT_ACTION, null);
 		super.sleep();
 	}
 

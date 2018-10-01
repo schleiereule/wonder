@@ -22,6 +22,7 @@ import com.webobjects.foundation.NSSelector;
 
 import er.directtoweb.ERDirectToWeb;
 import er.directtoweb.components.ERDCustomEditComponent;
+import er.extensions.appserver.ERXSession;
 import er.extensions.eof.ERXConstant;
 import er.extensions.eof.ERXEC;
 import er.extensions.eof.ERXEOControlUtilities;
@@ -234,7 +235,7 @@ public class ERMD2WEditToOneTypeAhead extends ERDCustomEditComponent implements 
 		}
         // support for ERMDAjaxNotificationCenter
         if (ERXValueUtilities.booleanValueWithDefault(d2wContext().valueForKey("shouldObserve"), false)) {
-            NSNotificationCenter.defaultCenter().postNotification(
+            ERXSession.session().notificationCenter().postNotification(
                     ERMDAjaxNotificationCenter.PropertyChangedNotification,
                     parent().valueForKeyPath("d2wContext"));
         }

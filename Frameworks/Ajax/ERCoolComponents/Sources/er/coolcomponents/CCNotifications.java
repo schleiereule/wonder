@@ -8,7 +8,6 @@ import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSKeyValueCoding;
 import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.foundation.NSNotification;
-import com.webobjects.foundation.NSNotificationCenter;
 import com.webobjects.foundation.NSSelector;
 import com.webobjects.foundation.NSTimestamp;
 
@@ -55,7 +54,7 @@ public class CCNotifications extends ERXComponent {
     @Override
     public void awake() {
         super.awake();
-        NSNotificationCenter.defaultCenter()
+        ERXSession.session().notificationCenter()
                 .addObserver(this,
                         new NSSelector<Void>("displayNSNotification",
                                 ERXConstant.NotificationClassArray),
@@ -64,7 +63,7 @@ public class CCNotifications extends ERXComponent {
 
     @Override
     public void sleep() {
-        NSNotificationCenter.defaultCenter().removeObserver(this, CC_NOTIFICATION, null);
+        ERXSession.session().notificationCenter().removeObserver(this, CC_NOTIFICATION, null);
         super.sleep();
     }
 
@@ -89,19 +88,12 @@ public class CCNotifications extends ERXComponent {
             if (notification.userInfo().containsKey("type")) {
                 notificationType = (TYPE) notification.userInfo().valueForKey("type");
             }
-            if (notification.userInfo().containsKey("sessionID") && !session().sessionID()
-                    .equals(notification.userInfo().valueForKey("sessionID"))) {
-                sessionMatches = false;
-            }
         }
-        if (sessionMatches) {
-            if (notification.object() != null
-                    && notification.object() instanceof NSKeyValueCoding) {
-                notify((NSKeyValueCoding) notification.object(), message,
-                        notificationType);
-            } else {
-                notify(message, notificationType);
-            }
+        if (notification.object() != null
+                && notification.object() instanceof NSKeyValueCoding) {
+            notify((NSKeyValueCoding) notification.object(), message, notificationType);
+        } else {
+            notify(message, notificationType);
         }
     }
 

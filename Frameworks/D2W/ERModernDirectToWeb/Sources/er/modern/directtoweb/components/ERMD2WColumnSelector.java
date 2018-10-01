@@ -12,6 +12,7 @@ import er.directtoweb.ERD2WContainer;
 import er.directtoweb.components.ERDCustomComponent;
 import er.directtoweb.components.repetitions.ERDAttributeRepetition;
 import er.directtoweb.pages.ERD2WPage;
+import er.extensions.appserver.ERXSession;
 import er.extensions.foundation.ERXStringUtilities;
 import er.extensions.foundation.ERXValueUtilities;
 import er.modern.directtoweb.components.repetitions.ERMDListPageRepetition;
@@ -83,7 +84,7 @@ public class ERMD2WColumnSelector extends ERDCustomComponent {
         } else {
             displayVariant = "omit";
         }
-        NSNotificationCenter.defaultCenter().postNotification(
+        ERXSession.session().notificationCenter().postNotification(
                 ERDAttributeRepetition.DisplayVariantChanged, displayVariant,
                 new NSDictionary(d2wContext(), "d2wContext"));
         AjaxUpdateContainer.safeUpdateContainerWithID(

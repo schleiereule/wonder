@@ -2,26 +2,19 @@ package er.modern.look.pages;
 
 import org.apache.commons.lang3.ObjectUtils;
 
-import com.webobjects.appserver.WOActionResults;
-import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.directtoweb.D2WContext;
 import com.webobjects.eoaccess.EOEntity;
 import com.webobjects.eocontrol.EOEnterpriseObject;
-import com.webobjects.foundation.NSMutableDictionary;
 import com.webobjects.foundation.NSNotification;
-import com.webobjects.foundation.NSNotificationCenter;
 import com.webobjects.foundation.NSSelector;
 
 import er.ajax.AjaxUpdateContainer;
-import er.directtoweb.pages.ERD2WWizardCreationPage;
 import er.directtoweb.pages.templates.ERD2WWizardCreationPageTemplate;
+import er.extensions.appserver.ERXSession;
 import er.extensions.eof.ERXConstant;
-import er.extensions.eof.ERXEOControlUtilities;
-import er.extensions.eof.ERXGenericRecord;
 import er.extensions.foundation.ERXValueUtilities;
 import er.modern.directtoweb.ERMDNotificationNameRegistry;
-import er.modern.look.pages.ERMODInspectPage.Keys;
 
 /**
  * A wizard inspect/edit template. Can be used in-line, and supports ajax updates
@@ -63,13 +56,13 @@ public class ERMODWizardCreationPage extends ERD2WWizardCreationPageTemplate {
 	
 	@Override
 	public void awake() {
-		NSNotificationCenter.defaultCenter().addObserver(this, new NSSelector<Void>("handleSaveNotification", ERXConstant.NotificationClassArray),
+		ERXSession.session().notificationCenter().addObserver(this, new NSSelector<Void>("handleSaveNotification", ERXConstant.NotificationClassArray),
 				ERMDNotificationNameRegistry.BUTTON_PERFORMED_SAVE_ACTION, null);
-		NSNotificationCenter.defaultCenter().addObserver(this, new NSSelector<Void>("handleCancelEditNotification", ERXConstant.NotificationClassArray),
+		ERXSession.session().notificationCenter().addObserver(this, new NSSelector<Void>("handleCancelEditNotification", ERXConstant.NotificationClassArray),
 				ERMDNotificationNameRegistry.BUTTON_PERFORMED_CANCEL_EDIT_ACTION, null);
-		NSNotificationCenter.defaultCenter().addObserver(this, new NSSelector<Void>("handleNextStepNotification", ERXConstant.NotificationClassArray),
+		ERXSession.session().notificationCenter().addObserver(this, new NSSelector<Void>("handleNextStepNotification", ERXConstant.NotificationClassArray),
 				ERMDNotificationNameRegistry.BUTTON_PERFORMED_NEXT_STEP_ACTION, null);
-		NSNotificationCenter.defaultCenter().addObserver(this, new NSSelector<Void>("handlePreviousStepNotification", ERXConstant.NotificationClassArray),
+		ERXSession.session().notificationCenter().addObserver(this, new NSSelector<Void>("handlePreviousStepNotification", ERXConstant.NotificationClassArray),
 				ERMDNotificationNameRegistry.BUTTON_PERFORMED_PREVIOUS_STEP_ACTION, null);
 		super.awake();
 		clearValidationFailed();
@@ -77,10 +70,10 @@ public class ERMODWizardCreationPage extends ERD2WWizardCreationPageTemplate {
 	
 	@Override
 	public void sleep() {
-		NSNotificationCenter.defaultCenter().removeObserver(this, ERMDNotificationNameRegistry.BUTTON_PERFORMED_SAVE_ACTION, null);
-		NSNotificationCenter.defaultCenter().removeObserver(this, ERMDNotificationNameRegistry.BUTTON_PERFORMED_CANCEL_EDIT_ACTION, null);
-		NSNotificationCenter.defaultCenter().removeObserver(this, ERMDNotificationNameRegistry.BUTTON_PERFORMED_NEXT_STEP_ACTION, null);
-		NSNotificationCenter.defaultCenter().removeObserver(this, ERMDNotificationNameRegistry.BUTTON_PERFORMED_PREVIOUS_STEP_ACTION, null);
+		ERXSession.session().notificationCenter().removeObserver(this, ERMDNotificationNameRegistry.BUTTON_PERFORMED_SAVE_ACTION, null);
+		ERXSession.session().notificationCenter().removeObserver(this, ERMDNotificationNameRegistry.BUTTON_PERFORMED_CANCEL_EDIT_ACTION, null);
+		ERXSession.session().notificationCenter().removeObserver(this, ERMDNotificationNameRegistry.BUTTON_PERFORMED_NEXT_STEP_ACTION, null);
+		ERXSession.session().notificationCenter().removeObserver(this, ERMDNotificationNameRegistry.BUTTON_PERFORMED_PREVIOUS_STEP_ACTION, null);
 		super.sleep();
 	}
 
