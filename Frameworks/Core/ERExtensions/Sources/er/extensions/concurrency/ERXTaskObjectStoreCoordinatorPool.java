@@ -3,6 +3,7 @@ package er.extensions.concurrency;
 import com.webobjects.eocontrol.EOObjectStoreCoordinator;
 import com.webobjects.foundation.NSMutableArray;
 
+import er.extensions.appserver.ERXApplication;
 import er.extensions.eof.ERXObjectStoreCoordinator;
 import er.extensions.foundation.ERXProperties;
 import er.extensions.foundation.ERXRoundRobinCollection;
@@ -28,7 +29,7 @@ public class ERXTaskObjectStoreCoordinatorPool {
 			for (int i = 0; i < maxCoordinators; i++) {
 				int poolItemID = i + 1;
 				ERXObjectStoreCoordinator osc = new ERXObjectStoreCoordinator(true);
-				osc.setName("TaskPool-" + poolItemID + "/" + maxCoordinators);
+				osc.setName("Instance-" + ERXApplication.application().instanceIdKey() + "/TaskPool-" + poolItemID + "/" + maxCoordinators);
 				coordinators.add(osc);
 			}
 			return new ERXRoundRobinCollection<>(coordinators.immutableClone());
