@@ -429,6 +429,16 @@
             externalType = text; 
             factoryMethodArgumentType = EOFactoryMethodArgumentIsNSString; 
             name = customTextType; 
+        }, 
+        {
+            adaptorValueConversionMethodName = asString; 
+            columnName = ""; 
+            externalType = varchar; 
+            factoryMethodArgumentType = EOFactoryMethodArgumentIsNSString; 
+            name = globalUID; 
+            valueClassName = "de.htgreenline.divas.core.eof.EOKeyGlobalUID"; 
+            valueFactoryMethodName = fromString; 
+            width = 255; 
         }
     ); 
     className = EOGenericRecord; 
@@ -478,7 +488,8 @@
         varchar16, 
         varchar255, 
         varchar50, 
-        varcharLarge
+        varcharLarge, 
+        globalUID
     ); 
     fetchSpecificationDictionary = {}; 
     internalInfo = {
