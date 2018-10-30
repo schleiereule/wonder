@@ -223,7 +223,6 @@ public class ERMD2WEditToOneTypeAhead extends ERDCustomEditComponent implements 
 //		log.debug("selectobject called: " + item);
 		EOQualifier qual = ERXQ.equals(keyWhenRelationship(), searchValue());
 		NSArray<EOEnterpriseObject> objs = destinationObjectsWithQualifier(qual);
-		System.out.println("ERMD2WEditToOneTypeAhead.selectObject: " + propertyKey() + " => " + qual);
 		if (objs != null && objs.count() > 0) {
 			EOEnterpriseObject localEO = ERXEOControlUtilities.localInstanceOfObject(object().editingContext(), objs.objectAtIndex(0));
 			object().addObjectToBothSidesOfRelationshipWithKey(localEO, propertyKey());
