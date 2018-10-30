@@ -435,8 +435,8 @@
             columnName = ""; 
             externalType = varchar; 
             factoryMethodArgumentType = EOFactoryMethodArgumentIsNSString; 
-            name = globalUID; 
-            valueClassName = "de.htgreenline.divas.core.eof.EOKeyGlobalUID"; 
+            name = globalUUID; 
+            valueClassName = "de.htgreenline.divas.core.eof.EOUniqueGlobalID"; 
             valueFactoryMethodName = fromString; 
             width = 255; 
         }
@@ -489,7 +489,7 @@
         varchar255, 
         varchar50, 
         varcharLarge, 
-        globalUID
+        globalUUID
     ); 
     fetchSpecificationDictionary = {}; 
     internalInfo = {
