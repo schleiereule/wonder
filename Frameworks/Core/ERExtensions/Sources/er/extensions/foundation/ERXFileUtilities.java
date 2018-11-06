@@ -29,6 +29,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -513,6 +514,7 @@ public class ERXFileUtilities {
      * @return string representation of that file.
      * @throws IOException if things go wrong
      */
+    @Deprecated
     public static String stringFromFile(File f) throws IOException {
         return new String(bytesFromFile(f), charset().name());
     }
@@ -525,11 +527,38 @@ public class ERXFileUtilities {
      * @return string representation of the file.
      * @throws IOException if things go wrong
      */
+    @Deprecated
     public static String stringFromFile(File f, String encoding) throws IOException {
         if (encoding == null) {
             return new String(bytesFromFile(f), charset().name());
         }
         return new String(bytesFromFile(f), encoding);
+    }
+    
+    /**
+     * Returns a string from the file using the default
+     * encoding.
+     * @param f file to read
+     * @return string representation of that file.
+     * @throws IOException if things go wrong
+     */
+    public static String stringFromFile(Path f) throws IOException {
+        return new String(bytesFromFile(f.toFile()), charset().name());
+    }
+    
+    /**
+     * Returns a string from the file using the specified
+     * encoding.
+     * @param f file to read
+     * @param encoding to be used, <code>null</code> will use the default
+     * @return string representation of the file.
+     * @throws IOException if things go wrong
+     */
+    public static String stringFromFile(Path f, String encoding) throws IOException {
+        if (encoding == null) {
+            return new String(bytesFromFile(f.toFile()), charset().name());
+        }
+        return new String(bytesFromFile(f.toFile()), encoding);
     }
 
     /**
