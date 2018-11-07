@@ -276,6 +276,7 @@ public class ERXObjectStoreCoordinatorPool {
             Constructor<? extends EOSharedEditingContext> sharedEditingContextConstructor = Class.forName(className).asSubclass(EOSharedEditingContext.class).getConstructor(EOObjectStore.class);
             for (int i = 0; i < _maxObjectStoreCoordinators; i++) {
                 EOObjectStoreCoordinator os = ERXObjectStoreCoordinator.create();
+				((ERXObjectStoreCoordinator) os).setName(Integer.toString(i) + "/" + Integer.toString(_maxObjectStoreCoordinators));
                 _objectStores.add(os);
                 _sharedEditingContexts.add(sharedEditingContextConstructor.newInstance(os));
             }
