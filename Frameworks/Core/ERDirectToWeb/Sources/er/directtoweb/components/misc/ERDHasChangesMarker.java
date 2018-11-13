@@ -31,20 +31,21 @@ public class ERDHasChangesMarker extends ERDCustomEditComponent {
     }
     
     public boolean hasChanges() {
-        EOEnterpriseObject object = object();
-        EOEditingContext ec = object.editingContext();
-        boolean result = ec != null && ec.hasChanges();
-        if(result) {
-            if(object.changesFromSnapshot(ec.committedSnapshotForObject(object)).count() == 0) {
-                for (Enumeration e = ec.registeredObjects().objectEnumerator(); e.hasMoreElements();) {
-                    EOEnterpriseObject eo = (EOEnterpriseObject) e.nextElement();
-                    if(eo.changesFromSnapshot(ec.committedSnapshotForObject(eo)).count() != 0) {
-                        return true;
-                    }
-                }
-                result = false;
-            }
-        }
-        return result;
+//        EOEnterpriseObject object = object();
+//        EOEditingContext ec = object.editingContext();
+//        boolean result = ec != null && ec.hasChanges();
+//        if(result) {
+//            if(object.changesFromSnapshot(ec.committedSnapshotForObject(object)).count() == 0) {
+//                for (Enumeration e = ec.registeredObjects().objectEnumerator(); e.hasMoreElements();) {
+//                    EOEnterpriseObject eo = (EOEnterpriseObject) e.nextElement();
+//                    if(eo.changesFromSnapshot(ec.committedSnapshotForObject(eo)).count() != 0) {
+//                        return true;
+//                    }
+//                }
+//                result = false;
+//            }
+//        }
+//        return result;
+        return false;
     }
 }
