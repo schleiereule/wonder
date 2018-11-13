@@ -27,6 +27,7 @@ import com.webobjects.eoaccess.EOObjectNotAvailableException;
 import com.webobjects.eoaccess.EORelationship;
 import com.webobjects.eoaccess.EOSQLExpression;
 import com.webobjects.eoaccess.EOSQLExpressionFactory;
+import com.webobjects.eoaccess.EOUtilities;
 import com.webobjects.eocontrol.EOEditingContext;
 import com.webobjects.eocontrol.EOEnterpriseObject;
 import com.webobjects.eocontrol.EOFaultHandler;
@@ -316,7 +317,7 @@ public class ERXDatabaseContextDelegate {
             EOKeyGlobalID kgid = (EOKeyGlobalID)gid;
             gidString = "<" +  kgid.entityName() + ": [" ;
             EOEntity entity = ERXEOAccessUtilities.entityNamed(null, kgid.entityName());
-            NSArray pks = entity.primaryKeyAttributes();
+            NSArray<EOAttribute> pks = entity.primaryKeyAttributes();
             NSArray values = kgid.keyValuesArray();
             EOSQLExpressionFactory expressionFactory = context.database().adaptor().expressionFactory();
             EOSQLExpression expression = null;
@@ -339,6 +340,23 @@ public class ERXDatabaseContextDelegate {
             }
             gidString += "] >";
             
+            ////
+            // for debugging purposes, attempt a raw-row SQL fetch on the GID that failed to fetch
+            ////
+            try {
+				EOEditingContext ec = ((EOEnterpriseObject) object).editingContext();
+				NSArray<NSDictionary> rowsForSQL = null;
+				if (pks.count() == 1) {
+					rowsForSQL = EOUtilities.rawRowsForSQL(ec, entity.model().name(), "SELECT count(*) FROM " + entity.externalName() + " WHERE " + pks.objectAtIndex(0).name() + " = " + values.objectAtIndex(0) + ";", null);
+				}
+				else if (pks.count() == 2) {
+					rowsForSQL = EOUtilities.rawRowsForSQL(ec, entity.model().name(), "SELECT count(*) FROM " + entity.externalName() + " WHERE " + pks.objectAtIndex(0).name() + " = " + values.objectAtIndex(0) + " AND " + pks.objectAtIndex(1) + " = " + values.objectAtIndex(1) + ";", null);
+				}
+				log.info("Raw row fetch count for object that failed to fetch: " + rowsForSQL.lastObject().objectForKey("COUNT"));
+				log.info("Other objects that failed to fetch: " + context.missingObjectGlobalIDs());
+            } catch (Exception e) {
+            	log.warn("Debug raw row fetch failed: ", e);
+            }
         } else {
             gidString = gid.toString();
         }
