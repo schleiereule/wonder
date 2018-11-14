@@ -414,8 +414,21 @@ public class ERXFileUtilities {
      * @param f the destination file
      * @throws IOException if things go wrong
      */
+    @Deprecated
     public static void stringToFile(String s, File f) throws IOException {
         stringToFile( s, f, System.getProperty("file.encoding") );
+    }
+    
+    /**
+     * Writes the contents of <code>s</code> to <code>f</code>
+     * using the platform's default encoding.
+     * 
+     * @param s the string to be written to file
+     * @param f the destination file
+     * @throws IOException if things go wrong
+     */
+    public static void stringToFile(String s, Path f) throws IOException {
+        stringToFile( s, f.toFile(), System.getProperty("file.encoding") );
     }
     
     /**
@@ -427,12 +440,37 @@ public class ERXFileUtilities {
      * @param encoding  the desired encoding
      * @throws IOException if things go wrong
      */
+    @Deprecated
     public static void stringToFile(String s, File f, String encoding) throws IOException {
         if (s == null) throw new IllegalArgumentException("string argument cannot be null");
         if (f == null) throw new IllegalArgumentException("file argument cannot be null");
         if (encoding == null) throw new IllegalArgumentException("encoding argument cannot be null");
         try (Reader reader = new BufferedReader(new StringReader(s));
              FileOutputStream fos = new FileOutputStream(f);
+             Writer out = new BufferedWriter(new OutputStreamWriter(fos, encoding))) {
+            int read;
+            char buf[] = new char[1024 * 50];
+            while ((read = reader.read(buf)) != -1) {
+                out.write(buf, 0, read);
+            }
+        }
+    }
+    
+    /**
+     * Writes the contents of <code>s</code> to <code>f</code>
+     * using specified encoding.
+     * 
+     * @param s the string to be written to file
+     * @param f the destination file
+     * @param encoding  the desired encoding
+     * @throws IOException if things go wrong
+     */
+    public static void stringToFile(String s, Path f, String encoding) throws IOException {
+        if (s == null) throw new IllegalArgumentException("string argument cannot be null");
+        if (f == null) throw new IllegalArgumentException("file argument cannot be null");
+        if (encoding == null) throw new IllegalArgumentException("encoding argument cannot be null");
+        try (Reader reader = new BufferedReader(new StringReader(s));
+             FileOutputStream fos = new FileOutputStream(f.toFile());
              Writer out = new BufferedWriter(new OutputStreamWriter(fos, encoding))) {
             int read;
             char buf[] = new char[1024 * 50];
