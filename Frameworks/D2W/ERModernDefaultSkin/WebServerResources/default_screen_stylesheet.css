@@ -824,6 +824,7 @@ span.ErrorLabel {
 	display: block;
 	padding: 10px 10px 10px 220px;
 	font-weight: bold;
+	overflow-wrap: break-word;
 }
 
 .EditAttrVal textarea,
