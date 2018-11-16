@@ -75,6 +75,9 @@ public class ERXNavigationManager {
 			String keyPath = session.context().request().uri().replace('.', '_');
 			// store it as it will be called
 			keyPath = ERXApplication.erxApplication()._rewriteURL(keyPath);
+			// remove application URL prefix from URI to avoid issues with instance IDs
+			String appURLPrefix = ERXApplication.erxApplication()._rewriteURL(session.context().request().applicationURLPrefix());
+			keyPath = keyPath.replaceFirst(appURLPrefix, "");
 			navigationState = (String) navigationDictionary.objectForKey(keyPath);
 			if (navigationState != null) {
 				// check whether the item has a default child
@@ -113,6 +116,9 @@ public class ERXNavigationManager {
 			navigationFlightPlan = new NSMutableDictionary<>();
 		}
 		if (uri != null) {
+			// remove application URL prefix from URI to avoid issues with instance IDs
+			String appURLPrefix = ERXApplication.erxApplication()._rewriteURL(session.context().request().applicationURLPrefix());
+			uri = uri.replaceFirst(appURLPrefix, "");
 			navigationFlightPlan.setObjectForKey(navigationItem.navigationPath().replace('/', '.'), uri.replace('.', '_'));
 			session.setObjectForKey(navigationFlightPlan, ERXNavigationManager.NAVIGATION_MAP_KEY);
 		}
