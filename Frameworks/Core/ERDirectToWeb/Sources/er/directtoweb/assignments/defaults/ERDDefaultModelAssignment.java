@@ -10,14 +10,19 @@ import com.webobjects.directtoweb.D2WContext;
 import com.webobjects.directtoweb.KeyValuePath;
 import com.webobjects.eoaccess.EOAttribute;
 import com.webobjects.eoaccess.EOEntity;
+import com.webobjects.eoaccess.EOEntityClassDescription;
+import com.webobjects.eoaccess.EOModel;
 import com.webobjects.eoaccess.EOModelGroup;
 import com.webobjects.eoaccess.EORelationship;
+import com.webobjects.eocontrol.EOClassDescription;
 import com.webobjects.eocontrol.EOEditingContext;
 import com.webobjects.eocontrol.EOEnterpriseObject;
 import com.webobjects.eocontrol.EOKeyValueUnarchiver;
 import com.webobjects.eocontrol.EOSortOrdering;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSDictionary;
+import com.webobjects.foundation.NSKeyValueCoding;
+import com.webobjects.foundation.NSMutableDictionary;
 
 import er.directtoweb.assignments.ERDAssignment;
 import er.extensions.eof.ERXConstant;
@@ -214,16 +219,26 @@ public class ERDDefaultModelAssignment extends ERDAssignment {
         return result;
     }
 
-    private transient EOEntity _dummyEntity;
-    /** Utility to create a fake entity that can be used for tasks such as error/confirm. */
-    // CHECKME ak We may have to insert the entity into the default model group
-    protected EOEntity dummyEntity() {
-        if (_dummyEntity==null) {
-            _dummyEntity=new EOEntity();
-            _dummyEntity.setName("*all*");
-        }
-        return _dummyEntity;
-    }
+	private transient EOEntity _dummyEntity;
+
+	/** Utility to create a fake entity that can be used for tasks such as error/confirm.
+	 * creates also a fake EOModel to satisfy D2W */
+	protected EOEntity dummyEntity() {
+		if (_dummyEntity == null) {
+			_dummyEntity = new EOEntity();
+			_dummyEntity.setName("*all*");
+			// insert the fake entity into a fake model
+			EOModel dummy = new EOModel();
+			dummy.setName("DummyModel");
+			// set fake name for possible NPE
+			dummy.setAdaptorName("Dummy");
+			// set fake connection dictionary for possible NPE
+			dummy.setConnectionDictionary(new NSMutableDictionary());
+			EOModelGroup.defaultGroup().addModel(dummy);
+			dummy.addEntity(_dummyEntity);
+		}
+		return _dummyEntity;
+	}
 
     /**
      * Returns a fake entity that can be used for tasks such as error/confirm.
