@@ -29,6 +29,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -445,6 +446,10 @@ public class ERXFileUtilities {
         if (s == null) throw new IllegalArgumentException("string argument cannot be null");
         if (f == null) throw new IllegalArgumentException("file argument cannot be null");
         if (encoding == null) throw new IllegalArgumentException("encoding argument cannot be null");
+        File parentDirectory = f.getParentFile();
+		if (!parentDirectory.exists() && !parentDirectory.mkdirs()) {
+			throw new IOException("Failed to create the directory " + parentDirectory + ".");
+		}
         try (Reader reader = new BufferedReader(new StringReader(s));
              FileOutputStream fos = new FileOutputStream(f);
              Writer out = new BufferedWriter(new OutputStreamWriter(fos, encoding))) {
@@ -469,6 +474,10 @@ public class ERXFileUtilities {
         if (s == null) throw new IllegalArgumentException("string argument cannot be null");
         if (f == null) throw new IllegalArgumentException("file argument cannot be null");
         if (encoding == null) throw new IllegalArgumentException("encoding argument cannot be null");
+        Path parentDirectory = f.getParent();
+        if (Files.notExists(parentDirectory)) {
+			Files.createDirectories(parentDirectory);
+		}
         try (Reader reader = new BufferedReader(new StringReader(s));
              FileOutputStream fos = new FileOutputStream(f.toFile());
              Writer out = new BufferedWriter(new OutputStreamWriter(fos, encoding))) {
