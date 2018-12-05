@@ -32,7 +32,6 @@ import com.webobjects.foundation.NSMutableDictionary;
 import com.webobjects.foundation.NSValidation;
 
 import er.directtoweb.ERD2WContainer;
-import er.directtoweb.components.ERDCustomEditComponent;
 import er.directtoweb.delegates.ERDBranchDelegate;
 import er.directtoweb.delegates.ERDBranchInterface;
 import er.directtoweb.delegates.ERDPageDelegate;
@@ -265,10 +264,6 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 					return (WOComponent) cpi;
 				}
 			}
-		}
-		ERDCustomEditComponent attachmentEditor = ERD2WUtilities.enclosingComponentOfClass(sender, ERDCustomEditComponent.class);
-		if (attachmentEditor != null) {
-		    return (WOComponent) attachmentEditor.valueForKey("nextPage");
 		}
 		ERD2WInspectPage page = ERD2WUtilities.enclosingComponentOfClass(sender, ERD2WInspectPage.class);
 		EOEditingContext ec = eo != null ? eo.editingContext() : null;
