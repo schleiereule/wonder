@@ -144,7 +144,7 @@ public class ERSolrAdaptorChannel extends EOAdaptorChannel {
 			row = _fetchedRows.objectAtIndex(_fetchIndex++);
 
 			NSMutableDictionary<String, Object> snapShot = new NSMutableDictionary<>();
-			for (EOAttribute att : _fetchedEntity.attributes()) {
+			for (EOAttribute att : _fetchedEntity.attributesToFetch()) {
 				Object val = row.get(att.name());
 				snapShot.put(att.name(), val != null ? val : NSKeyValueCoding.NullValue);
 			}
