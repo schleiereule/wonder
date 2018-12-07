@@ -184,9 +184,7 @@ public class ERD2WListPage extends ERD2WPage implements ERDListPageInterface, Se
 	 * display.
 	 */
 	public void editingContextDidSaveChanges(NSNotification notif) {
-	    if (Objects.equals(sessionID(), ERXSession.currentSessionID())) {
-	        _hasToUpdate = true;
-	    }
+		_hasToUpdate = true;
 	}
 
 	/**
