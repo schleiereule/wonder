@@ -33,6 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.zip.GZIPInputStream;
@@ -915,6 +916,7 @@ public class ERXFileUtilities {
      * @param directory to be deleted
      * @return if the directory deleted successfully
      */
+    @Deprecated
     public static boolean deleteDirectory(File directory) {
         if (! directory.isDirectory()) return directory.delete();
 
@@ -932,6 +934,27 @@ public class ERXFileUtilities {
         if (!directory.delete() && deletedAllFiles) deletedAllFiles = false;
         return deletedAllFiles;
     }
+    
+
+    /**
+     * Deletes a given directory in a recursive fashion.
+     * 
+     * @param directory to be deleted
+     * @return if the directory deleted successfully
+     * @throws IOException
+     */
+	public static boolean deleteDirectory(Path directory) throws IOException {
+		// collect all files/directories
+		// sort them in reverse order (so directories come after the files)
+		// map the path to file (to avoid the otherwise required exception handling Files.delete(...))
+		// call delete on each file
+		Files.walk(directory).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+		// check the result
+		if (Files.exists(directory)) {
+			return false;
+		}
+		return true;
+	}
 
     /**
      * Java wrapper for call out to chmod.  Only works if your OS supports the chmod command.
