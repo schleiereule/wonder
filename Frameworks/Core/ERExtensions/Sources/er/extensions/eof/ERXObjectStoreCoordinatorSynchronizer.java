@@ -48,6 +48,8 @@ import er.extensions.remoteSynchronizer.ERXRemoteSynchronizer;
 public class ERXObjectStoreCoordinatorSynchronizer {
 	public static final Logger log = Logger.getLogger(ERXObjectStoreCoordinatorSynchronizer.class);
 
+	public static final Logger changesLog = Logger.getLogger(ERXObjectStoreCoordinatorSynchronizer.class.getCanonicalName() + "-changes");
+
 	public static final String SYNCHRONIZER_KEY = "_synchronizer";
 
 	private static ERXObjectStoreCoordinatorSynchronizer _synchronizer;
@@ -504,7 +506,76 @@ public class ERXObjectStoreCoordinatorSynchronizer {
 		public void addChange(Change changes) {
 			synchronized (_elements) {
 				_elements.add(changes);
+				if (changesLog.isTraceEnabled()) {
+					traceLogChange(changes, true);
+				}
 				_elements.notify();
+			}
+		}
+
+		/**
+		 * When an entity name is set via
+		 * er.extensions.eof.ERXObjectStoreCoordinatorSynchronizer-traceEntity
+		 * and
+		 * log4j.logger.er.extensions.eof.ERXObjectStoreCoordinatorSynchronizer-changes
+		 * is set to TRACE, this will log out all changes to the entities EOs.
+		 * It's called when a change is initially added to the queue and after
+		 * it has been successfully processed.
+		 * 
+		 * @param changes
+		 * @param isNew
+		 */
+		private void traceLogChange(Change changes, Boolean isNew) {
+			String debugEntityName = ERXProperties.stringForKey(ERXObjectStoreCoordinatorSynchronizer.class.getCanonicalName() + "-traceEntity");
+			if (debugEntityName != null) {
+				if (changes instanceof LocalChange) {
+					LocalChange lchange = (LocalChange) changes;
+					for (EOGlobalID aGID : lchange.insertedGIDs()) {
+						if (aGID instanceof EOKeyGlobalID && debugEntityName.equals(((EOKeyGlobalID) aGID).entityName())) {
+							if (isNew) {
+								changesLog.trace("Received local INSERT change from OSC " + ((ERXObjectStoreCoordinator) lchange.coordinator()).name() + ": " + lchange.inserted());
+							}
+							else {
+								changesLog.trace("Processed local INSERT change from OSC " + ((ERXObjectStoreCoordinator) lchange.coordinator()).name() + ": " + lchange.inserted());
+							}
+						}
+					}
+					for (EOGlobalID aGID : lchange.updatedGIDs()) {
+						if (aGID instanceof EOKeyGlobalID && debugEntityName.equals(((EOKeyGlobalID) aGID).entityName())) {
+							if (isNew) {
+								changesLog.trace("Received local UPDATE change from OSC " + ((ERXObjectStoreCoordinator) lchange.coordinator()).name() + ": " + lchange.updated());
+							}
+							else {
+								changesLog.trace("Processed local UPDATE change from OSC " + ((ERXObjectStoreCoordinator) lchange.coordinator()).name() + ": " + lchange.updated());
+							}
+						}
+					}
+					for (EOGlobalID aGID : lchange.deletedGIDs()) {
+						if (aGID instanceof EOKeyGlobalID && debugEntityName.equals(((EOKeyGlobalID) aGID).entityName())) {
+							if (isNew) {
+								changesLog.trace("Received local DELETE change from OSC " + ((ERXObjectStoreCoordinator) lchange.coordinator()).name() + ": " + lchange.deleted());
+							}
+							else {
+								changesLog.trace("Processed local DELETE change from OSC " + ((ERXObjectStoreCoordinator) lchange.coordinator()).name() + ": " + lchange.deleted());
+							}
+						}
+					}
+					if (lchange.invalidatedGIDs() != null) {
+						for (EOGlobalID aGID : lchange.invalidatedGIDs()) {
+							if (aGID instanceof EOKeyGlobalID && debugEntityName.equals(((EOKeyGlobalID) aGID).entityName())) {
+								if (isNew) {
+									changesLog.trace("Received local INVALIDATE change from OSC " + ((ERXObjectStoreCoordinator) lchange.coordinator()).name() + ": " + lchange.invalidated());
+								}
+								else {
+									changesLog.trace("Processed local INVALIDATE change from OSC " + ((ERXObjectStoreCoordinator) lchange.coordinator()).name() + ": " + lchange.invalidated());
+								}
+							}
+						}
+					}
+				}
+				else {
+					// TODO implement handling of remote changes
+				}
 			}
 		}
 
@@ -629,6 +700,9 @@ public class ERXObjectStoreCoordinatorSynchronizer {
 							process(sender, _updateProcessor, localChange.updated(), EODatabaseContext.UpdatedKey);
 							process(sender, _invalidateProcessor, localChange.invalidated(), EODatabaseContext.InvalidatedKey);
 							publishRemoteChanges(_transactionID++, localChange);
+							if (changesLog.isTraceEnabled()) {
+								traceLogChange(changes, false);
+							}
 						}
 						else if (changes instanceof RemoteChange) {
 							processRemoteChange((RemoteChange) changes);
@@ -744,19 +818,19 @@ public class ERXObjectStoreCoordinatorSynchronizer {
 			return _localCacheChanges;
 		}
 
-		public NSArray deletedGIDs() {
+		public NSArray<EOGlobalID> deletedGIDs() {
 			return _deletedGIDs;
 		}
 
-		public NSArray updatedGIDs() {
+		public NSArray<EOGlobalID> updatedGIDs() {
 			return _updatedGIDs;
 		}
 
-		public NSArray insertedGIDs() {
+		public NSArray<EOGlobalID> insertedGIDs() {
 			return _insertedGIDs;
 		}
 
-		public NSArray invalidatedGIDs() {
+		public NSArray<EOGlobalID> invalidatedGIDs() {
 			return _invalidatedGIDs;
 		}
 
