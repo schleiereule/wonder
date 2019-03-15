@@ -16,23 +16,18 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.webobjects.eoaccess.EOAdaptor;
 import com.webobjects.eoaccess.EOAttribute;
-import com.webobjects.eoaccess.EODatabase;
-import com.webobjects.eoaccess.EODatabaseContext;
 import com.webobjects.eoaccess.EOEntity;
 import com.webobjects.eoaccess.EOJoin;
 import com.webobjects.eoaccess.EOModel;
 import com.webobjects.eoaccess.EOModelGroup;
 import com.webobjects.eoaccess.EORelationship;
 import com.webobjects.eoaccess.ERXModel;
-import com.webobjects.eocontrol.EOCooperatingObjectStore;
 import com.webobjects.eocontrol.EOKeyValueCodingAdditions;
-import com.webobjects.eocontrol.EOObjectStoreCoordinator;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSBundle;
 import com.webobjects.foundation.NSDictionary;
@@ -51,12 +46,10 @@ import com.webobjects.foundation.NSSet;
 import com.webobjects.foundation._NSArrayUtilities;
 import com.webobjects.jdbcadaptor.JDBCAdaptor;
 
-import er.extensions.foundation.ERXArrayUtilities;
 import er.extensions.foundation.ERXConfigurationManager;
 import er.extensions.foundation.ERXFileUtilities;
 import er.extensions.foundation.ERXPatcher;
 import er.extensions.foundation.ERXProperties;
-import er.extensions.foundation.ERXSelectorUtilities;
 import er.extensions.foundation.ERXStringUtilities;
 import er.extensions.foundation.ERXSystem;
 import er.extensions.foundation.ERXValueUtilities;
@@ -165,10 +158,6 @@ public class ERXModelGroup extends EOModelGroup {
 	 */
 	public ERXModelGroup() {
 		cache = new Hashtable<>();
-
-		// register for CooperatingObjectStoreWasAddedNotification to fix inheritance problem due to EODatabase missing models when fetching
-		NSSelector<?> selector = ERXSelectorUtilities.notificationSelector("addMissingModelsToObjectStore");
-		NSNotificationCenter.defaultCenter().addObserver(this, selector, EOObjectStoreCoordinator.CooperatingObjectStoreWasAddedNotification, null);
 	}
 
 	/**
@@ -588,40 +577,6 @@ public class ERXModelGroup extends EOModelGroup {
 					if (child.parentEntity() != parent && !parent.subEntities().containsObject(child)) {
 						log.debug("Found entity: {} which should have: {} as it's parent.", child.name(), parent.name());
 						parent.addSubEntity(child);
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * When a fetch of a parent entity is carried out, the EODatabase may be
-	 * missing models that contain child entities of the parent entity. To
-	 * prevent this, we force loading of missing models that have the same
-	 * connection parameters and contain child entities.
-	 * 
-	 * @param cooperatingObjectStoreWasAddedNotification
-	 */
-	public void addMissingModelsToObjectStore(NSNotification cooperatingObjectStoreWasAddedNotification) {
-		EOObjectStoreCoordinator osc = (EOObjectStoreCoordinator) cooperatingObjectStoreWasAddedNotification.object();
-		NSArray<EOCooperatingObjectStore> cooperatingObjectStores = osc.cooperatingObjectStores();
-		for (EOCooperatingObjectStore cos : cooperatingObjectStores) {
-			if (cos instanceof EODatabaseContext) {
-				EODatabase db = ((EODatabaseContext) cos).database();
-				NSArray<EOModel> existingModels = db.models();
-				for (String anEntityName : ((NSArray<String>) ERXArrayUtilities.flatten(_subEntitiesCache.allValues(), true))) {
-					// get the model for the parent entity
-					EOModel aModel = entityNamed(anEntityName).model();
-					if (!existingModels.contains(aModel)) {
-						EOModel anExistingModel = existingModels.lastObject();
-						NSDictionary<String, Object> firstDict = anExistingModel.connectionDictionary();
-						NSDictionary<String, Object> secondDict = aModel.connectionDictionary();
-						boolean isEqualURL = StringUtils.equals(String.valueOf(firstDict.objectForKey("URL")), String.valueOf(secondDict.objectForKey("URL")));
-						boolean isEqualUsername = StringUtils.equals(String.valueOf(firstDict.objectForKey("username")), String.valueOf(secondDict.objectForKey("username")));
-						boolean isEqualAdaptorName = StringUtils.equals(String.valueOf(firstDict.objectForKey("adaptorName")), String.valueOf(secondDict.objectForKey("adaptorName")));
-						if (isEqualURL && isEqualUsername && isEqualAdaptorName) {
-							db.addModelIfCompatible(aModel);
-						}
 					}
 				}
 			}
