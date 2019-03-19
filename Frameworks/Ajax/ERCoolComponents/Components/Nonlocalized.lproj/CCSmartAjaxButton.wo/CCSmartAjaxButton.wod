@@ -12,6 +12,7 @@ Button : CCSubmitLinkButton {
     value = ^value;
     alt = ^alt;
     hotkey = ^hotkey;
+    additionalFunction = ^additionalFunction;
 }
 LocalizeValue : WOConditional {
   condition = localizeValue;
@@ -33,6 +34,7 @@ AjaxButton : AjaxSubmitButton {
 	updateContainerID = ^updateContainerID;
 	button = false;
     hotkey = ^hotkey;
+    additionalFunction = ^additionalFunction;
 }
 AjaxLink : AjaxUpdateLink {
     action = ^action;
@@ -40,6 +42,7 @@ AjaxLink : AjaxUpdateLink {
     alt = ^alt;
     updateContainerID = ^updateContainerID;
     hotkey = ^hotkey;
+    additionalFunction = ^additionalFunction;
 }
 DontSubmitForm : WOConditional {
   condition = ^dontSubmitForm;

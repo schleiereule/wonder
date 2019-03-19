@@ -34,6 +34,7 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 		public static final String pageActionConfiguration = "pageActionConfiguration";
 		public static final String updateContainerKey = "updateContainerKey";
 		public static final String hotkey = "hotkey";
+		public static final String additionalFunction = "additionalFunction";
 		public static final String buttonLabel = "buttonLabel";
 		public static final String auxiliaryCssClass = "auxiliaryCssClass";
 	}
@@ -143,6 +144,23 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 		}
 		return branchHotkey();
 	}
+	
+    /**
+     * gets the additionalFunction to execute before the server-side action is called
+     * 
+     * @return the additionalFunction
+     */
+    public String additionalFunction() {
+        if (branchConfiguration() != null) {
+            NSDictionary<String, Object> c = (NSDictionary<String, Object>) branchConfiguration().objectForKey(branchName());
+            if (c != null) {
+                String additionalFunction = (String) c.objectForKey(Keys.additionalFunction);
+                if (ERXStringUtilities.isNotBlank(additionalFunction))
+                    return additionalFunction;
+            }
+        }
+        return branchAdditionalFunction();
+    }
 	
 	/**
      * gets the button label
@@ -264,6 +282,15 @@ public class ERMDPageActionControllerButton extends ERMDActionButton implements 
 	public String branchHotkey() {
 		return (String) branch().valueForKey(ERDBranchDelegate.BRANCH_HOTKEY);
 	}
+
+    /**
+     * Implementation of the {@link ERDBranchDelegate ERDBranchDelegate}
+     * 
+     * @return an additionalFunction to bind to the branch action
+     */
+    public String branchAdditionalFunction() {
+        return (String) branch().valueForKey(ERDBranchDelegate.BRANCH_ADDITIONAL_FUNCTION);
+    }
 
 	public Boolean dontSubmitForm() {
 		if (branchRequiresFormSubmit())

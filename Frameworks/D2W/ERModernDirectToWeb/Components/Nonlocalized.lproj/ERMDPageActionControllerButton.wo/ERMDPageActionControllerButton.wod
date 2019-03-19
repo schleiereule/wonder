@@ -22,6 +22,7 @@ BranchButton : CCSmartAjaxButton {
 	updateContainerID = updateContainerID;
 	dontSubmitForm = dontSubmitForm;
 	hotkey = hotkey;
+	additionalFunction = additionalFunction;
 }
 
 BranchButton2 : AjaxSubmitButton {

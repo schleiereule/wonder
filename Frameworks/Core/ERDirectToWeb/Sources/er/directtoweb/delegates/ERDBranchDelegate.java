@@ -88,6 +88,12 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 		 * Returns true if the method requires a form submit.
 		 */
 		public boolean requiresFormSubmit() default true;
+		
+        /**
+         * Returns a JS function to be executed before the server-side action is called.
+         */
+        public String additionalFunction() default "";
+
 	}
 
 	/** logging support */
@@ -103,6 +109,7 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 	public static final String BRANCH_BUTTON_ID = "branchButtonID";
 	public static final String BRANCH_NAME = "branchName";
 	public static final String BRANCH_HOTKEY = "branchHotkey";
+	public static final String BRANCH_ADDITIONAL_FUNCTION = "branchAdditionalFunction";
 	public static final String BRANCH_LABEL = "branchButtonLabel";
 	public static final String BRANCH_PREFIX = "Button";
 	public static final String BRANCH_GROUP = "branchGroup";
@@ -163,6 +170,7 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 		}
 		String group = ERXProperties.stringForKey("er.directtoweb.delegates.ERDBranchDelegate.defaultGroup");
 		String hotkey = null;
+		String additionalFunction = null;
 		boolean requiresFormSubmit = true;
 		try {
 			Method m = getClass().getMethod(method, new Class[] { WOComponent.class });
@@ -171,13 +179,14 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 				group = info.group();
 				requiresFormSubmit = info.requiresFormSubmit();
 				hotkey = info.hotkey();
+				additionalFunction = info.additionalFunction();
 			}
 		} catch (NoSuchMethodException e) {
 			log.error("Caught no such method exception while calculating the branch choices for context: " + this + " exception: " + e.getMessage());
 		} catch (SecurityException e) {
 			log.error("Caught security exception while calculating the branch choices for context: " + this + " exception: " + e.getMessage());
 		}
-		return branchChoiceDictionary(method, label, group, hotkey, requiresFormSubmit);
+		return branchChoiceDictionary(method, label, group, hotkey, additionalFunction, requiresFormSubmit);
 	}
 
 	/**
@@ -191,7 +200,7 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 	 *            name of the group of the method
 	 * @return NSDictionary suitable as a branch choice.
 	 */
-	protected NSDictionary branchChoiceDictionary(String method, String label, String group, String hotkey, boolean requiresFormSubmit) {
+	protected NSDictionary branchChoiceDictionary(String method, String label, String group, String hotkey, String additionalFunction, boolean requiresFormSubmit) {
 		if (label == null) {
 			label = ERXLocalizer.currentLocalizer().localizedDisplayNameForKey(BRANCH_PREFIX, method);
 		}
@@ -199,7 +208,7 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 			group = ERXProperties.stringForKey("er.directtoweb.delegates.ERDBranchDelegate.defaultGroup");
 		}
 		return ERXDictionaryUtilities
-				.dictionaryWithObjectsAndKeys(new Object[] { method, BRANCH_NAME, label, BRANCH_LABEL, method + "Action", BRANCH_BUTTON_ID, group, BRANCH_GROUP, hotkey, BRANCH_HOTKEY, requiresFormSubmit, BRANCH_REQUIRESFORMSUBMIT });
+				.dictionaryWithObjectsAndKeys(new Object[] { method, BRANCH_NAME, label, BRANCH_LABEL, method + "Action", BRANCH_BUTTON_ID, group, BRANCH_GROUP, hotkey, BRANCH_HOTKEY, additionalFunction, BRANCH_ADDITIONAL_FUNCTION, requiresFormSubmit, BRANCH_REQUIRESFORMSUBMIT });
 	}
 
 	/**
@@ -224,6 +233,7 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 				String label = null;
 				String group = null;
 				String hotkey = null;
+				String additionalFunction = null;
 				boolean requiresFormSubmit = true;
 
 				NSMutableDictionary entry = new NSMutableDictionary();
@@ -234,6 +244,7 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 					label = (String) entry.objectForKey(BRANCH_LABEL);
 					group = (String) entry.objectForKey(BRANCH_GROUP);
 					hotkey = (String) entry.objectForKey(BRANCH_HOTKEY);
+					additionalFunction = (String) entry.objectForKey(BRANCH_ADDITIONAL_FUNCTION);
 				} else if (o instanceof String) {
 					method = (String) o;
 					entry.setObjectForKey(method, BRANCH_NAME);
@@ -268,6 +279,8 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 						requiresFormSubmit = info.requiresFormSubmit();
 						if (StringUtils.isBlank(hotkey))
 							hotkey = info.hotkey();
+						if (StringUtils.isBlank(additionalFunction))
+							additionalFunction = info.additionalFunction();
 					}
 				} catch (NoSuchMethodException e) {
 					log.error("Caught no such method exception while calculating the branch choices for context: " + this + " exception: " + e.getMessage());
@@ -283,6 +296,9 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 				entry.setObjectForKey(group, BRANCH_GROUP);
 				if (StringUtils.isNotBlank(hotkey)) {
 					entry.setObjectForKey(hotkey, BRANCH_HOTKEY);
+				}
+				if (StringUtils.isNotBlank(additionalFunction)) {
+					entry.setObjectForKey(additionalFunction, BRANCH_ADDITIONAL_FUNCTION);
 				}
 				entry.setObjectForKey(requiresFormSubmit, BRANCH_REQUIRESFORMSUBMIT);
 				entry.setObjectForKey(method + "Action", BRANCH_BUTTON_ID);
@@ -310,6 +326,7 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 			for (Enumeration e = new NSArray(methods).objectEnumerator(); e.hasMoreElements();) {
 				String group = null;
 				String hotkey = null;
+				String additionalFunction = null;
 				Method method = (Method) e.nextElement();
 				if (method.getParameterTypes().length == 1 && method.getParameterTypes()[0] == WOComponent.class && !method.getName().equals("nextPage") && method.getName().charAt(0) != '_'
 						&& ((method.getModifiers() & Modifier.PUBLIC) == Modifier.PUBLIC)) {
@@ -322,6 +339,7 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 						String availablePages = info.availablePages();
 						group = info.group();
 						hotkey = info.hotkey();
+						additionalFunction = info.additionalFunction();
 						requiresFormSubmit = info.requiresFormSubmit();
 						if (scope.length() > 0) {
 							if ("object".equals(scope) && context.valueForKey("object") == null) {
@@ -339,7 +357,7 @@ public abstract class ERDBranchDelegate implements ERDBranchDelegateInterface {
 						}
 					}
 					if (isAllowed) {
-						NSDictionary branch = branchChoiceDictionary(method.getName(), null, group, hotkey, requiresFormSubmit);
+						NSDictionary branch = branchChoiceDictionary(method.getName(), null, group, hotkey, additionalFunction, requiresFormSubmit);
 						methodChoices.addObject(branch);
 					}
 				}

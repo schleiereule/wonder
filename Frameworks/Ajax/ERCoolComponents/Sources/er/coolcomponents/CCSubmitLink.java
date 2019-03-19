@@ -1,5 +1,7 @@
 package er.coolcomponents;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.webobjects.appserver.WOActionResults;
 import com.webobjects.appserver.WOContext;
 import com.webobjects.appserver.WORequest;
@@ -108,7 +110,7 @@ public class CCSubmitLink extends ERXNonSynchronizingComponent {
 	public String linkScript()
 	{
 		String func = additionalFunction();
-		String addInFunction = (func.length() > 0) ? "', '" + func : ""; 
+		String addInFunction = (StringUtils.isNotBlank(func)) ? "', '" + func : ""; 
 		return ("javascript:CCSL.submit('" + fieldName() + addInFunction + "');");
 	}
 	
