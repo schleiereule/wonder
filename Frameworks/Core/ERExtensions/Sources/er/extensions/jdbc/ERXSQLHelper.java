@@ -937,6 +937,17 @@ public class ERXSQLHelper {
 	public String sqlForCreateIndex(String indexName, String tableName, ColumnIndex... columnIndexes) {
 		throw new UnsupportedOperationException("There is no " + getClass().getSimpleName() + " implementation for generating index expressions.");
 	}
+	
+	/**
+	 * Returns the SQL expression for creating an sequence
+	 * 
+	 * @param sequenceName
+	 *            the name of the sequence to create
+	 * @return a SQL expression
+	 */
+	public String sqlForCreateSequence(String sequenceName) {
+		throw new UnsupportedOperationException("There is no " + getClass().getSimpleName() + " implementation for generating sequence expressions.");
+	}
 
 	/**
 	 * IndexLimit represents the reference to a column for use in an index
@@ -1870,6 +1881,11 @@ public class ERXSQLHelper {
 			}
 			return "CREATE INDEX " + indexName + " ON " + tableName + "(" + columnNames.componentsJoinedByString(",") + ")";
 		}
+		
+		@Override
+		public String sqlForCreateSequence(String sequenceName) {
+			return "CREATE SEQUENCE " + sequenceName;
+		}
 
 		@Override
 		public String sqlForRegularExpressionQuery(String key, String value) {
@@ -2456,6 +2472,11 @@ public class ERXSQLHelper {
 				columnNames.addObject(columnIndex.columnName());
 			}
 			return "CREATE INDEX " + indexName + " ON " + tableName + "(" + columnNames.componentsJoinedByString(",") + ")";
+		}
+		
+		@Override
+		public String sqlForCreateSequence(String sequenceName) {
+			return "CREATE SEQUENCE " + sequenceName;
 		}
 
 		@Override
