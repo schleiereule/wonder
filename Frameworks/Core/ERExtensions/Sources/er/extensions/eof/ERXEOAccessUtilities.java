@@ -258,39 +258,79 @@ public class ERXEOAccessUtilities {
      * @param exp
      *            SQL expression
      */
+	public static void evaluateSQLWithEntity(EOEditingContext ec, EOEntity entity, String exp) {
+		evaluateSQLWithModel(ec, entity.model(), exp);
+	}
+	
+    /**
+     * Utility method used to execute arbitrary SQL. This has the advantage over
+     * the {@link com.webobjects.eoaccess.EOUtilities EOUtilities}
+     * <code>rawRowsForSQL</code> in that it can be used with other statements
+     * besides just SELECT without throwing exceptions.
+     * 
+     * @param ec
+     *            editing context that determines which model group and database
+     *            context to use.
+     * @param modelName
+     *            the name of the model connected to the database you wish to
+     *            execute SQL against
+     * @param exp
+     *            SQL expression
+     */
+	public static void evaluateSQLWithModelNamed(EOEditingContext ec, String modelName, String exp) {
+		EOModel model = EOUtilities.modelGroup(ec).modelNamed(modelName);
+		evaluateSQLWithModel(ec, model, exp);
+	}
+    
+    /**
+     * Utility method used to execute arbitrary SQL. This has the advantage over
+     * the {@link com.webobjects.eoaccess.EOUtilities EOUtilities}
+     * <code>rawRowsForSQL</code> in that it can be used with other statements
+     * besides just SELECT without throwing exceptions.
+     * 
+     * @param ec
+     *            editing context that determines which model group and database
+     *            context to use.
+     * @param model
+     *            the model connected to the database you wish to
+     *            execute SQL against
+     * @param exp
+     *            SQL expression
+     */
     // ENHANCEME: Should support the use of bindings
     // ENHANCEME: Could also support the option of using a seperate EOF stack so
     // as to execute
     // sql in a non-blocking fashion.
-    public static void evaluateSQLWithEntity(EOEditingContext ec, EOEntity entity, String exp) {
-        EODatabaseContext dbContext = EODatabaseContext.registeredDatabaseContextForModel(entity.model(), ec);
-        dbContext.lock();
-        try {
-	        EOAdaptorChannel adaptorChannel = dbContext.availableChannel().adaptorChannel();
-	        if (!adaptorChannel.isOpen()) {
-	        	adaptorChannel.openChannel();
-	        }
-	        EOSQLExpressionFactory factory = adaptorChannel.adaptorContext().adaptor().expressionFactory();
+	public static void evaluateSQLWithModel(EOEditingContext ec, EOModel model, String exp) {
+		EODatabaseContext dbContext = EODatabaseContext.registeredDatabaseContextForModel(model, ec);
+		dbContext.lock();
+		try {
+			EOAdaptorChannel adaptorChannel = dbContext.availableChannel().adaptorChannel();
+			if (!adaptorChannel.isOpen()) {
+				adaptorChannel.openChannel();
+			}
+			EOSQLExpressionFactory factory = adaptorChannel.adaptorContext().adaptor().expressionFactory();
 			if (ERXEOAccessUtilities.log.isInfoEnabled()) {
 				ERXEOAccessUtilities.log.info("Executing " + exp);
 			}
-	        // If channel.evaluateExpression throws when committing, it won't close the JDBC transaction
-	        // Probably a bug in JDBCChannel, but we must take care of it
-	        boolean contextHadOpenTransaction = adaptorChannel.adaptorContext().hasOpenTransaction();
+			// If channel.evaluateExpression throws when committing, it won't
+			// close the JDBC transaction
+			// Probably a bug in JDBCChannel, but we must take care of it
+			boolean contextHadOpenTransaction = adaptorChannel.adaptorContext().hasOpenTransaction();
 			try {
-				adaptorChannel.evaluateExpression(factory.expressionForString(exp));        
+				adaptorChannel.evaluateExpression(factory.expressionForString(exp));
 			}
 			catch (EOGeneralAdaptorException e) {
-				if (adaptorChannel.adaptorContext().hasOpenTransaction() && ! contextHadOpenTransaction) {
+				if (adaptorChannel.adaptorContext().hasOpenTransaction() && !contextHadOpenTransaction) {
 					adaptorChannel.adaptorContext().rollbackTransaction();
 				}
 				throw e;
 			}
-        }
-        finally {
-        	dbContext.unlock();
-        }
-    }
+		}
+		finally {
+			dbContext.unlock();
+		}
+	}
     
     /**
      * Creates the SQL which is used by the provides EOFetchSpecification.
