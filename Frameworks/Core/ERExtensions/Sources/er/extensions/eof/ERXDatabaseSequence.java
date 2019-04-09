@@ -36,7 +36,7 @@ public class ERXDatabaseSequence {
 				switch (sqlState) {
 				case "42P07": // postgresql sequence already exists
 					return new ERXDatabaseSequence(editingContext, modelName, name);
-				case "oracle exists": // oracle sequence already exists
+				case "42000": // oracle sequence already exists
 					return new ERXDatabaseSequence(editingContext, modelName, name);
 				default:
 					log.error(e);
