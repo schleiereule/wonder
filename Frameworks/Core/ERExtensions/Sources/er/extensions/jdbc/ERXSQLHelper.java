@@ -1884,7 +1884,8 @@ public class ERXSQLHelper {
 		
 		@Override
 		public String sqlForCreateSequence(String sequenceName) {
-			return "CREATE SEQUENCE " + sequenceName;
+			// disable caching, which is on by default in oracle and will cause an increment of 20
+			return "CREATE SEQUENCE " + sequenceName + " NOCACHE";
 		}
 
 		@Override
@@ -2476,6 +2477,7 @@ public class ERXSQLHelper {
 		
 		@Override
 		public String sqlForCreateSequence(String sequenceName) {
+			// postgres by default uses a cache of 1, so all is good
 			return "CREATE SEQUENCE " + sequenceName;
 		}
 
