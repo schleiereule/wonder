@@ -1460,7 +1460,8 @@ public class ERXExtensions extends ERXFrameworkPrincipal {
 				}
 			}
 		}
-		else {
+		
+		if (_userpresentableDescriptionDelegate != null) {
 			return _userpresentableDescriptionDelegate.userPresentableDescriptionForObject(eo);
 		}
 		
