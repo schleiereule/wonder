@@ -21,9 +21,8 @@ import er.modern.directtoweb.components.buttons.ERMDDeleteButton.Keys;
 public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 
 	/**
-	 * Do I need to update serialVersionUID? See section 5.6 <cite>Type Changes Affecting
-	 * Serialization</cite> on page 51 of the
-	 * <a href="http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf">Java Object Serialization Spec</a>
+	 * Do I need to update serialVersionUID? See section 5.6 <cite>Type Changes Affecting Serialization</cite> on page
+	 * 51 of the <a href="http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf">Java Object Serialization Spec</a>
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -33,6 +32,7 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 	public static final NSArray<String> toOneRelationshipDependentKeys = new NSArray<String>("task", "entity", "parentRelationship", "frame", "isEntityDeletable", "isEntityEditable", "isEntityInspectable", "readOnly", "object.canDelete",
 			"object.canUpdate", "object.isNonNull");
 	public static final NSArray<String> queryControllerDependentKeys = new NSArray<String>("task", "frame");
+	public static final NSArray<String> listControllerDependentKeys = new NSArray<String>("task", "frame", "subTask");
 
 	public static final NSDictionary<String, NSArray<String>> dependentKeys;
 
@@ -43,6 +43,7 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 		keys.setObjectForKey(toManyRelationshipDependentKeys, "toManyControllerChoices");
 		keys.setObjectForKey(toOneRelationshipDependentKeys, "toOneControllerChoices");
 		keys.setObjectForKey(queryControllerDependentKeys, "queryControllerChoices");
+		keys.setObjectForKey(listControllerDependentKeys, "listControllerChoices");
 		dependentKeys = keys.immutableClone();
 	}
 
@@ -62,25 +63,25 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 	public NSArray<String> dependentKeys(String keyPath) {
 		return dependentKeys.objectForKey(keyPath);
 	}
-	
+
 	public Object inspectControllerChoices(D2WContext c) {
 		NSMutableArray<String> choices = new NSMutableArray<String>();
-		EOEnterpriseObject eo = (EOEnterpriseObject)c.valueForKey("object");
+		EOEnterpriseObject eo = (EOEnterpriseObject) c.valueForKey("object");
 		EOEntity e = c.entity();
 		boolean unguarded = !ERXGuardedObjectInterface.class.isAssignableFrom(classForEntity(e));
 		boolean isEntityEditable = ERXValueUtilities.booleanValue(c.valueForKey("isEntityEditable"));
 		boolean isEntityDeletable = ERXValueUtilities.booleanValue(c.valueForKey("isEntityDeletable"));
-		boolean canUpdate = eo instanceof ERXGuardedObjectInterface?((ERXGuardedObjectInterface)eo).canUpdate():unguarded;
-		boolean canDelete = eo instanceof ERXGuardedObjectInterface?((ERXGuardedObjectInterface)eo).canDelete():unguarded;
+		boolean canUpdate = eo instanceof ERXGuardedObjectInterface ? ((ERXGuardedObjectInterface) eo).canUpdate() : unguarded;
+		boolean canDelete = eo instanceof ERXGuardedObjectInterface ? ((ERXGuardedObjectInterface) eo).canDelete() : unguarded;
 		boolean isEntityWritable = !ERXValueUtilities.booleanValue(c.valueForKey("readOnly"));
 
-		if(!c.frame()) {
+		if (!c.frame()) {
 			choices.add("_return");
 		}
-		if(isEntityWritable && isEntityEditable && canUpdate) {
+		if (isEntityWritable && isEntityEditable && canUpdate) {
 			choices.add("_edit");
 		}
-		if(isEntityWritable && isEntityDeletable && canDelete) {
+		if (isEntityWritable && isEntityDeletable && canDelete) {
 			choices.add("_deleteReturn");
 		}
 		return choices;
@@ -175,6 +176,16 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 		EOEnterpriseObject eo = (EOEnterpriseObject) c.valueForKey("object");
 		choices.add("_editListRelated");
 		return choices;
+	}
+
+	public Object listControllerChoices(D2WContext c) {
+		if ("pick".equals(c.valueForKey("subTask"))) {
+			return new NSArray<String>("_selectAll", "_selectNone");
+		}
+		if (c.frame()) {
+			return NSArray.emptyArray();
+		}
+		return new NSArray<String>("_return");
 	}
 
 	public Object queryControllerChoices(D2WContext c) {
