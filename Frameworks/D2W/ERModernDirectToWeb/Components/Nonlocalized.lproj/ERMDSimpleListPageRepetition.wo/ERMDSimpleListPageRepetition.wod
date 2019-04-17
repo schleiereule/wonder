@@ -49,6 +49,13 @@ LeftActions: WORepetition {
 	list = leftActions;
 }
 
+isSubTaskPick : WOConditional {
+    condition = isSubTaskPick;
+}
+
+checkBox : ERDSelectionComponent {
+}
+
 ObjectTableHeaderRow: WOGenericContainer {
 	_unroll = true;
 	elementName = "tr";

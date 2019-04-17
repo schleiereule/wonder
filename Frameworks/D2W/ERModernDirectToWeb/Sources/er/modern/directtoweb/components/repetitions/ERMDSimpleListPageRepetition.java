@@ -32,4 +32,8 @@ public class ERMDSimpleListPageRepetition extends ERMDListPageRepetition {
         super(context);
     }
     
+    public boolean isSubTaskPick() {
+        return "pick".equals(d2wContext().valueForKey("subTask"));
+    }
+    
 }
