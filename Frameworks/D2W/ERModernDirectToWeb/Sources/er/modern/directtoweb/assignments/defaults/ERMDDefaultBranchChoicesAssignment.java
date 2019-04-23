@@ -1,5 +1,6 @@
 package er.modern.directtoweb.assignments.defaults;
 
+import com.webobjects.appserver.WOComponent;
 import com.webobjects.directtoweb.D2WContext;
 import com.webobjects.eoaccess.EOEntity;
 import com.webobjects.eoaccess.EORelationship;
@@ -12,6 +13,7 @@ import com.webobjects.foundation.NSMutableArray;
 import com.webobjects.foundation.NSMutableDictionary;
 
 import er.directtoweb.assignments.ERDAssignment;
+import er.directtoweb.pages.ERD2WPickListPage;
 import er.extensions.eof.ERXEOControlUtilities;
 import er.extensions.eof.ERXGuardedObjectInterface;
 import er.extensions.eof.ERXNonNullObjectInterface;
@@ -180,7 +182,17 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 
 	public Object listControllerChoices(D2WContext c) {
 		if ("pick".equals(c.valueForKey("subTask"))) {
-			return new NSArray<String>("_selectAll", "_selectNone");
+            NSMutableArray<String> choices = new NSMutableArray<String>("_return", "_selectAllOnPage", "_selectNoneOnPage");
+
+            // add delete method if list is not empty
+            WOComponent page = (WOComponent) c.valueForKeyPath("session.context.page");
+            if (page instanceof ERD2WPickListPage) {
+                ERD2WPickListPage pickPage = (ERD2WPickListPage) page;
+                if (pickPage.displayGroup().displayedObjects().count() > 0) {
+                    choices.add("_batchDelete");
+                }
+            }
+            return choices;
 		}
 		if (c.frame()) {
 			return NSArray.emptyArray();

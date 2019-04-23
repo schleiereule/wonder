@@ -1,6 +1,7 @@
 <webobject name = "PageWrapper">
   <webobject name = "RequiredWrapper">
     <webobject name = "NotIsListEmpty">
+      <webobject name = "ErrorBlock"/>
       <webobject name = "HiddenField" />
       <webobject name = "ShowTopActionBlock">
         <webobject name = "TopActionBlock">
@@ -22,18 +23,8 @@
       </webobject>
       <webobject name = "ShowBottomActionBlock">
         <webobject name = "BottomActionBlock">
-          <ul class = "ActionList">
-            <webobject name = "ShowCancel">
-              <li><webobject name = "CancelPageButton" /></li>
-            </webobject>
-            <webobject name = "ShowActions">
-              <li><webobject name = "SelectAllButton" /></li>
-              <li><webobject name = "UnselectAllButton" /></li>
-            </webobject>
-            <webobject name = "NotHasBranchChoices">
-              <li><webobject name = "BackActionButton" /></li>
-            </webobject>
-          </ul>
+        <webobject name = "BottomActions" />
+        <webobject name = "SecondaryActionBlock" />
           <webobject name = "HasBranchChoices">
             <ul class = "ActionList BranchActionList">
               <webobject name = "BranchChoices">
@@ -48,12 +39,14 @@
       <webobject name = "EmptyMessageComponent" />
       <webobject name = "ShowBottomActionBlock">
         <webobject name = "BottomActionBlock">
-          <webobject name = "HideReturnOnSelect">
-            <webobject name = "ShowCancel">
-              <ul class = "ActionList">
-                <li> <webobject name = "ReturnButton" /> </li>
-              </ul>
-            </webobject>
+        <webobject name = "BottomActions" />
+        <webobject name = "SecondaryActionBlock" />
+          <webobject name = "HasBranchChoices">
+            <ul class = "ActionList BranchActionList">
+              <webobject name = "BranchChoices">
+                <li><webobject name = "BranchActionButton" /></li>
+              </webobject>
+            </ul>
           </webobject>
         </webobject>
       </webobject>

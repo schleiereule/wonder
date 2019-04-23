@@ -1,5 +1,6 @@
 package er.modern.directtoweb.interfaces;
 
+import com.webobjects.appserver.WODisplayGroup;
 import com.webobjects.directtoweb.D2WSwitchComponent;
 import com.webobjects.directtoweb.EditRelationshipPageInterface;
 import com.webobjects.foundation.NSArray;
@@ -27,4 +28,11 @@ public interface ERMEditRelationshipPageInterface extends EditRelationshipPageIn
 	 */
 	public void setMasterObjectAndRelationshipKey(NSArray<?> a);
 	
+    /**
+     * Display group for the related objects
+     * 
+     * @return WODisplayGroup lazily instantiated display group.
+     */
+    public WODisplayGroup relationshipDisplayGroup();
+
 }

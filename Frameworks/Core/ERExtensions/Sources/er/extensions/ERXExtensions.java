@@ -76,7 +76,7 @@ import er.extensions.eof.ERXGenericRecord;
 import er.extensions.eof.ERXModelGroup;
 import er.extensions.eof.ERXObjectStoreCoordinatorPool;
 import er.extensions.eof.ERXSharedEOLoader;
-import er.extensions.eof.UserPresentableDescriptionDelegate;
+import er.extensions.eof.ERXUserPresentableDescriptionDelegate;
 import er.extensions.eof.qualifiers.ERXFullTextQualifier;
 import er.extensions.eof.qualifiers.ERXFullTextQualifierSupport;
 import er.extensions.eof.qualifiers.ERXPrimaryKeyListQualifier;
@@ -1444,7 +1444,7 @@ public class ERXExtensions extends ERXFrameworkPrincipal {
     	}
     }
     
-    private static UserPresentableDescriptionDelegate _userpresentableDescriptionDelegate;
+    private static ERXUserPresentableDescriptionDelegate _userpresentableDescriptionDelegate;
     
 	public static String userPresentableDescriptionForObject(ERXGenericRecord eo) {
 		
@@ -1452,7 +1452,7 @@ public class ERXExtensions extends ERXFrameworkPrincipal {
 			String delegateClassName = ERXProperties.stringForKey("er.extensions.UserPresentableDescriptionDelegate");
 			if (ERXStringUtilities.isNotBlank(delegateClassName)) {
 				try {
-					Class<? extends UserPresentableDescriptionDelegate> delegateClass = _NSUtilities.classWithName(delegateClassName);
+					Class<? extends ERXUserPresentableDescriptionDelegate> delegateClass = _NSUtilities.classWithName(delegateClassName);
 					_userpresentableDescriptionDelegate = delegateClass.newInstance();
 				}
 				catch (InstantiationException | IllegalAccessException e) {

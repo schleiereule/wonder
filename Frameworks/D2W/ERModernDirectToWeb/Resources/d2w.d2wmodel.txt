@@ -1,5 +1,6 @@
 (
     0 : *true* => useAjaxControlsWhenEmbedded = "false" [com.webobjects.directtoweb.BooleanAssignment],
+    0 : task = 'list' => listControllerChoices = "<ERMDDefaultBranchChoicesAssignment>" [er.modern.directtoweb.assignments.defaults.ERMDDefaultBranchChoicesAssignment],
     0 : (task = 'editRelationship' and parentRelationship.isToMany = (java.lang.Number)'1') => belowControllerChoices = "toManyControllerChoices" [ERDDelayedKeyValueAssignment],
     0 : task = 'query' => queryControllerChoices = "<ERMDDefaultBranchChoicesAssignment>" [er.modern.directtoweb.assignments.defaults.ERMDDefaultBranchChoicesAssignment],
     0 : *true* => pageActionController = "er.modern.directtoweb.delegates.defaults.ERMDDefaultPageActionDelegate" [er.directtoweb.ERDDelayedObjectCreationAssignment],
@@ -11,6 +12,7 @@
     0 : task = 'inspect' => inspectControllerChoices = "<ERMDDefaultBranchChoicesAssignment>" [er.modern.directtoweb.assignments.defaults.ERMDDefaultBranchChoicesAssignment],
     0 : (task = 'editRelationship' and not (parentRelationship.isToMany = (java.lang.Number)'1')) => belowControllerChoices = "toOneControllerChoices" [ERDDelayedKeyValueAssignment],
     0 : *true* => useAjaxControls = "true" [com.webobjects.directtoweb.BooleanAssignment],
+    0 : task = 'list' => belowControllerChoices = "listControllerChoices" [ERDDelayedKeyValueAssignment],
     0 : task = 'inspect' => belowControllerChoices = "inspectControllerChoices" [ERDDelayedKeyValueAssignment],
     0 : pageConfiguration like '*Embedded*' => useAjaxControls = "true" [com.webobjects.directtoweb.BooleanAssignment],
     0 : *true* => typeAheadSearchTemplate = "*@@searchValue@@*" [com.webobjects.directtoweb.Assignment],

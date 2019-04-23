@@ -1,8 +1,20 @@
+ErrorBlock : ERMODErrorBlock {
+  d2wContext = d2wContext;
+  errorMessage = errorMessage;
+  errorMessages = errorMessages;
+}
+
 ReturnButton: CCSubmitLinkButton {
 	alt = "Returns to the previous page";
 	action = backAction;
 	value = "Return";
 	class = "Button PageButton ReturnPageButton";
+}
+
+SecondaryActionBlock: ERMODSecondaryActionButtons {
+	d2wContext = d2wContext;
+	dataSource = dataSource;
+	displayGroup = displayGroup;
 }
 
 NotIsListEmpty: WOConditional {
@@ -23,11 +35,6 @@ PrinterButton: ERDPrinterButton {
 	dataSource = dataSource;
 	displayGroup = displayGroup;
 	task = "list";
-}
-
-NotHasBranchChoices: WOConditional {
-	condition = hasBranchChoices;
-	negate = true;
 }
 
 HasBranchChoices: WOConditional {
@@ -117,38 +124,10 @@ ShowCancel: WOConditional {
 	condition = showCancel;
 }
 
-ShowActions: WOConditional {
-	condition = d2wContext.showActions;
-}
-
-BackActionButton: CCSubmitLinkButton {
-	action = backAction;
-	value = d2wContext.pickButtonLabel;
-	class = "Button PageButton BackPageButton";
-}
-
-CancelPageButton: CCSubmitLinkButton {
-	action = nextPage;
-	value = "Cancel";
-	class = "Button PageButton CancelPageButton";
-}
-
 BranchActionButton: CCSubmitLinkButton {
 	action = backAction;
 	value = branch.branchButtonLabel;
 	class = "Button PageButton BranchPageButton";
-}
-
-SelectAllButton: CCSubmitLinkButton {
-	action = selectAll;
-	value = "Select All";
-	class = "Button PageButton SelectAllPageButton";
-}
-
-UnselectAllButton: CCSubmitLinkButton {
-	action = unselectAll;
-	value = "Select None";
-	class = "Button PageButton DeselectAllPageButton";
 }
 
 RequiredWrapper : ERMODRequiredWrapper {
@@ -171,6 +150,11 @@ ShowTopActionBlock : WOConditional {
 BottomActionBlock : WOGenericContainer {
 	elementName = "div";
 	class = d2wContext.classForBottomActionBlock;
+}
+
+BottomActions: ERD2WExtraDisplayPropertyKeysComponent {
+	localContext = d2wContext;
+	extraPropertiesKey = "belowControllerPropertyKeys";
 }
 
 TopActionBlock : WOGenericContainer {
