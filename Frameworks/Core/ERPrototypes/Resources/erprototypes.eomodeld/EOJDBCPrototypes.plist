@@ -409,10 +409,16 @@
             width = 36; 
         }, 
         {
+            adaptorValueConversionClassName = "er.extensions.eof.ERXStringType"; 
+            adaptorValueConversionMethodName = typeToString; 
             columnName = ""; 
             externalType = varchar; 
             factoryMethodArgumentType = EOFactoryMethodArgumentIsNSString; 
             name = stringType; 
+            valueClassName = "er.extensions.eof.ERXStringType"; 
+            valueFactoryClassName = "er.extensions.eof.ERXStringType"; 
+            valueFactoryMethodName = typeFromString; 
+            valueType = c; 
             width = 1024; 
         }
     ); 
