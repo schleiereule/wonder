@@ -419,7 +419,6 @@
             externalType = VARCHAR; 
             factoryMethodArgumentType = EOFactoryMethodArgumentIsNSString; 
             name = stringType; 
-            valueClassName = "er.extensions.eof.ERXStringType"; 
             valueFactoryClassName = "er.extensions.eof.ERXStringType"; 
             valueFactoryMethodName = typeFromString; 
             valueType = c; 
