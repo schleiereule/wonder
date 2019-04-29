@@ -5,24 +5,19 @@ import java.io.Serializable;
 import er.extensions.eof.ERXConstant.StringConstant;
 
 public abstract class ERXStringType extends ERXConstant.StringConstant implements Serializable {
-
-	private static final long serialVersionUID = 3340039759302984455L;
+	
+	/**
+	 * Do I need to update serialVersionUID? See section 5.6 <cite>Type Changes Affecting Serialization</cite> on page
+	 * 51 of the <a href="http://java.sun.com/j2se/1.4/pdf/serial-spec.pdf">Java Object Serialization Spec</a>
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public ERXStringType(String value, String name) {
 		super(value, name);
 	}
-
-	public String textDescription() {
-		return name();
-	}
-
-	@Override
-	public String toString() {
-		return getClass().getName() + ":" + value();
-	}
-
+	
 	public static String typeToString(ERXStringType stringType) {
-		return stringType.toString();
+		return stringType.getClass().getName() + ":" + stringType.value();
 	}
 
 	// do not forget to initialize the shared data of the StringType to make this feature work
