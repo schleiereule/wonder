@@ -1,4 +1,14 @@
 {
+    "er.extensions.concurrency.ERXDeleteEnterpriseObjectTask.start" = "start deleting...";
+    "er.extensions.concurrency.ERXDeleteEnterpriseObjectTask.fetchEnterpriseObject" = "fetching object";
+    "er.extensions.concurrency.ERXDeleteEnterpriseObjectTask.deleteEnterpriseObject" = "deleting object";
+    "er.extensions.concurrency.ERXDeleteEnterpriseObjectTask.completed" = "deletion completed";
+
+    "er.extensions.concurrency.ERXTaskOutcome:successful" = "successful";
+    "er.extensions.concurrency.ERXTaskOutcome:successfulWithError" = "successful with error";
+    "er.extensions.concurrency.ERXTaskOutcome:successfulWithWarning" = "successful with warning";
+    "er.extensions.concurrency.ERXTaskOutcome:failed" = "failed";
+    
 	"Could not save your changes: " = "Could not save your changes: ";
 	"ERXArrayChooser.noneString" = "- none -";
 	"ERXBatchNavigationBar.items_per_page" = "items/page";

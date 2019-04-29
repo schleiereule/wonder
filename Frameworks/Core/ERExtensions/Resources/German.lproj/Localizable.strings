@@ -1,4 +1,14 @@
 {
+    "er.extensions.concurrency.ERXDeleteEnterpriseObjectTask.start" = "Starte Löschung...";
+    "er.extensions.concurrency.ERXDeleteEnterpriseObjectTask.fetchEnterpriseObject" = "Hole Datenbankobjekt";
+    "er.extensions.concurrency.ERXDeleteEnterpriseObjectTask.deleteEnterpriseObject" = "Lösche Daten";
+    "er.extensions.concurrency.ERXDeleteEnterpriseObjectTask.completed" = "Löschung abgeschlossen";
+
+    "er.extensions.concurrency.ERXTaskOutcome:successful" = "Erfolgreich";
+    "er.extensions.concurrency.ERXTaskOutcome:successfulWithError" = "Erfolgreich mit Fehlern";
+    "er.extensions.concurrency.ERXTaskOutcome:successfulWithWarning" = "Erfolgreich mit Warnungen";
+    "er.extensions.concurrency.ERXTaskOutcome:failed" = "Fehlgeschlagen";
+    
 	"Could not save your changes: " = "Konnte nicht speichern: ";
 	"ERXArrayChooser.noneString" = "- keine Auswahl -";
 	"ERXBatchNavigationBar.items_per_page" = "pro Seite";
