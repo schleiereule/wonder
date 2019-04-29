@@ -1,4 +1,4 @@
-package er.modern.directtoweb.components;
+package er.modern.look.pages;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
@@ -34,12 +34,13 @@ import er.extensions.foundation.ERXValueUtilities;
 import er.extensions.foundation.IERXStatus;
 import er.extensions.localization.ERXLocalizer;
 import er.modern.directtoweb.interfaces.ERMBrowserPageInterface;
+import er.modern.directtoweb.interfaces.ERMLongResponsePageInterface;
 
-public class ERMDLongResponsePage extends ERD2WInspectPageTemplate {
+public class ERMODLongResponsePage extends ERD2WInspectPageTemplate implements ERMLongResponsePageInterface {
 
 	private static final long serialVersionUID = 1L;
 
-	public ERMDLongResponsePage(WOContext context) {
+	public ERMODLongResponsePage(WOContext context) {
 		super(context);
 		// Grab the referring page when this long response page is created
 		_referringPage = context.page();
@@ -56,8 +57,8 @@ public class ERMDLongResponsePage extends ERD2WInspectPageTemplate {
 
 	// Constants to determine the CSS stylesheet used for the long response page
 	// for this app
-	private static final String STYLESHEET_FRAMEWORK = "DivasDirectToWeb";
-	private static final String STYLESHEET_FILENAME = "css/LongResponsePage.css";
+	private static final String STYLESHEET_FRAMEWORK = "ERModernLook";
+	private static final String STYLESHEET_FILENAME = "css/ERMODLongResponsePage.css";
 
 	// The page that instantiated this long response page
 	private final WOComponent _referringPage;
@@ -234,7 +235,7 @@ public class ERMDLongResponsePage extends ERD2WInspectPageTemplate {
 	 */
 	public String defaultStatus() {
 		if (_defaultStatus == null) {
-			_defaultStatus = ERXLocalizer.currentLocalizer().localizedStringForKeyWithDefault("LongResponsePage.defaultStatus");
+			_defaultStatus = ERXLocalizer.currentLocalizer().localizedStringForKeyWithDefault("ERMODLongResponsePage.defaultStatus");
 		}
 		return _defaultStatus;
 	}
@@ -379,7 +380,7 @@ public class ERMDLongResponsePage extends ERD2WInspectPageTemplate {
 	}
 
 	public String altForNextButton() {
-		return ERXLocalizer.currentLocalizer().localizedStringForKeyWithDefault("LongResponsePage.altForNextButton");
+		return ERXLocalizer.currentLocalizer().localizedStringForKeyWithDefault("ERMODLongResponsePage.altForNextButton");
 	}
 
 	@Override

@@ -1,0 +1,182 @@
+PageWrapper: WOSwitchComponent {
+	WOComponentName = d2wContext.pageWrapperName;
+	_componentUnroll = true;
+	_unroll = true;
+}
+
+InnerWrapper : WOGenericContainer {
+	elementName = "div";
+	class = d2wContext.classForInnerWrapper;
+}
+
+StyleSheet : CCResourceInjector {
+  framework = styleSheetFramework;
+  filename = styleSheetFilename;
+}
+
+NextPageActionURL: WOActionURL {
+	action = nextPage;
+}
+
+MainUpdateContainer : AjaxUpdateContainer {
+	elementName = "div";
+	id = "MonitorMainContainer";
+}
+
+ShowHeader : WOConditional {
+	condition = d2wContext.showHeader;
+}
+
+HeaderDiv : WOGenericContainer {
+	elementName = "div";
+	class = d2wContext.classForHeader;
+}
+
+Header: WOSwitchComponent {
+	WOComponentName = d2wContext.headerComponentName;
+	d2wContext = d2wContext;
+	object = ^object;
+	key = ^key;
+}
+
+TaskProgressRefresh : AjaxUpdateContainer {
+	id = "TaskProgressRefresh";
+	elementName = "div";
+	frequency = refreshInterval;
+	// stopped binding used for developing a custom CSS style-sheet
+	// stopped = stayOnLongResponsePageIndefinitely;
+	stopped = future.isDone;
+}
+
+FutureStatus : WOString {
+  value = status;
+  escapeHTML = false;
+}
+
+FutureHasStatus : ERXWOConditional {
+  condition = hasStatus;
+}
+
+FutureDoesNotHaveStatus : ERXElse {
+}
+
+DefaultStatus : WOString {
+  value = defaultStatus;
+}
+
+FutureHasPercentComplete : ERXWOConditional {
+  condition = future.hasPercentComplete;
+}
+
+FutureHasDetails : ERXWOConditional {
+  condition = hasDetails;
+}
+
+FutureDetails : WORepetition {
+  list = details;
+  item = detail;
+}
+
+DetailStatus : WOString {
+  value = detailStatus;
+  escapeHTML = false;
+}
+
+DetailFinishedPercentage : WOString {
+  value = detailFinishedPercentage;
+}
+
+FutureDoesNotHavePercentComplete : ERXElse {
+}
+
+Finished : WOGenericContainer {
+	elementName = "td";
+	width = finishedPercentage;
+	class = "percentageFinished";
+}
+
+Unfinished : WOGenericContainer {
+	elementName = "td";
+	class = "percentageUnfinished";
+	omitTags = hideUnfinishedProgressTableCell;
+}
+
+FinishedPercentage : WOString {
+  value = finishedPercentage;
+  valueWhenEmpty = "0%";
+}
+
+ElapsedTimePreamble : ERXLocalizedString {
+	value = "ERMODLongResponsePage.elapsedTimePreamble";
+}
+
+StoppingMessage : ERXLocalizedString {
+	value = "ERMODLongResponsePage.stoppingMessage";
+}
+
+StopButtonCaption : ERXLocalizedString {
+	value = "ERMODLongResponsePage.stopButtonCaption";
+}
+
+ElapsedTime : WOString {
+  value = elapsedTime;
+}
+
+ControlScriptContent : WOString {
+  value = controlScriptContent;
+}
+
+FutureIsDone : ERXWOConditional {
+  condition = future.isDone;
+}
+
+FutureIsNotDone : ERXElse {
+}
+
+AutoFireNextPageAction : ERXWOConditional {
+  condition = autoFireNextPageAction;
+}
+
+NotAutoFireNextPageAction : ERXElse {
+}
+
+HasTaskResult : ERXWOConditional {
+  condition = taskResult;
+}
+
+TaskResultFinalOutcome : ERXLocalizedString {
+	value = taskResult.finalOutcome.localizedValue;
+}
+
+FutureIsStoppable : ERXWOConditional {
+  condition = future.isStoppable;
+}
+
+StopControlUpdateContainer : AjaxUpdateContainer {
+  id = "stop-control-area";
+  class = "section";
+}
+
+WasStoppedByUser : ERXWOConditional {
+  condition = wasStoppedByUser;
+}
+
+WasNotStoppedByUser : ERXWOConditional {
+  condition = wasStoppedByUser;
+  negate = true;
+}
+
+NextButton: CCSmartAjaxButton {
+	alt = altForNextButton;
+	action = nextPage;
+	value = d2wContext.nextButtonLabel;
+	class = "Button PageButton ReturnPageButton LongResponsePageReturnPageButton";
+	useAjax = d2wContext.useAjaxControlsWhenEmbedded;
+    updateContainerID = "EmbeddedUpdateContainer";
+}
+
+StopTaskUpdateHyperlink : AjaxUpdateLink {
+  action = stopTask;
+  class = "stop-link";
+  updateContainerID = "stop-control-area";
+}

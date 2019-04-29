@@ -1,0 +1,53 @@
+PageWrapper: WOSwitchComponent {
+	WOComponentName = d2wContext.pageWrapperName;
+	_componentUnroll = true;
+	_unroll = true;
+}
+
+RequiredWrapper : ERMODRequiredWrapper {
+	d2wContext = d2wContext;
+}
+
+InnerWrapper : WOGenericContainer {
+	elementName = "div";
+	class = d2wContext.classForInnerWrapper;
+}
+
+BottomActionBlock : WOGenericContainer {
+	elementName = "div";
+	class = d2wContext.classForBottomActionBlock;
+}
+
+ShowBottomActionBlock : WOConditional {
+	condition = d2wContext.showBottomActionBlock;
+}
+
+ShouldShowDefaultPageButtons : WOConditional {
+	condition = d2wContext.shouldShowDefaultPageButtons;
+}
+
+ReturnButton: CCSmartAjaxButton {
+	alt = "Returns to the previous page";
+	action = nextPage;
+	value = d2wContext.returnButtonLabel;
+	class = "Button PageButton ReturnPageButton";
+	useAjax = d2wContext.useAjaxControlsWhenEmbedded;
+    updateContainerID = d2wContext.idForParentMainContainer;
+}
+
+ThreadMonitor : ERMDThreadMonitor {
+}
+
+Refresh : AjaxUpdateContainer {
+	id = "refreshContainer";
+	elementName = "div";
+	frequency = 2;
+	decay = 1;
+	evalScripts = true;
+}
+
+WatchIndicator : AjaxBusyIndicator {
+  watchContainerID = "refreshContainer";
+  onCreate = "function() { $('busy').show(); }";
+  onComplete = "function() { $('refreshContainer').highlight(); $('busy').hide(); }";
+}

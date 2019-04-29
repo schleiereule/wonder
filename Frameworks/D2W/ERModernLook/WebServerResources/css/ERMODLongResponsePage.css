@@ -1,0 +1,97 @@
+table.progressBar {
+	border: none;
+}
+
+table.progressBar td.percentageFinished {
+	background-image: url('../images/progress-bar.gif');
+	background-repeat: repeat-x;
+	padding: 0px;
+}
+
+table.progressBar td.percentageUnfinished {
+	background-image: url('../images/progress-remainder.gif');
+	background-repeat: repeat-x;
+	padding: 0px;
+}
+
+#content-wrapper {
+	width: 540px;
+	margin: 0 auto;
+	text-align: center;
+	padding: 50px 0 0 0;
+	z-index: 1000;
+	position: relative;
+}
+
+#content-panel {
+	border: 1px solid #424242;
+	padding: 50px;
+	background-color: white;
+	border-radius: 15px;
+	-moz-border-radius: 15px;
+}
+
+div.section {
+	padding: 20px 0 20px 0;
+}
+
+p.status-message {
+	font-size: 2em;
+}
+
+p.percent-display {
+	padding: 10px 0 10px 0;
+}
+
+p.stopping-message {
+	font-size: 2em;
+	color: #FF0000;
+	font-weight: bold;
+	text-decoration: blink;
+}
+
+#development-info {
+	padding-top: 50px;
+}
+
+div#busy-indicator {
+	background: url('../images/ajax-busy-bar.gif');
+	margin-left: 109px;
+	width: 220px;
+	height: 19px;
+}
+
+#action-area {
+	float: right;
+	position: relative;
+	left: -50%; /* or right 50% */
+	text-align: left;
+}
+
+.LongResponsePageActionList {
+	position: relative;
+	left: 50%;
+}
+
+/* Style the Stop Task link */
+
+a.stop-link {
+	background: url('../images/button_stop_cancel_32.png');
+	display: block;
+	height: 32px;
+	width: 32px;
+	margin-left: 203px;
+}
+
+a.stop-link span.stop-link-text {
+	display: block;
+	width: 0px;
+	height: 0px;
+	overflow: hidden;
+}
+
+div#status-area {
+	font: 10px/normal "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+	overflow: hidden;
+	word-wrap: break-word;
+}

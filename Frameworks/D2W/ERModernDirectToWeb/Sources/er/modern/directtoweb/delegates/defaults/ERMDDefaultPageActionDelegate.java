@@ -64,10 +64,10 @@ import er.extensions.localization.ERXLocalizer;
 import er.extensions.validation.ERXValidationException;
 import er.extensions.validation.ERXValidationFactory;
 import er.modern.directtoweb.ERMDNotificationNameRegistry;
-import er.modern.directtoweb.components.ERMDListThreadPage;
-import er.modern.directtoweb.components.ERMDLongResponsePage;
 import er.modern.directtoweb.delegates.ERMD2WConfirmCancellationDelegate;
 import er.modern.directtoweb.delegates.ERMDDeleteEnterpriseObjectController;
+import er.modern.directtoweb.interfaces.ERMListThreadPageInterface;
+import er.modern.directtoweb.interfaces.ERMLongResponsePageInterface;
 
 public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
 
@@ -592,78 +592,76 @@ public class ERMDDefaultPageActionDelegate extends ERDBranchDelegate {
     }
 	
 
- public WOActionResults _batchDelete(WOComponent sender) {
-        WOActionResults nextPage = null;
-        if (sender.context().page() instanceof ERD2WPickListPage) {
-            ERD2WPickListPage pickPage = (ERD2WPickListPage) sender.context().page();
-            @SuppressWarnings("unchecked")
-            NSArray<EOEnterpriseObject> selectedObjects = pickPage.selectedObjects();
-            if (!selectedObjects.isEmpty()) {
-                if (pageDelete(sender)) {
-                    // delete is to be handled in the page context
-                    EOEditingContext ec = selectedObjects.lastObject().editingContext();
-                    try {
-                        for (EOEnterpriseObject eo : selectedObjects) {
-                            ec.deleteObject(eo);
-                        }
-                        ec.saveChanges();
-                        // make sure the display group shows a batch that exists
-                        // after deletions
-                        if (pickPage.displayGroup().currentBatchIndex() > pickPage.displayGroup().batchCount()) {
-                            pickPage.displayGroup().setCurrentBatchIndex(pickPage.displayGroup().batchCount());
-                        }
-                    } catch (ERXValidationException e) {
-                        log.warn("Failed to delete EO: " + e.object(), e);
-                    }
-                    nextPage = sender.context().page();
-                } else {
-                    // delete is to be handled via a background task
-                    ERMDDeleteEnterpriseObjectController resultController = new ERMDDeleteEnterpriseObjectController();
-                    // TODO this may not work when the PickList is embedded
-                    WOComponent senderPage = ERD2WUtilities.enclosingPageOfClass(sender, D2WPage.class);
-                    resultController.setObjectPage(senderPage);
-                    resultController.setSenderPage(resultController.objectPage());
+	public WOActionResults _batchDelete(WOComponent sender) {
+		WOActionResults nextPage = null;
+		if (sender.context().page() instanceof ERD2WPickListPage) {
+			ERD2WPickListPage pickPage = (ERD2WPickListPage) sender.context().page();
+			@SuppressWarnings("unchecked")
+			NSArray<EOEnterpriseObject> selectedObjects = pickPage.selectedObjects();
+			if (!selectedObjects.isEmpty()) {
+				if (pageDelete(sender)) {
+					// delete is to be handled in the page context
+					EOEditingContext ec = selectedObjects.lastObject().editingContext();
+					try {
+						for (EOEnterpriseObject eo : selectedObjects) {
+							ec.deleteObject(eo);
+						}
+						ec.saveChanges();
+						// make sure the display group shows a batch that exists
+						// after deletions
+						if (pickPage.displayGroup().currentBatchIndex() > pickPage.displayGroup().batchCount()) {
+							pickPage.displayGroup().setCurrentBatchIndex(pickPage.displayGroup().batchCount());
+						}
+					} catch (ERXValidationException e) {
+						log.warn("Failed to delete EO: " + e.object(), e);
+					}
+					nextPage = sender.context().page();
+				} else {
+					// delete is to be handled via a background task
+					ERMDDeleteEnterpriseObjectController resultController = new ERMDDeleteEnterpriseObjectController();
+					// TODO this may not work when the PickList is embedded
+					WOComponent senderPage = ERD2WUtilities.enclosingPageOfClass(sender, D2WPage.class);
+					resultController.setObjectPage(senderPage);
+					resultController.setSenderPage(resultController.objectPage());
 
-                    Callable<ERXTaskResult> task = ERXDeleteEnterpriseObjectsTask.getInstance(selectedObjects);
+					Callable<ERXTaskResult> task = ERXDeleteEnterpriseObjectsTask.getInstance(selectedObjects);
 
-                    switch (deleteMode(sender)) {
-                    case "LongResponse":
-                        ERMDLongResponsePage longResponsePage = (ERMDLongResponsePage) D2W.factory().pageForConfigurationNamed("LongResponsePage",
-                                sender.context().session());
-                        longResponsePage.setLongRunningTask(task);
-                        longResponsePage.setNextPageForResultController(resultController);
-                        longResponsePage.setAutoFireNextPageAction(true);
-                        nextPage = longResponsePage;
-                        break;
-                    case "Monitor":
-                        ERXExecutorService.executorService().submit(task);
-                        ERMDListThreadPage listThreadPage = (ERMDListThreadPage) D2W.factory().pageForConfigurationNamed("ListThread",
-                                sender.context().session());
-                        listThreadPage.setNextPageForResultController(resultController);
-                        nextPage = listThreadPage;
-                        break;
-                    }
-                }
-            }
-        }
-        return nextPage;
- }
+					switch (deleteMode(sender)) {
+					case "LongResponse":
+						ERMLongResponsePageInterface longResponsePage = (ERMLongResponsePageInterface) D2W.factory().pageForConfigurationNamed("LongResponsePage", sender.context().session());
+						longResponsePage.setLongRunningTask(task);
+						longResponsePage.setNextPageForResultController(resultController);
+						longResponsePage.setAutoFireNextPageAction(true);
+						nextPage = (WOComponent) longResponsePage;
+						break;
+					case "Monitor":
+						ERXExecutorService.executorService().submit(task);
+						ERMListThreadPageInterface listThreadPage = (ERMListThreadPageInterface) D2W.factory().pageForConfigurationNamed("ListThread", sender.context().session());
+						listThreadPage.setNextPageForResultController(resultController);
+						nextPage = (WOComponent) listThreadPage;
+						break;
+					}
+				}
+			}
+		}
+		return nextPage;
+	}
 
- private String deleteMode(WOComponent sender) {
-     String deleteMode = (String) d2wContext(sender).valueForKey("deleteMode");
-     if (ERXStringUtilities.isBlank(deleteMode)) {
-         deleteMode = "Page";
-     }
-     return deleteMode;
- }
+	private String deleteMode(WOComponent sender) {
+		String deleteMode = (String) d2wContext(sender).valueForKey("deleteMode");
+		if (ERXStringUtilities.isBlank(deleteMode)) {
+			deleteMode = "Page";
+		}
+		return deleteMode;
+	}
 
- public Boolean pageDelete(WOComponent sender) {
-     if (deleteMode(sender).equals("Page")) {
-         return true;
-     } else {
-         return false;
-     }
- }
+	private Boolean pageDelete(WOComponent sender) {
+		if (deleteMode(sender).equals("Page")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 
 }

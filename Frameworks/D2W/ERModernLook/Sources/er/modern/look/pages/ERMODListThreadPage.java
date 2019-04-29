@@ -1,4 +1,4 @@
-package er.modern.directtoweb.components;
+package er.modern.look.pages;
 
 import com.webobjects.appserver.WOComponent;
 import com.webobjects.appserver.WOContext;
@@ -7,8 +7,9 @@ import com.webobjects.directtoweb.D2WPage;
 import er.directtoweb.pages.templates.ERD2WInspectPageTemplate;
 import er.extensions.appserver.ERXNextPageForResultWOAction;
 import er.extensions.appserver.IERXPerformWOActionForResult;
+import er.modern.directtoweb.interfaces.ERMListThreadPageInterface;
 
-public class ERMDListThreadPage extends ERD2WInspectPageTemplate {
+public class ERMODListThreadPage extends ERD2WInspectPageTemplate implements ERMListThreadPageInterface {
 
 	private static final long serialVersionUID = 1L;
 
@@ -17,7 +18,7 @@ public class ERMDListThreadPage extends ERD2WInspectPageTemplate {
 
 	private IERXPerformWOActionForResult _nextPageForResultController;
 
-	public ERMDListThreadPage(WOContext context) {
+	public ERMODListThreadPage(WOContext context) {
 		super(context);
 		// Grab the referring page when this list thread page is created
 		_referringPage = context.page();

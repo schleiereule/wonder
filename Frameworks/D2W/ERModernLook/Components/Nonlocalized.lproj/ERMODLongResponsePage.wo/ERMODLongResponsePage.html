@@ -1,0 +1,110 @@
+<webobject name = "PageWrapper">
+  <webobject name = "InnerWrapper">
+    <webobject name = "StyleSheet" />
+    <webobject name = "AutoFireNextPageAction">
+      <script>
+        var performNextPageAction = function () {
+        window.location='<webobject name = "NextPageActionURL" />';
+        }
+      </script>
+    </webobject>
+    <div id = "embeddedOverlay"></div>
+    <webobject name = "MainUpdateContainer">
+      <div id = "content-wrapper">
+        <div id = "content-panel">
+          <webobject name = "ShowHeader">
+            <webobject name = "HeaderDiv"> <webobject name = "Header" /> </webobject>
+          </webobject>
+          <webobject name = "TaskProgressRefresh">
+            <div id = "status-area" class = "section">
+              <!-- We either show the task status, or fallback to user-defined default status, or fallback to global default status message -->
+              <webobject name = "FutureHasStatus">
+                <p class = "status-message"> <webobject name = "FutureStatus" /> </p>
+              </webobject>
+              <webobject name = "FutureDoesNotHaveStatus">
+                <p class = "status-message"><webobject name = "DefaultStatus" /></p>
+              </webobject>
+            </div>
+            <div id = "progress-area" class = "section">
+              <!-- We show a percentage based progress feedback, or fallback to an ajax busy indicator -->
+              <webobject name = "FutureHasPercentComplete">
+                <table style = "width: 100%;">
+                  <tr>
+                    <td style = "width: 90%; border: none; padding-top: 16px;">
+                      <table class = "progressBar" width = "100%" cellspacing = "0">
+                        <tr>
+                          <webobject name = "Finished">&nbsp;</webobject>
+                          <webobject name = "Unfinished" />
+                        </tr>
+                      </table>
+                    </td>
+                    <td style = "width: 10%; border: none;"><webobject name = "FinishedPercentage" /></td>
+                  </tr>
+                </table>
+              </webobject>
+              <webobject name = "FutureDoesNotHavePercentComplete">
+                <!-- Just show an ajax busy indicator which is determined by CSS styling of this div -->
+                <div id = "busy-indicator"> &nbsp; </div>
+              </webobject>
+            </div>
+            <webobject name = "FutureHasDetails">
+              <div>
+                <table class = "ObjTable ListObjTable">
+                  <webobject name = "FutureDetails">
+                    <tr class = "ObjRow">
+                      <td style=" width: 90%;word-break: break-all;"><webobject name = "DetailStatus" /></td>
+                      <td style=" width: 10%;"><webobject name = "DetailFinishedPercentage" /></td>
+                    </tr>
+                  </webobject>
+                </table>
+              </div>
+            </webobject>
+            <webobject name = "HasTaskResult">
+              <div id = "task-result-area" class = "section">
+                <webobject name = "TaskResultFinalOutcome" />
+              </div>
+            </webobject>
+            <div id = "elapsed-time-area" class = "section">
+              <p class = "elapsed-time">
+                <webobject name = "ElapsedTimePreamble" />&nbsp;<webobject name = "ElapsedTime" />
+              </p>
+            </div>
+            <webobject name = "FutureIsDone">
+              <webobject name = "AutoFireNextPageAction">
+                <!-- The content of this next javascript changes when the task is done so that the nextPage action is fired -->
+                <script>
+                  <webobject name = "ControlScriptContent" />
+                </script>
+              </webobject>
+              <webobject name = "NotAutoFireNextPageAction">
+                <div id = "action-area">
+                  <ul class = "ActionList LongResponsePageActionList">
+                    <li><webobject name = "NextButton" /></li>
+                  </ul>
+                </div>
+              </webobject>
+              <!-- the content of this next javascript stops the container updates -->
+              <script>TaskProgressRefreshStop();</script>
+            </webobject>
+            <webobject name = "FutureIsNotDone">
+              <webobject name = "WasStoppedByUser">
+                <p class = "stopping-message"><webobject name = "StoppingMessage" /></p>
+              </webobject>
+            </webobject>
+          </webobject>
+          <webobject name = "FutureIsStoppable">
+            <!-- We want the Stop control outside of the refresh area, otherwise a user click on Stop at the same time as a refresh request might not have any effect. -->
+            <webobject name = "StopControlUpdateContainer">
+              <webobject name = "WasNotStoppedByUser">
+                <webobject name = "StopTaskUpdateHyperlink">
+                  <span class = "stop-link-text"><webobject name = "StopButtonCaption" /></span>
+                </webobject>
+              </webobject>
+            </webobject>
+          </webobject>
+        </div>
+      </div>
+    </webobject>
+  </webobject>
+  <div class = "InnerClear"></div>
+</webobject>

@@ -1,0 +1,103 @@
+ThreadLoop : WORepetition {
+	list = taskInfos;
+	item = taskInfo;
+}
+
+ThreadRow: WOGenericContainer {
+	elementName = "tr";
+	class = rowClass;
+}
+
+HasNoTasks : ERXNonZeroConditional {
+	condition = taskInfos.count;
+	negate = true;
+}
+
+HasTasks : ERXNonZeroConditional {
+	condition = taskInfos.count;
+}
+
+PercentageComplete : WOString {
+  value = percentageComplete;
+  numberformat = "0.0 %";
+}
+
+ElapsedTime : WOString {
+  value = taskInfo.elapsedTime;
+}
+
+ShowStop : WOConditional {
+  condition = showStop;
+}
+
+TaskDescription : WOString {
+  value = description;
+}
+
+TaskStatus : WOString {
+  value = status;
+}
+
+StopTask : WOHyperlink {
+	action = stopTask;
+	class = "Button ObjButton EditObjButton";
+}
+
+WillStop : WOConditional {
+  condition = willStop;
+}
+
+WillStopMessage : ERXLocalizedString {
+  value = "ERMDThreadMonitor.willStopMessage";
+}
+
+noTasksRunningMessage : ERXLocalizedString {
+  value = "ERMDThreadMonitor.noTasksRunningMessage";
+}
+
+tasksRunningMessage : WOString {
+  value = tasksRunningMessage;
+}
+
+stopTaskButtonLabel : ERXLocalizedString {
+  value = "ERMDThreadMonitor.stopTaskButtonLabel";
+}
+
+progressColumnCaption : ERXLocalizedString {
+  value = "ERMDThreadMonitor.progressColumnCaption";
+}
+
+elapsedTimeColumnCaption : ERXLocalizedString {
+  value = "ERMDThreadMonitor.elapsedTimeColumnCaption";
+}
+
+descriptionColumnCaption : ERXLocalizedString {
+  value = "ERMDThreadMonitor.descriptionColumnCaption";
+}
+
+statusColumnCaption : ERXLocalizedString {
+  value = "ERMDThreadMonitor.statusColumnCaption";
+}
+
+detailsColumnCaption : ERXLocalizedString {
+  value = "ERMDThreadMonitor.detailsColumnCaption";
+}
+
+HasDetails : ERXWOConditional {
+  condition = hasDetails;
+}
+
+Details : WORepetition {
+  list = details;
+  item = detail;
+}
+
+DetailStatus : WOString {
+  value = detailStatus;
+  escapeHTML = false;
+}
+
+DetailPercentageComplete : WOString {
+  value = detailPercentageComplete;
+  numberformat = "0.0 %";
+}

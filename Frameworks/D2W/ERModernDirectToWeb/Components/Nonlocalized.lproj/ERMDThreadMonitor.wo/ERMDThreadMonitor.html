@@ -1,0 +1,63 @@
+<div class = "TaskThreadMonitor">
+  <webobject name = "HasNoTasks">
+    <div class = "ERMDEmptyList">
+      <span class = "ERMDEmptyListMessage"><webobject name = "noTasksRunningMessage" /></span>
+    </div>
+  </webobject>
+  <webobject name = "HasTasks">
+    <div class = "ERMDEmptyList">
+      <span class = "ERMDEmptyListMessage"><webobject name = "tasksRunningMessage" /></span>
+    </div>
+    <div width = "100%">
+      <table class = "ObjTable ListObjTable">
+        <tr class = "ObjTableHd ListObjTableHd">
+          <th class = "ActionCell LftActionCell" />
+          <th class = "AttrColumn ThreadMonitorTaskDescription"><webobject name = "descriptionColumnCaption" /></th>
+          <th class = "AttrColumn ThreadMonitorPercentageCompleteColumn"><webobject name = "progressColumnCaption" /></th>
+          <th class = "AttrColumn ThreadMonitorElapsedTimeColumn"><webobject name = "elapsedTimeColumnCaption" /></th>
+          <th class = "AttrColumn ThreadMonitorTaskStatus"><webobject name = "statusColumnCaption" /></th>
+          <th class = "AttrColumn ThreadMonitorTaskDetails"><webobject name = "detailsColumnCaption" /></th>
+        </tr>
+        <webobject name = "ThreadLoop">
+          <webobject name = "ThreadRow">
+            <td class = "ActionCell LftActionCell">
+              <ul class = "ObjActionList RtObjActionList">
+                <webobject name = "ShowStop">
+                  <li>
+                    <webobject name = "StopTask">
+                      <span><webobject name = "stopTaskButtonLabel" /></span>
+                    </webobject>
+                  </li>
+                </webobject>
+              </ul>
+            </td>
+            <td class = "AttrColumn ThreadMonitorTaskDescription"> <webobject name = "TaskDescription" /> </td>
+            <td class = "AttrColumn ThreadMonitorPercentageCompleteColumn"><webobject name = "PercentageComplete" /></td>
+            <td class = "AttrColumn ThreadMonitorElapsedTimeColumn"><webobject name = "ElapsedTime" /></td>
+            <td class = "AttrColumn ThreadMonitorTaskStatus">
+              <webobject name = "TaskStatus" />
+              <webobject name = "WillStop">
+                <br />
+                <webobject name = "WillStopMessage" />
+              </webobject>
+            </td>
+            <td class = "AttrColumn">
+              <webobject name = "HasDetails">
+                <div class = "ThreadMonitorTaskDetails">
+                  <table class = "ObjTable ThreadMonitorDetailTable">
+                    <webobject name = "Details">
+                      <tr class = "ObjRow">
+                        <td><webobject name = "DetailStatus" /></td>
+                        <td><webobject name = "DetailPercentageComplete" /></td>
+                      </tr>
+                    </webobject>
+                  </table>
+                </div>
+              </webobject>
+            </td>
+          </webobject>
+        </webobject>
+      </table>
+    </div>
+  </webobject>
+</div>
