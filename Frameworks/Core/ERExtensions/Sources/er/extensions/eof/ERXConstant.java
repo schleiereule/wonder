@@ -383,8 +383,12 @@ public abstract class ERXConstant {
 			return name() + " (" + value() +  ")";
 		}
 		
+		public String localizerKey() {
+			return getClass().getName() + ":" + value();
+		}
+
 		public String localizedValue() {
-			return ERXLocalizer.currentLocalizer().localizedStringForKeyWithDefault(value());
+			return ERXLocalizer.currentLocalizer().localizedStringForKeyWithDefault(localizerKey());
 		}
 		
 		@Override
