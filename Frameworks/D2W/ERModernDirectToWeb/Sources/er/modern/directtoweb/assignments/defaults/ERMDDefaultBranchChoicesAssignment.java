@@ -182,7 +182,7 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
 
 	public Object listControllerChoices(D2WContext c) {
 		if ("pick".equals(c.valueForKey("subTask"))) {
-            NSMutableArray<String> choices = new NSMutableArray<String>("_return", "_selectAllOnPage", "_selectNoneOnPage");
+            NSMutableArray<String> choices = new NSMutableArray<String>("_selectAllOnPage", "_selectNoneOnPage");
 
             // add delete method if list is not empty
             WOComponent page = (WOComponent) c.valueForKeyPath("session.context.page");
@@ -194,10 +194,7 @@ public class ERMDDefaultBranchChoicesAssignment extends ERDAssignment {
             }
             return choices;
 		}
-		if (c.frame()) {
-			return NSArray.emptyArray();
-		}
-		return new NSArray<String>("_return");
+		return NSArray.emptyArray();
 	}
 
 	public Object queryControllerChoices(D2WContext c) {
